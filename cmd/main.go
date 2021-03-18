@@ -23,9 +23,10 @@ func main() {
 
 	if len(os.Args) > 1 {
 
-		postgres := database.Postgres{}
+		var dump database.Dump
+		dump = database.Postgres{}
 
-		err := postgres.Check()
+		err := dump.Check()
 
 		if err != nil {
 			panic(err)
@@ -40,7 +41,7 @@ func main() {
 				panic("Path is not exist")
 			}
 
-			err := postgres.Import(user, path)
+			err := dump.Import(user, path)
 
 			if err != nil {
 				panic(err)
@@ -51,7 +52,7 @@ func main() {
 			user := os.Args[2]
 			dbName := os.Args[3]
 
-			err := postgres.Export(user, dbName)
+			err := dump.Export(user, dbName)
 
 			if err != nil {
 				panic(err)

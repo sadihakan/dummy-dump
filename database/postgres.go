@@ -19,7 +19,15 @@ const (
 	PgFlatFormat   = "--format=c"
 )
 
-type Postgres struct{}
+type Dump interface {
+	Check() error
+	Export(user string, database string) error
+	Import(user string, path string) error
+}
+
+type Postgres struct{
+	Dump
+}
 
 func (p Postgres) Check() error {
 	cmd := exec.Command("postgres", "-V")
