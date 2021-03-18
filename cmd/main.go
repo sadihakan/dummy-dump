@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/sadihakan/DummyDump/database"
+	"github.com/sadihakan/DummyDump/util"
 	"os"
 	"runtime"
 )
@@ -34,6 +35,10 @@ func main() {
 		if os.Args[1] == "import" {
 			user := os.Args[2]
 			path := os.Args[3]
+
+			if !util.PathExists(path) {
+				panic("Path is not exist")
+			}
 
 			err := postgres.Import(user, path)
 
