@@ -10,8 +10,7 @@ import (
 
 func main() {
 
-	goos := runtime.GOOS
-	switch goos {
+	switch runtime.GOOS {
 	case "windows":
 		fmt.Println("Windows")
 	case "darwin":
@@ -19,7 +18,7 @@ func main() {
 	case "linux":
 		fmt.Println("Linux")
 	default:
-		fmt.Printf("%s.\n", goos)
+		fmt.Printf("%s.\n", runtime.GOOS)
 	}
 
 	if len(os.Args) > 1 {
@@ -33,6 +32,7 @@ func main() {
 		}
 
 		if os.Args[1] == "import" {
+
 			user := os.Args[2]
 			path := os.Args[3]
 
@@ -52,6 +52,7 @@ func main() {
 			dbName := os.Args[3]
 
 			err := postgres.Export(user, dbName)
+
 			if err != nil {
 				panic(err)
 			}
