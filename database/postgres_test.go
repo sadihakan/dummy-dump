@@ -52,7 +52,7 @@ func TestImport(t *testing.T) {
 	dump = Postgres{}
 
 	user := "hakankosanoglu"
-	file := filepath.Join(util.GetDirectory(), "1616145448738317000.backup")
+	file := filepath.Join(util.GetDirectory(), "test.backup")
 
 	dump.Import(user, file)
 }
