@@ -48,6 +48,7 @@ func (p Postgres) Export(user string, database string) error {
 	filename := fmt.Sprintf("%d.backup", today)
 
 	cmd := exec.Command(PgDump, user, database, PgFlagFileName, filename, PgFlagCreate, PgFlatFormat)
+	cmd.Stdin = strings.NewReader("password")
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
@@ -64,7 +65,7 @@ func (p Postgres) Import(user string, path string) error {
 
 	user = fmt.Sprintf("--username=%s", user)
 
-	cmd := exec.Command(PgRestore, user, PgDatabase, path, PgFlagCreate)
+	cmd := exec.Command(PgRestore, user, "-W", PgDatabase, path, PgFlagCreate)
 	cmd.Stdin = strings.NewReader("password")
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf

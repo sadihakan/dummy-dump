@@ -44,7 +44,7 @@ func main() {
 			user := os.Args[2]
 			path := os.Args[3]
 
-			if !util.PathExists(path) {
+			if util.PathExists(path) {
 				panic("Path is not exist")
 			}
 
