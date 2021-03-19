@@ -13,14 +13,14 @@ Simple Database Backup Tool
 * How to run the program
 
 ```
-go run ./cmd export <User Name> <Database Name>
+go run ./cmd <postgres/mysql> export <User Name> <Database Name>
 ```
 ## Import
 
 * How to run the program
 
 ```
-go run ./cmd import <User Name> <File Path> 
+go run ./cmd <postgres/mysql> import <User Name> <File Path> 
 ```
 
 Contributors names and contact info
