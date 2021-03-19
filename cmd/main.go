@@ -26,6 +26,7 @@ func main() {
 
 	if len(os.Args) > 1 {
 		var dump database.Dump
+
 		if *dbflag == "postgres" {
 			dump = database.Postgres{}
 		} else if *dbflag == "mysql" {
