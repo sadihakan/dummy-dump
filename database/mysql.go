@@ -11,8 +11,10 @@ import (
 
 const (
 	dbname = "deneme"
-	skippassword="--skip-password"
+	skippassword="--skip-password" // use this when you add -p arg
 )
+
+//to be able to access mysql without sudo do this :GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
 
 type MySQL struct {
 	Dump
@@ -33,7 +35,7 @@ func (m MySQL) Check() error {
 
 func (m MySQL) Export(user ,database string) error{
 	filename := fmt.Sprintf("%d.backup", time.Now().UTC().UnixNano())
-	cmd:= exec.Command("sudo","mysqldump","-u",user,"-p",skippassword,database)
+	cmd:= exec.Command("mysqldump","-u",user,database)
 	var outb bytes.Buffer
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
@@ -58,7 +60,7 @@ func (m MySQL) Export(user ,database string) error{
 func (m MySQL) Import(user,path string) error{
 	//cmd:= exec.Command("bash", "-c","sudo mysql -u"+dbuser +" -p < "+dir)
 	//cmd:= exec.Command("mysqlimport", "-uroot","-p",dbname,dir)
-	cmd:=exec.Command("sudo","mysql", "-u", user, "-p",skippassword ,dbname,"-e", "source "+ path )
+	cmd:=exec.Command("mysql", "-u", user,dbname,"-e", "source "+ path )
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
