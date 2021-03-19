@@ -11,7 +11,7 @@ import (
 
 func main() {
 
-	dbflag:=flag.String("db","postgres","database for creating dump")
+	dbflag := flag.String("db", "postgres", "database for creating dump")
 
 	switch runtime.GOOS {
 	case "windows":
@@ -26,9 +26,9 @@ func main() {
 
 	if len(os.Args) > 1 {
 		var dump database.Dump
-		if *dbflag=="postgres"{
+		if *dbflag == "postgres" {
 			dump = database.Postgres{}
-		} else if *dbflag=="mysql"{
+		} else if *dbflag == "mysql" {
 			dump = database.MySQL{}
 		}
 
