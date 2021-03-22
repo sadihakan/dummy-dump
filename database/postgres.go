@@ -44,7 +44,6 @@ func (p Postgres) Export(user string, database string) error {
 
 	user = fmt.Sprintf("--username=%s", user)
 	database = fmt.Sprintf("--dbname=%s", database)
-
 	filename := fmt.Sprintf("%d.backup", today)
 
 	cmd := exec.Command(PgDump, user, database, PgFlagFileName, filename, PgFlagCreate, PgFlatFormat)

@@ -29,7 +29,6 @@ func main() {
 
 		switch os.Args[1] {
 		case "postgres":
-
 			dump = database.Postgres{}
 		case "mysql":
 			dump = database.MySQL{}
