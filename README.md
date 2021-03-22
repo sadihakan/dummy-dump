@@ -6,27 +6,65 @@ Simple Database Backup Tool
 
 ### Requirements
 
-* Go >= 1.16.x
+* Go >= 1.15
 
 ### Export
 
 * How to run the program
 
 ```
-go run ./cmd <postgres/mysql> export <User Name> <Database Name>
+go run ./cmd -source <postgres/mysql> -export -user <User Name> -db <Database Name>
 ```
 ## Import
 
 * How to run the program
 
 ```
-go run ./cmd <postgres/mysql> import <User Name> <File Path> 
+go run ./cmd -source <postgres/mysql> -import -user <User Name> <File Path> 
 ```
+
+## Usage
+
+- *import*  
+Flag: -import  
+Type: bool  
+Default: false  
+
+- *export*  
+Flag: -export  
+Type: bool  
+Default: false 
+
+- *source*  
+Flag: -source  
+Type: string  
+Default: null  
+Values: **mysql**, **postgres** 
+
+- *user*  
+Flag: -user  
+Type: string  
+Default: null 
+
+- *path*  
+Flag: -path  
+Type: string  
+Default: null 
+
+- *db*  
+Flag: -db  
+Type: string  
+Default: null
+
+- *binaryPath*  
+Flag: -binaryPath  
+Type: string  
+Default: null  
 
 Contributors names and contact info
 
-ex. Sadi Hakan  
-ex. [@HakanKosanoglu](http://hakankosanoglu.com)
+ex. [@sadihakan](https://github.com/sadihakan/)
+
 
 
 ## License
