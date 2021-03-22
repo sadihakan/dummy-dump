@@ -29,6 +29,7 @@ func main() {
 
 		switch os.Args[1] {
 		case "postgres":
+
 			dump = database.Postgres{}
 		case "mysql":
 			dump = database.MySQL{}
@@ -40,11 +41,11 @@ func main() {
 			panic(err)
 		}
 
-		switch os.Args[1] {
+		switch os.Args[2] {
 
 		case "import":
-			user := os.Args[2]
-			path := os.Args[3]
+			user := os.Args[3]
+			path := os.Args[4]
 
 			if !util.PathExists(path) {
 				panic("Path is not exist")
@@ -56,8 +57,8 @@ func main() {
 				panic(err)
 			}
 		case "export":
-			user := os.Args[2]
-			dbName := os.Args[3]
+			user := os.Args[3]
+			dbName := os.Args[4]
 
 			err := dump.Export(user, dbName)
 
