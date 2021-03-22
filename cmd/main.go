@@ -26,9 +26,11 @@ func main() {
 
 	if len(os.Args) > 1 {
 		var dump database.Dump
-		if os.Args[1] == "postgres" {
+
+		switch os.Args[1] {
+		case "postgres":
 			dump = database.Postgres{}
-		} else if os.Args[1] == "mysql" {
+		case "mysql":
 			dump = database.MySQL{}
 		}
 
@@ -44,8 +46,6 @@ func main() {
 			user := os.Args[2]
 			path := os.Args[3]
 
-			user := os.Args[3]
-			path := os.Args[4]
 			if !util.PathExists(path) {
 				panic("Path is not exist")
 			}
