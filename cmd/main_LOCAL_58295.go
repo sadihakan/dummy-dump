@@ -26,9 +26,9 @@ func main() {
 
 	if len(os.Args) > 1 {
 		var dump database.Dump
-		if os.Args[1] == "postgres" {
+		if os.Args[1]=="postgres"{
 			dump = database.Postgres{}
-		} else if os.Args[1] == "mysql" {
+		} else if os.Args[1]=="mysql"{
 			dump = database.MySQL{}
 		}
 
@@ -38,11 +38,7 @@ func main() {
 			panic(err)
 		}
 
-		switch os.Args[1] {
-
-		case "import":
-			user := os.Args[2]
-			path := os.Args[3]
+		if os.Args[2] == "import" {
 
 			user := os.Args[3]
 			path := os.Args[4]
@@ -55,9 +51,11 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-		case "export":
-			user := os.Args[2]
-			dbName := os.Args[3]
+
+		} else if os.Args[2] == "export" {
+
+			user := os.Args[3]
+			dbName := os.Args[4]
 
 			err := dump.Export(user, dbName)
 

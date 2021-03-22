@@ -11,6 +11,8 @@ import (
 
 func main() {
 
+	dbflag := flag.String("db", "postgres", "database for creating dump")
+
 	switch runtime.GOOS {
 	case "windows":
 		fmt.Println("Windows")
@@ -22,13 +24,12 @@ func main() {
 		fmt.Printf("%s.\n", runtime.GOOS)
 	}
 
-	flag.Parse()
-
 	if len(os.Args) > 1 {
 		var dump database.Dump
-		if os.Args[1] == "postgres" {
+
+		if *dbflag == "postgres" {
 			dump = database.Postgres{}
-		} else if os.Args[1] == "mysql" {
+		} else if *dbflag == "mysql" {
 			dump = database.MySQL{}
 		}
 
@@ -38,15 +39,12 @@ func main() {
 			panic(err)
 		}
 
-		switch os.Args[1] {
+		if os.Args[1] == "import" {
 
-		case "import":
 			user := os.Args[2]
 			path := os.Args[3]
 
-			user := os.Args[3]
-			path := os.Args[4]
-			if !util.PathExists(path) {
+			if util.PathExists(path) {
 				panic("Path is not exist")
 			}
 
@@ -55,7 +53,9 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-		case "export":
+
+		} else if os.Args[1] == "export" {
+
 			user := os.Args[2]
 			dbName := os.Args[3]
 

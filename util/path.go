@@ -7,5 +7,5 @@ func PathExists(path string) bool {
 	if err != nil {
 		return false
 	}
-	return os.IsNotExist(err)
+	return !os.IsNotExist(err)
 }
