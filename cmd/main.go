@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"github.com/sadihakan/DummyDump/database"
 	"github.com/sadihakan/DummyDump/util"
 	"log"
+	"os/exec"
+	"strings"
 )
 
 var sourceTypes = []string{
@@ -20,6 +23,8 @@ var (
 	path string
 	db string
 	binaryPath string
+	pgDump string
+	pgRestore string
 )
 
 func main() {
@@ -61,7 +66,22 @@ func main() {
 			panic("Path is not exist")
 		}
 
-		err := dump.Import(binaryPath, user, path)
+		if binaryPath == "" {
+			var out, _ bytes.Buffer
+			cmd := exec.Command("which", "pg_restore")
+			cmd.Stdout = &out
+			err := cmd.Run()
+
+			if err != nil {
+				panic(err)
+			}
+
+			pgRestore = out.String()
+
+			binaryPath = strings.TrimSuffix(pgRestore, "\n")
+		}
+
+		err = dump.Import(binaryPath, user, path)
 
 		if err != nil {
 			panic(err)
@@ -69,7 +89,23 @@ func main() {
 	}
 
 	if exportArg {
-		err := dump.Export(binaryPath, user, db)
+
+		if binaryPath == "" {
+			binaryPath = strings.TrimSuffix(pgDump, "\n")
+
+			var out, _ bytes.Buffer
+			cmd := exec.Command("which", "pg_dump")
+			cmd.Stdout = &out
+			err := cmd.Run()
+
+			if err != nil {
+				panic(err)
+			}
+
+			pgDump = out.String()
+		}
+
+		err = dump.Export(binaryPath, user, db)
 
 		if err != nil {
 			panic(err)

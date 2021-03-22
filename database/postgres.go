@@ -11,15 +11,13 @@ import (
 )
 
 const (
-	pgRestore      = "pg_restore"
-	pgDump         = "pg_dump"
 	pgDatabase     = "--dbname=postgres"
 	pgFlagFileName = "-f"
 	pgFlagCreate   = "--create"
 	pgFlatFormat   = "--format=c"
 )
 
-type Postgres struct{
+type Postgres struct {
 	Dump
 }
 
@@ -44,10 +42,6 @@ func (p Postgres) Export(binaryPath string, user string, database string) error 
 	database = fmt.Sprintf("--dbname=%s", database)
 	filename := fmt.Sprintf("%d.backup", today)
 
-	if binaryPath == "" {
-		binaryPath = pgDump
-	}
-
 	cmd := exec.Command(binaryPath, user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat)
 	cmd.Stdin = strings.NewReader("password")
 	cmd.Stdout = &out
@@ -66,11 +60,7 @@ func (p Postgres) Import(binaryPath string, user string, path string) error {
 
 	user = fmt.Sprintf("--username=%s", user)
 
-	if binaryPath == "" {
-		binaryPath = pgDump
-	}
-
-	cmd := exec.Command(pgRestore, user, "-W", pgDatabase, path, pgFlagCreate)
+	cmd := exec.Command(binaryPath, user, "-W", pgDatabase, path, pgFlagCreate)
 	cmd.Stdin = strings.NewReader("password")
 	fmt.Println(cmd)
 	cmd.Stdout = &out
