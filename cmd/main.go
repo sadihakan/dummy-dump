@@ -39,8 +39,9 @@ func main() {
 			panic(err)
 		}
 
-		if os.Args[1] == "import" {
+		switch os.Args[1] {
 
+		case "import":
 			user := os.Args[2]
 			path := os.Args[3]
 
@@ -53,9 +54,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-
-		} else if os.Args[1] == "export" {
-
+		case "export":
 			user := os.Args[2]
 			dbName := os.Args[3]
 
