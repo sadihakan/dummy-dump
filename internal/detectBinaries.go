@@ -3,87 +3,87 @@ package internal
 import (
 	"bytes"
 	"github.com/sadihakan/DummyDump/model"
+	"os"
 	"os/exec"
 	"strings"
 )
 
-func CheckBinary(binaryPath string, sourceType model.SOURCE_TYPE, importArg bool, exportArg bool) string {
+func CheckBinary(opsys string, binaryPath string, sourceType model.SOURCE_TYPE, importArg bool, exportArg bool) string {
 	if binaryPath == "" {
 
 		if importArg {
-			binaryPath = checkImport(sourceType)
+			binaryPath = checkImport(opsys, sourceType)
 		}
 
 		if exportArg {
-			binaryPath = checkExport(sourceType)
+			binaryPath = checkExport(opsys, sourceType)
 		}
 	}
-
 	return binaryPath
 }
 
-func checkImport(sourceType model.SOURCE_TYPE) string {
+func checkImport(opsys string, sourceType model.SOURCE_TYPE) string {
+	var out bytes.Buffer
+	var cmd *exec.Cmd
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = &out
 	switch sourceType {
 	case model.PostgreSQL:
-		var out, _ bytes.Buffer
-		cmd := exec.Command("which", "pg_restore")
-		cmd.Stdout = &out
+		if opsys == "windows" {
+			cmd = exec.Command("where", "/r", "C:\\Program Files\\Postgresql", "pg_restore")
+		} else {
+			cmd = exec.Command("which", "pg_restore")
+		}
 		err := cmd.Run()
-
 		if err != nil {
 			panic(err)
 		}
-
-		restore := out.String()
-
-		return strings.TrimSuffix(restore, "\n")
+		return strings.TrimSuffix(out.String(), "\n")
 	case model.MySQL:
-		var out, _ bytes.Buffer
-		cmd := exec.Command("which", "*")
-		cmd.Stdout = &out
+		if opsys == "windows" {
+			cmd = exec.Command("where", "/r", "C:\\Program Files\\MySQL", "mysql")
+		} else {
+			cmd = exec.Command("which", "mysql")
+		}
 		err := cmd.Run()
-
 		if err != nil {
 			panic(err)
 		}
-
-		restore := out.String()
-
-		return strings.TrimSuffix(restore, "\n")
+		return strings.TrimSuffix(out.String(), "\n")
 	}
-
 	return ""
 }
 
-func checkExport(sourceType model.SOURCE_TYPE) string {
+func checkExport(opsys string, sourceType model.SOURCE_TYPE) string {
+	var out bytes.Buffer
+	var cmd *exec.Cmd
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = &out
 	switch sourceType {
-	case "postgres":
-		var out, _ bytes.Buffer
-		cmd := exec.Command("which", "pg_dump")
-		cmd.Stdout = &out
+	case model.PostgreSQL:
+		if opsys == "windows" {
+			cmd = exec.Command("where", "/r", "C:\\Program Files\\Postgresql", "pg_dump")
+		} else {
+			cmd = exec.Command("which", "pg_dump")
+		}
 		err := cmd.Run()
-
 		if err != nil {
 			panic(err)
 		}
-
-		restore := out.String()
-
-		return strings.TrimSuffix(restore, "\n")
-	case "mysql":
-		var out, _ bytes.Buffer
-		cmd := exec.Command("which", "*")
-		cmd.Stdout = &out
+		return strings.TrimSuffix(out.String(), "\n")
+	case model.MySQL:
+		if opsys == "windows" {
+			cmd = exec.Command("where", "/r", "C:\\Program Files\\MySQL", "mysqldump")
+		} else{
+			cmd = exec.Command("which", "mysqldump")
+		}
 		err := cmd.Run()
-
 		if err != nil {
 			panic(err)
 		}
-
-		restore := out.String()
-
-		return strings.TrimSuffix(restore, "\n")
+		return strings.TrimSuffix(out.String(), "\n")
 	}
-
 	return ""
 }
