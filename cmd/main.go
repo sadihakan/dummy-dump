@@ -1,19 +1,14 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
-	"github.com/sadihakan/DummyDump/database"
+	"github.com/sadihakan/DummyDump/internal"
+	"github.com/sadihakan/DummyDump/internal/database"
+	"github.com/sadihakan/DummyDump/model"
 	"github.com/sadihakan/DummyDump/util"
 	"log"
-	"os/exec"
-	"strings"
 )
-
-var sourceTypes = []string{
-	"mysql", "postgres",
-}
 
 var (
 	importArg bool
@@ -23,8 +18,6 @@ var (
 	path string
 	db string
 	binaryPath string
-	pgDump string
-	pgRestore string
 )
 
 func main() {
@@ -37,8 +30,10 @@ func main() {
 	flag.StringVar(&binaryPath, "binaryPath", "", "Binary path")
 	flag.Parse()
 
-	if e, _ := util.InArray(sourceType, sourceTypes); !e {
-		log.Println("invalid source type")
+	fmt.Println(sourceType)
+
+	if !model.SOURCE_TYPE(sourceType).IsValid()	{
+			log.Println("invalid source type")
 		return
 	}
 
@@ -61,24 +56,11 @@ func main() {
 		fmt.Println(err)
 	}
 
+	binaryPath = internal.CheckBinary(binaryPath, model.SOURCE_TYPE(sourceType), importArg, exportArg)
+
 	if importArg {
 		if !util.PathExists(path) {
 			panic("Path is not exist")
-		}
-
-		if binaryPath == "" {
-			var out, _ bytes.Buffer
-			cmd := exec.Command("which", "pg_restore")
-			cmd.Stdout = &out
-			err := cmd.Run()
-
-			if err != nil {
-				panic(err)
-			}
-
-			pgRestore = out.String()
-
-			binaryPath = strings.TrimSuffix(pgRestore, "\n")
 		}
 
 		err = dump.Import(binaryPath, user, path)
@@ -89,21 +71,6 @@ func main() {
 	}
 
 	if exportArg {
-
-		if binaryPath == "" {
-			binaryPath = strings.TrimSuffix(pgDump, "\n")
-
-			var out, _ bytes.Buffer
-			cmd := exec.Command("which", "pg_dump")
-			cmd.Stdout = &out
-			err := cmd.Run()
-
-			if err != nil {
-				panic(err)
-			}
-
-			pgDump = out.String()
-		}
 
 		err = dump.Export(binaryPath, user, db)
 
