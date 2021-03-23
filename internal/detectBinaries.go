@@ -5,18 +5,20 @@ import (
 	"github.com/sadihakan/DummyDump/model"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 )
 
-func CheckBinary(opsys string, binaryPath string, sourceType model.SOURCE_TYPE, importArg bool, exportArg bool) string {
+func CheckBinary(binaryPath string, sourceType model.SOURCE_TYPE, importArg bool, exportArg bool) string {
+	os := runtime.GOOS
 	if binaryPath == "" {
 
 		if importArg {
-			binaryPath = checkImport(opsys, sourceType)
+			binaryPath = checkImport(os, sourceType)
 		}
 
 		if exportArg {
-			binaryPath = checkExport(opsys, sourceType)
+			binaryPath = checkExport(os, sourceType)
 		}
 	}
 	return binaryPath
@@ -25,9 +27,7 @@ func CheckBinary(opsys string, binaryPath string, sourceType model.SOURCE_TYPE, 
 func checkImport(opsys string, sourceType model.SOURCE_TYPE) string {
 	var out bytes.Buffer
 	var cmd *exec.Cmd
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = &out
+
 	switch sourceType {
 	case model.PostgreSQL:
 		if opsys == "windows" {
@@ -35,6 +35,9 @@ func checkImport(opsys string, sourceType model.SOURCE_TYPE) string {
 		} else {
 			cmd = exec.Command("which", "pg_restore")
 		}
+		cmd.Stderr = os.Stderr
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = &out
 		err := cmd.Run()
 		if err != nil {
 			panic(err)
@@ -47,6 +50,9 @@ func checkImport(opsys string, sourceType model.SOURCE_TYPE) string {
 			cmd = exec.Command("which", "mysql")
 		}
 		err := cmd.Run()
+		cmd.Stderr = os.Stderr
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = &out
 		if err != nil {
 			panic(err)
 		}
@@ -58,9 +64,6 @@ func checkImport(opsys string, sourceType model.SOURCE_TYPE) string {
 func checkExport(opsys string, sourceType model.SOURCE_TYPE) string {
 	var out bytes.Buffer
 	var cmd *exec.Cmd
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = &out
 	switch sourceType {
 	case model.PostgreSQL:
 		if opsys == "windows" {
@@ -68,6 +71,9 @@ func checkExport(opsys string, sourceType model.SOURCE_TYPE) string {
 		} else {
 			cmd = exec.Command("which", "pg_dump")
 		}
+		cmd.Stderr = os.Stderr
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = &out
 		err := cmd.Run()
 		if err != nil {
 			panic(err)
@@ -79,6 +85,9 @@ func checkExport(opsys string, sourceType model.SOURCE_TYPE) string {
 		} else{
 			cmd = exec.Command("which", "mysqldump")
 		}
+		cmd.Stderr = os.Stderr
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = &out
 		err := cmd.Run()
 		if err != nil {
 			panic(err)
