@@ -30,9 +30,11 @@ func TestExport(t *testing.T) {
 	dump = Postgres{}
 
 	user := "hakankosanoglu"
-	dbName := "test"
+	db := "test"
 
-	dump.Export(user, dbName)
+	binaryPath := "pg_restore"
+
+	dump.Export(binaryPath, user, db)
 }
 
 func TestExportWithError(t *testing.T) {
@@ -41,9 +43,11 @@ func TestExportWithError(t *testing.T) {
 	dump = Postgres{}
 
 	user := "none"
-	dbName := "test"
+	db := "test"
 
-	dump.Export(user, dbName)
+	binaryPath := "pg_restore"
+
+	dump.Export(binaryPath, user, db)
 }
 
 func TestImport(t *testing.T) {
@@ -54,7 +58,9 @@ func TestImport(t *testing.T) {
 	user := "hakankosanoglu"
 	file := filepath.Join(util.GetDirectory(), "test.backup")
 
-	dump.Import(user, file)
+	binaryPath := "pg_dump"
+
+	dump.Import(binaryPath, user, file)
 }
 
 func TestImportWithError(t *testing.T) {
@@ -65,5 +71,7 @@ func TestImportWithError(t *testing.T) {
 	user := "hakankosanoglu"
 	file := "test"
 
-	dump.Import(user, file)
+	binaryPath := "pg_dump"
+
+	dump.Import(binaryPath, user, file)
 }
