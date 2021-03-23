@@ -8,6 +8,7 @@ import (
 	"github.com/sadihakan/DummyDump/model"
 	"github.com/sadihakan/DummyDump/util"
 	"log"
+	"runtime"
 )
 
 var (
@@ -21,6 +22,7 @@ var (
 )
 
 func main() {
+	var opsys = runtime.GOOS
 	flag.BoolVar(&importArg, "import", false, "Import process")
 	flag.BoolVar(&exportArg, "export", false, "Export process")
 	flag.StringVar(&sourceType, "source", "", "Source type is: mysql|postgres")
@@ -56,7 +58,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	binaryPath = internal.CheckBinary(binaryPath, model.SOURCE_TYPE(sourceType), importArg, exportArg)
+	binaryPath = internal.CheckBinary(opsys,binaryPath, model.SOURCE_TYPE(sourceType), importArg, exportArg)
 
 	if importArg {
 		if !util.PathExists(path) {
