@@ -3,6 +3,7 @@ package internal
 import (
 	"bytes"
 	"fmt"
+	"github.com/sadihakan/DummyDump/model"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -15,9 +16,12 @@ const (
 )
 
 //to be able to access mysql without sudo do this :GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+// or create another user besides root
 
 // MySQL ...
-type MySQL struct {}
+type MySQL struct {
+	Dump
+}
 
 func (m MySQL) Check() error {
 	cmd := exec.Command("mysql", "--version")
@@ -29,9 +33,9 @@ func (m MySQL) Check() error {
 	return nil
 }
 
-func (m MySQL) Export(user, database string) error {
+func (m MySQL) Export(binaryPath string, user string, database string) error {
 	filename := fmt.Sprintf("%d.backup", time.Now().UTC().UnixNano())
-	cmd := exec.Command("mysqldump", "-u", user, database)
+	cmd := CreateExportCommand(binaryPath, model.MySQL, user, database)
 	var outb bytes.Buffer
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
@@ -51,8 +55,8 @@ func (m MySQL) Export(user, database string) error {
 	return err
 }
 
-func (m MySQL) Import(user, path string) error {
-	cmd := exec.Command("mysql", "-u", user, dbname, "-e", "source "+path)
+func (m MySQL) Import(binaryPath string, user string, database string) error {
+	cmd := CreateImportCommand(binaryPath, model.MySQL, user, database)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

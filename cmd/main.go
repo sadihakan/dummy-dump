@@ -46,7 +46,7 @@ func main() {
 	case "postgres":
 		dump = internal.Postgres{}
 	case "mysql":
-		//dump = database.MySQL{}
+		dump = internal.MySQL{}
 	}
 
 	err := dump.Check()
