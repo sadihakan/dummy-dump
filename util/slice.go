@@ -21,4 +21,3 @@ func InArray(val interface{}, array interface{}) (exists bool, index int) {
 
 	return
 }
-

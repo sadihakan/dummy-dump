@@ -10,12 +10,12 @@ import (
 )
 
 var (
-	importArg bool
-	exportArg bool
+	importArg  bool
+	exportArg  bool
 	sourceType string
-	user string
-	path string
-	db string
+	user       string
+	path       string
+	db         string
 	binaryPath string
 )
 
@@ -31,8 +31,8 @@ func main() {
 
 	fmt.Println(sourceType)
 
-	if !model.SOURCE_TYPE(sourceType).IsValid()	{
-			log.Println("invalid source type")
+	if !model.SOURCE_TYPE(sourceType).IsValid() {
+		log.Println("invalid source type")
 		return
 	}
 

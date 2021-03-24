@@ -16,9 +16,9 @@ func Which() (which string) {
 	return which
 }
 
-func Name(name string) string{
-if runtime.GOOS=="windows"{
-	return "cmd"
-}
-return name
+func Name(name string) string {
+	if runtime.GOOS == "windows" {
+		return "cmd"
+	}
+	return name
 }

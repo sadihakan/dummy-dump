@@ -12,7 +12,7 @@ var sourceTypes = []string{
 type SOURCE_TYPE string
 
 const (
-	MySQL SOURCE_TYPE = "mysql"
+	MySQL      SOURCE_TYPE = "mysql"
 	PostgreSQL SOURCE_TYPE = "postgres"
 )
 

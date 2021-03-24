@@ -16,8 +16,8 @@ func TestInArray(t *testing.T) {
 
 	}
 	//100 percent coverage
-	nExist,nIndex:=InArray("non-existent element",sourceTypes)
-	if nExist||nIndex!=-1{
+	nExist, nIndex := InArray("non-existent element", sourceTypes)
+	if nExist || nIndex != -1 {
 		t.Errorf("Error at InArray(): Function doesnt work as expected")
 	}
 }
