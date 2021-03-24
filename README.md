@@ -1,6 +1,6 @@
 # DummyDump
 
-Simple Database Backup Tool
+Simple Database Backup Tool (zero dependencies)
 
 ## Getting Started
 

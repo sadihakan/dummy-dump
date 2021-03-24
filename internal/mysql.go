@@ -1,4 +1,4 @@
-package database
+package internal
 
 import (
 	"bytes"
@@ -16,6 +16,7 @@ const (
 
 //to be able to access mysql without sudo do this :GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
 
+// MySQL ...
 type MySQL struct {}
 
 func (m MySQL) Check() error {
@@ -39,11 +40,11 @@ func (m MySQL) Export(user, database string) error {
 	if err != nil {
 		return err
 	}
-	bytes, err := ioutil.ReadAll(&outb)
+	b, err := ioutil.ReadAll(&outb)
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(filename+".sql", bytes, 0644)
+	err = ioutil.WriteFile(filename+".sql", b, 0644)
 	if err != nil {
 		return err
 	}

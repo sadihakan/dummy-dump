@@ -1,4 +1,4 @@
-package database
+package internal
 
 import (
 	"github.com/sadihakan/DummyDump/util"

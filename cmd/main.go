@@ -4,11 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"github.com/sadihakan/DummyDump/internal"
-	"github.com/sadihakan/DummyDump/internal/database"
 	"github.com/sadihakan/DummyDump/model"
 	"github.com/sadihakan/DummyDump/util"
 	"log"
-	"runtime"
 )
 
 var (
@@ -42,11 +40,11 @@ func main() {
 		log.Fatal("only one operation can be run")
 	}
 
-	var dump database.Dump
+	var dump internal.Dump
 
 	switch sourceType {
 	case "postgres":
-		dump = database.Postgres{}
+		dump = internal.Postgres{}
 	case "mysql":
 		//dump = database.MySQL{}
 	}

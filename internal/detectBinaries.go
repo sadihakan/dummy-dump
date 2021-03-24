@@ -3,96 +3,59 @@ package internal
 import (
 	"bytes"
 	"github.com/sadihakan/DummyDump/model"
+	"log"
 	"os"
 	"os/exec"
-	"runtime"
 	"strings"
 )
 
+// CheckBinary ...
 func CheckBinary(binaryPath string, sourceType model.SOURCE_TYPE, importArg bool, exportArg bool) string {
-	os := runtime.GOOS
 	if binaryPath == "" {
 
 		if importArg {
-			binaryPath = checkImport(os, sourceType)
+			binaryPath = checkImport(sourceType)
 		}
 
 		if exportArg {
-			binaryPath = checkExport(os, sourceType)
+			binaryPath = checkExport(sourceType)
 		}
 	}
 	return binaryPath
 }
 
-func checkImport(opsys string, sourceType model.SOURCE_TYPE) string {
+func checkImport(sourceType model.SOURCE_TYPE) string {
 	var out bytes.Buffer
 	var cmd *exec.Cmd
 
-	switch sourceType {
-	case model.PostgreSQL:
-		if opsys == "windows" {
-			cmd = exec.Command("where", "/r", "C:\\Program Files\\Postgresql", "pg_restore")
-		} else {
-			cmd = exec.Command("which", "pg_restore")
-		}
-		cmd.Stderr = os.Stderr
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = &out
-		err := cmd.Run()
-		if err != nil {
-			panic(err)
-		}
-		return strings.TrimSuffix(out.String(), "\n")
-	case model.MySQL:
-		if opsys == "windows" {
-			cmd = exec.Command("where", "/r", "C:\\Program Files\\MySQL", "mysql")
-		} else {
-			cmd = exec.Command("which", "mysql")
-		}
-		err := cmd.Run()
-		cmd.Stderr = os.Stderr
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = &out
-		if err != nil {
-			panic(err)
-		}
-		return strings.TrimSuffix(out.String(), "\n")
+	cmd = CreateImportBinaryCommand(sourceType)
+
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = &out
+	err := cmd.Run()
+
+	if err != nil {
+		log.Fatal(err)
 	}
-	return ""
+
+	return strings.TrimSuffix(out.String(), "\n")
 }
 
-func checkExport(opsys string, sourceType model.SOURCE_TYPE) string {
+func checkExport(sourceType model.SOURCE_TYPE) string {
 	var out bytes.Buffer
 	var cmd *exec.Cmd
-	switch sourceType {
-	case model.PostgreSQL:
-		if opsys == "windows" {
-			cmd = exec.Command("where", "/r", "C:\\Program Files\\Postgresql", "pg_dump")
-		} else {
-			cmd = exec.Command("which", "pg_dump")
-		}
-		cmd.Stderr = os.Stderr
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = &out
-		err := cmd.Run()
-		if err != nil {
-			panic(err)
-		}
-		return strings.TrimSuffix(out.String(), "\n")
-	case model.MySQL:
-		if opsys == "windows" {
-			cmd = exec.Command("where", "/r", "C:\\Program Files\\MySQL", "mysqldump")
-		} else{
-			cmd = exec.Command("which", "mysqldump")
-		}
-		cmd.Stderr = os.Stderr
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = &out
-		err := cmd.Run()
-		if err != nil {
-			panic(err)
-		}
-		return strings.TrimSuffix(out.String(), "\n")
+
+	cmd = CreateExportBinaryCommand(sourceType)
+
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = &out
+	err := cmd.Run()
+
+	if err != nil {
+		log.Fatal(err)
 	}
-	return ""
+
+	return strings.TrimSuffix(out.String(), "\n")
 }

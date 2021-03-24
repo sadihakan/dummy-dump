@@ -1,20 +1,11 @@
-package database
+package internal
 
 import (
 	"bytes"
 	"fmt"
+	"github.com/sadihakan/DummyDump/model"
 	"os"
 	"os/exec"
-	"strings"
-	//"syscall"
-	"time"
-)
-
-const (
-	pgDatabase     = "--dbname=postgres"
-	pgFlagFileName = "-f"
-	pgFlagCreate   = "--create"
-	pgFlatFormat   = "--format=c"
 )
 
 type Postgres struct {
@@ -35,15 +26,12 @@ func (p Postgres) Check() error {
 }
 
 func (p Postgres) Export(binaryPath string, user string, database string) error {
-	today := time.Now().UTC().UnixNano()
 	var out, errBuf bytes.Buffer
 
 	user = fmt.Sprintf("--username=%s", user)
 	database = fmt.Sprintf("--dbname=%s", database)
-	filename := fmt.Sprintf("%d.backup", today)
 
-	cmd := exec.Command(binaryPath, user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat)
-	cmd.Stdin = strings.NewReader("password")
+	cmd := CreateExportCommand(binaryPath, model.PostgreSQL, user, database)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
@@ -60,9 +48,7 @@ func (p Postgres) Import(binaryPath string, user string, path string) error {
 
 	user = fmt.Sprintf("--username=%s", user)
 
-	cmd := exec.Command(binaryPath, user, "-W", pgDatabase, path, pgFlagCreate)
-	cmd.Stdin = strings.NewReader("password")
-	fmt.Println(cmd)
+	cmd := CreateImportCommand(binaryPath, model.PostgreSQL, user, path)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()

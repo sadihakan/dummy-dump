@@ -1,5 +1,6 @@
-package database
+package internal
 
+// Dump ...
 type Dump interface {
 	Check() error
 	Export(binaryPath string, user string, database string) error
