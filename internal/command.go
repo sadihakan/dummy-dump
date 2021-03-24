@@ -14,10 +14,10 @@ const (
 	pgFlagFileName = "-f"
 	pgFlagCreate   = "--create"
 	pgFlatFormat   = "--format=c"
-	pgRestore="pg_restore"
-	pgDump="pg_dump"
-	mysqlImport="mysql"
-	mysqlExport="mysqldump"
+	pgRestore      = "pg_restore"
+	pgDump         = "pg_dump"
+	mysqlImport    = "mysql"
+	mysqlExport    = "mysqldump"
 )
 
 // CreateImportBinaryCommand ...
@@ -31,12 +31,12 @@ func CreateExportBinaryCommand(sourceType model.SOURCE_TYPE) *exec.Cmd {
 }
 
 // CreateExportCommand ...
-func CreateExportCommand(name string, sourceType model.SOURCE_TYPE, user string, database string)  *exec.Cmd {
+func CreateExportCommand(name string, sourceType model.SOURCE_TYPE, user string, database string) *exec.Cmd {
 	return exec.Command(util.Name(name), getExportCommandArg(sourceType, user, database)...)
 }
 
 // CreateImportCommand ...
-func CreateImportCommand(name string, sourceType model.SOURCE_TYPE, user string, database string)  *exec.Cmd {
+func CreateImportCommand(name string, sourceType model.SOURCE_TYPE, user string, database string) *exec.Cmd {
 	return exec.Command(util.Name(name), getImportCommandArg(sourceType, user, database)...)
 }
 
@@ -49,7 +49,7 @@ func getImportCommandArg(sourceType model.SOURCE_TYPE, user string, path string)
 		case "linux":
 			arg = []string{user, pgDatabase, path, pgFlagCreate}
 		case "windows":
-			arg = []string{"/C",pgRestore,user, pgDatabase, path, pgFlagCreate}
+			arg = []string{"/C", pgRestore, user, pgDatabase, path, pgFlagCreate}
 		}
 	case model.MySQL:
 
@@ -69,7 +69,7 @@ func getExportCommandArg(sourceType model.SOURCE_TYPE, user string, database str
 		case "linux":
 			arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
 		case "windows":
-			arg = []string{"/C",pgDump,user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
+			arg = []string{"/C", pgDump, user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
 		}
 	case model.MySQL:
 	}

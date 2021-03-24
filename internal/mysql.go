@@ -17,7 +17,7 @@ const (
 //to be able to access mysql without sudo do this :GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
 
 // MySQL ...
-type MySQL struct {}
+type MySQL struct{}
 
 func (m MySQL) Check() error {
 	cmd := exec.Command("mysql", "--version")
