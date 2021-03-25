@@ -46,6 +46,8 @@ func main() {
 		dump = internal.MySQL{}
 	default:
 		panic("")
+
+
 	}
 
 	if err := dump.Check(); err != nil {
