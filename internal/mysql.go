@@ -3,7 +3,7 @@ package internal
 import (
 	"bytes"
 	"fmt"
-	"github.com/sadihakan/DummyDump/model"
+	"github.com/sadihakan/dummy-dump/model"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -19,6 +19,7 @@ const (
 // or create another user besides root
 
 // MySQL ...
+
 type MySQL struct {
 	Dump
 }

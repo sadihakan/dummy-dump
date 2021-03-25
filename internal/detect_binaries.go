@@ -2,7 +2,7 @@ package internal
 
 import (
 	"bytes"
-	"github.com/sadihakan/DummyDump/model"
+	"github.com/sadihakan/dummy-dump/model"
 	"log"
 	"os"
 	"os/exec"
