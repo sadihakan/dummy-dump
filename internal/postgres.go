@@ -3,7 +3,7 @@ package internal
 import (
 	"bytes"
 	"fmt"
-	"github.com/sadihakan/DummyDump/model"
+	"github.com/sadihakan/dummy-dump/model"
 	"os"
 	"os/exec"
 )
@@ -54,7 +54,6 @@ func (p Postgres) Import(binaryPath string, user string, path string) error {
 	err := cmd.Run()
 
 	if err != nil {
-		fmt.Println(out.String(), errBuf.String())
 		return err
 	}
 

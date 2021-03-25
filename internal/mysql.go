@@ -19,9 +19,13 @@ const (
 // or create another user besides root
 
 // MySQL ...
+<<<<<<< HEAD
 type MySQL struct {
 	Dump
 }
+=======
+type MySQL struct{}
+>>>>>>> 9dcf83a030589ec764d633be08cccab1e1c7e59e
 
 func (m MySQL) Check() error {
 	cmd := exec.Command("mysql", "--version")

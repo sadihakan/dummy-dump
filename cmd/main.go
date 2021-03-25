@@ -2,10 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"github.com/sadihakan/DummyDump/internal"
-	"github.com/sadihakan/DummyDump/model"
-	"github.com/sadihakan/DummyDump/util"
+	"github.com/sadihakan/dummy-dump/internal"
+	"github.com/sadihakan/dummy-dump/model"
+	"github.com/sadihakan/dummy-dump/util"
 	"log"
 )
 
@@ -29,8 +28,11 @@ func main() {
 	flag.StringVar(&binaryPath, "binaryPath", "", "Binary path")
 	flag.Parse()
 
+<<<<<<< HEAD
 	fmt.Println(sourceType)
 
+=======
+>>>>>>> 9dcf83a030589ec764d633be08cccab1e1c7e59e
 	if !model.SOURCE_TYPE(sourceType).IsValid() {
 		log.Println("invalid source type")
 		return
@@ -46,34 +48,35 @@ func main() {
 	case "postgres":
 		dump = internal.Postgres{}
 	case "mysql":
+<<<<<<< HEAD
 		dump = internal.MySQL{}
+=======
+		//dump = database.MySQL{}
+	default:
+		panic("")
+>>>>>>> 9dcf83a030589ec764d633be08cccab1e1c7e59e
 	}
 
-	err := dump.Check()
-
-	if err != nil {
-		fmt.Println(err)
+	if err := dump.Check(); err != nil {
+		panic(err)
 	}
 
 	binaryPath = internal.CheckBinary(binaryPath, model.SOURCE_TYPE(sourceType), importArg, exportArg)
 
 	if importArg {
+
 		if !util.PathExists(path) {
 			panic("Path is not exist")
 		}
 
-		err = dump.Import(binaryPath, user, path)
-
-		if err != nil {
+		if err := dump.Import(binaryPath, user, path); err != nil {
 			panic(err)
 		}
 	}
 
 	if exportArg {
 
-		err = dump.Export(binaryPath, user, db)
-
-		if err != nil {
+		if err := dump.Export(binaryPath, user, db); err != nil {
 			panic(err)
 		}
 	}

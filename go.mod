@@ -1,3 +1,3 @@
-module github.com/sadihakan/DummyDump
+module github.com/sadihakan/dummy-dump
 
-go 1.16
+go 1.15

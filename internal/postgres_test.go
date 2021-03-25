@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"github.com/sadihakan/DummyDump/util"
+	"github.com/sadihakan/dummy-dump/util"
 	"path/filepath"
 	"testing"
 )

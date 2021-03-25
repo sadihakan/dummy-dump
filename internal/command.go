@@ -2,8 +2,8 @@ package internal
 
 import (
 	"fmt"
-	"github.com/sadihakan/DummyDump/model"
-	"github.com/sadihakan/DummyDump/util"
+	"github.com/sadihakan/dummy-dump/model"
+	"github.com/sadihakan/dummy-dump/util"
 	"os/exec"
 	"runtime"
 	"time"
@@ -14,6 +14,7 @@ const (
 	pgFlagFileName = "-f"
 	pgFlagCreate   = "--create"
 	pgFlatFormat   = "--format=c"
+<<<<<<< HEAD
 	//pgRestore="pg_restore"
 	//pgDump="pg_dump"
 	mysqlDatabase     = "deneme"
@@ -23,6 +24,12 @@ const (
 	//mysqlImport="mysql"
 	//mysqlDump="mysqldump"
 
+=======
+	pgRestore      = "pg_restore"
+	pgDump         = "pg_dump"
+	mysqlImport    = "mysql"
+	mysqlExport    = "mysqldump"
+>>>>>>> 9dcf83a030589ec764d633be08cccab1e1c7e59e
 )
 
 // CreateImportBinaryCommand ...
@@ -37,12 +44,20 @@ func CreateExportBinaryCommand(sourceType model.SOURCE_TYPE) *exec.Cmd {
 
 // CreateExportCommand ...
 func CreateExportCommand(name string, sourceType model.SOURCE_TYPE, user string, database string) *exec.Cmd {
+<<<<<<< HEAD
 	return exec.Command(util.Name(name), getExportCommandArg(name, sourceType, user, database)...)
+=======
+	return exec.Command(util.Name(name), getExportCommandArg(sourceType, user, database)...)
+>>>>>>> 9dcf83a030589ec764d633be08cccab1e1c7e59e
 }
 
 // CreateImportCommand ...
 func CreateImportCommand(name string, sourceType model.SOURCE_TYPE, user string, database string) *exec.Cmd {
+<<<<<<< HEAD
 	return exec.Command(util.Name(name), getImportCommandArg(name, sourceType, user, database)...)
+=======
+	return exec.Command(util.Name(name), getImportCommandArg(sourceType, user, database)...)
+>>>>>>> 9dcf83a030589ec764d633be08cccab1e1c7e59e
 }
 
 func getImportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user string, path string) (arg []string) {
@@ -54,7 +69,11 @@ func getImportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user s
 		case "linux":
 			arg = []string{user, pgDatabase, path, pgFlagCreate}
 		case "windows":
+<<<<<<< HEAD
 			arg = []string{"/C", binaryName, user, pgDatabase, path, pgFlagCreate}
+=======
+			arg = []string{"/C", pgRestore, user, pgDatabase, path, pgFlagCreate}
+>>>>>>> 9dcf83a030589ec764d633be08cccab1e1c7e59e
 		}
 	case model.MySQL:
 		switch runtime.GOOS {
@@ -81,7 +100,11 @@ func getExportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user s
 		case "linux":
 			arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
 		case "windows":
+<<<<<<< HEAD
 			arg = []string{"/C", binaryName, user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
+=======
+			arg = []string{"/C", pgDump, user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
+>>>>>>> 9dcf83a030589ec764d633be08cccab1e1c7e59e
 		}
 	case model.MySQL:
 		switch runtime.GOOS {
