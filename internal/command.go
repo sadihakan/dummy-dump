@@ -2,8 +2,8 @@ package internal
 
 import (
 	"fmt"
-	"github.com/sadihakan/DummyDump/model"
-	"github.com/sadihakan/DummyDump/util"
+	"github.com/sadihakan/dummy-dump/model"
+	"github.com/sadihakan/dummy-dump/util"
 	"os/exec"
 	"runtime"
 	"time"
