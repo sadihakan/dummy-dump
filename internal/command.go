@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	pgDatabase     = "--dbname=postgres"
+	//pgDatabase     = "--dbname=postgres"
+	pgFlagDatabase = "-d"
 	pgFlagFileName = "-f"
 	pgFlagCreate   = "--create"
 	pgFlatFormat   = "--format=c"
@@ -44,34 +45,33 @@ func CreateExportCommand(name string, sourceType model.SOURCE_TYPE, user string,
 }
 
 // CreateImportCommand ...
-func CreateImportCommand(name string, sourceType model.SOURCE_TYPE, user string, path string) *exec.Cmd {
-
-	return exec.Command(util.Name(name), getImportCommandArg(name, sourceType, user, path)...)
+func CreateImportCommand(name string, sourceType model.SOURCE_TYPE, user string, database string, path string) *exec.Cmd {
+	return exec.Command(util.Name(name), getImportCommandArg(name, sourceType, user, database, path)...)
 }
 
-func getImportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user string, path string) (arg []string) {
+func getImportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user string, database, path string) (arg []string) {
 	switch sourceType {
 	case model.PostgreSQL:
 		switch runtime.GOOS {
 		case "darwin":
-			arg = []string{user, pgDatabase, path, pgFlagCreate}
+			arg = []string{user, pgFlagDatabase, database, path, pgFlagCreate}
 		case "linux":
-			arg = []string{user, pgDatabase, path, pgFlagCreate}
+			arg = []string{user, pgFlagDatabase, database, pgFlagCreate}
 		case "windows":
-			arg = []string{"/C", binaryName, user, pgDatabase, path, pgFlagCreate}
+			arg = []string{"/C", binaryName, user, pgFlagDatabase, database, path, pgFlagCreate}
 		}
 	case model.MySQL:
 		switch runtime.GOOS {
 		case "darwin":
-			arg = []string{mysqlFlagUser, user, mysqlFlagPassword, mysqlDatabase, mysqlFlagExecute, "source " + path}
+			arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database, mysqlFlagExecute, "source " + path}
 		case "linux":
-			arg = []string{mysqlFlagUser, user, mysqlFlagPassword, mysqlDatabase, mysqlFlagExecute, "source " + path}
+			arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database, mysqlFlagExecute, "source " + path}
 		case "windows":
-			arg = []string{"/C", binaryName, mysqlFlagUser, user, mysqlFlagPassword, mysqlDatabase, mysqlFlagExecute, "source " + path}
+			arg = []string{"/C", binaryName, mysqlFlagUser, user, mysqlFlagPassword, database, mysqlFlagExecute, "source " + path}
 		}
 	case model.MSSQL:
 		importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s'`,
-			"temp",
+			database,
 			path)
 		arg = []string{"/C", binaryName, mssqlFlagUser, user, mssqlFlagQuery, importQuery}
 	}

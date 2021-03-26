@@ -54,7 +54,7 @@ func (m MySQL) Export(binaryPath string, user string, database string) error {
 }
 
 func (m MySQL) Import(binaryPath string, user string, database string, path string) error {
-	cmd := CreateImportCommand(binaryPath, model.MySQL, user, database)
+	cmd := CreateImportCommand(binaryPath, model.MySQL, user, database, path)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

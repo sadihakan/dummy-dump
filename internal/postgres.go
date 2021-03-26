@@ -48,7 +48,7 @@ func (p Postgres) Import(binaryPath string, user string, database string, path s
 
 	user = fmt.Sprintf("--username=%s", user)
 
-	cmd := CreateImportCommand(binaryPath, model.PostgreSQL, user, path)
+	cmd := CreateImportCommand(binaryPath, model.PostgreSQL, user,database, path)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
