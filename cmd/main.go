@@ -43,9 +43,11 @@ func main() {
 	case "postgres":
 		dump = internal.Postgres{}
 	case "mysql":
-		//dump = database.MySQL{}
+		dump = internal.MySQL{}
 	default:
 		panic("")
+
+
 	}
 
 	if err := dump.Check(); err != nil {

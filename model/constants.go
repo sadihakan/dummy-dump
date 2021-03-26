@@ -21,6 +21,7 @@ func (s SOURCE_TYPE) IsValid() bool {
 	return e
 }
 
+
 type DummyDumpError string
 
 const (
