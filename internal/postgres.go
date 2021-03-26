@@ -43,7 +43,7 @@ func (p Postgres) Export(binaryPath string, user string, database string) error 
 	return nil
 }
 
-func (p Postgres) Import(binaryPath string, user string, path string) error {
+func (p Postgres) Import(binaryPath string, user string, database string, path string) error {
 	var out, errBuf bytes.Buffer
 
 	user = fmt.Sprintf("--username=%s", user)

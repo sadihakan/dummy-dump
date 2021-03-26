@@ -44,6 +44,8 @@ func main() {
 		dump = internal.Postgres{}
 	case "mysql":
 		dump = internal.MySQL{}
+	case "mssql":
+		dump = internal.MSSQL{}
 	default:
 		panic("")
 
@@ -62,7 +64,7 @@ func main() {
 			panic("Path is not exist")
 		}
 
-		if err := dump.Import(binaryPath, user, path); err != nil {
+		if err := dump.Import(binaryPath, user, db, path); err != nil {
 			panic(err)
 		}
 	}

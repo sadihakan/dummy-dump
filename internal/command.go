@@ -23,7 +23,8 @@ const (
 	mysqlFlagExecute  = "-e"
 	//mysqlImport="mysql"
 	//mysqlDump="mysqldump"
-
+	mssqlFlagUser  = "-U"
+	mssqlFlagQuery = "-Q"
 )
 
 // CreateImportBinaryCommand ...
@@ -43,9 +44,9 @@ func CreateExportCommand(name string, sourceType model.SOURCE_TYPE, user string,
 }
 
 // CreateImportCommand ...
-func CreateImportCommand(name string, sourceType model.SOURCE_TYPE, user string, database string) *exec.Cmd {
+func CreateImportCommand(name string, sourceType model.SOURCE_TYPE, user string, path string) *exec.Cmd {
 
-	return exec.Command(util.Name(name), getImportCommandArg(name, sourceType, user, database)...)
+	return exec.Command(util.Name(name), getImportCommandArg(name, sourceType, user, path)...)
 }
 
 func getImportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user string, path string) (arg []string) {
@@ -68,6 +69,11 @@ func getImportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user s
 		case "windows":
 			arg = []string{"/C", binaryName, mysqlFlagUser, user, mysqlFlagPassword, mysqlDatabase, mysqlFlagExecute, "source " + path}
 		}
+	case model.MSSQL:
+		importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s'`,
+			"temp",
+			path)
+		arg = []string{"/C", binaryName, mssqlFlagUser, user, mssqlFlagQuery, importQuery}
 	}
 
 	return arg
@@ -78,15 +84,14 @@ func getExportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user s
 	filename := fmt.Sprintf("%d.backup", today)
 	switch sourceType {
 	case model.PostgreSQL:
+
 		switch runtime.GOOS {
 		case "darwin":
 			arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
 		case "linux":
 			arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
 		case "windows":
-
 			arg = []string{"/C", binaryName, user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
-
 		}
 	case model.MySQL:
 		switch runtime.GOOS {
@@ -97,8 +102,12 @@ func getExportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user s
 		case "windows":
 			arg = []string{"/C", binaryName, mysqlFlagUser, user, mysqlFlagPassword, database, pgFlagCreate, pgFlatFormat}
 		}
+	case model.MSSQL:
+		exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s'`,
+			database,
+			util.GetMSSQLBackupDirectory()+`\`+fmt.Sprintf("%d.bak", today))
+		arg = []string{"/C", binaryName, mssqlFlagUser, user, mssqlFlagQuery, exportQuery}
 	}
-
 	return arg
 }
 

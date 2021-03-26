@@ -50,13 +50,10 @@ func (m MySQL) Export(binaryPath string, user string, database string) error {
 		return err
 	}
 	err = ioutil.WriteFile(filename+".sql", b, 0644)
-	if err != nil {
-		return err
-	}
 	return err
 }
 
-func (m MySQL) Import(binaryPath string, user string, database string) error {
+func (m MySQL) Import(binaryPath string, user string, database string, path string) error {
 	cmd := CreateImportCommand(binaryPath, model.MySQL, user, database)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
