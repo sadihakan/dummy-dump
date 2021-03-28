@@ -24,12 +24,8 @@ func Which() (which string) {
 	return which
 }
 
-func Name(name string) string {
-	if runtime.GOOS == "windows" {
-		return "cmd"
-	}
-	return name
-}
+
+
 
 //The function below is for Windows systems only
 //GetMSSQLBackupDirectory ...

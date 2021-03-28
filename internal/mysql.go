@@ -6,7 +6,6 @@ import (
 	"github.com/sadihakan/dummy-dump/model"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"time"
 )
 
@@ -25,7 +24,7 @@ type MySQL struct {
 }
 
 func (m MySQL) Check() error {
-	cmd := exec.Command("mysql", "--version")
+	cmd := CreateCheckBinaryCommand(model.MySQL)
 	err := cmd.Run()
 	if err != nil {
 		_, _ = os.Stderr.WriteString(err.Error())

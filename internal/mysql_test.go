@@ -23,7 +23,7 @@ func TestMySQL_Import(t *testing.T) {
 	var d Dump
 	d = MySQL{}
 	binaryPath := "mysql"
-	d.Import(binaryPath, "testuser", "/home/onur123/go/src/github.com/onurcevik/DummyDump/test.sql")
+	d.Import(binaryPath, "testuser", "deneme","/home/onur123/go/src/github.com/onurcevik/DummyDump/test.sql")
 
 }
 
@@ -32,7 +32,7 @@ func TestMySQL_ImportWithError(t *testing.T) {
 	d = MySQL{}
 
 	binaryPath := "mysql"
-	err := d.Import(binaryPath, "testuser", "/home/onur123/go/src/github.com/onurcevik/DummyDump/test.sql")
+	err := d.Import(binaryPath, "testuser", "deneme","/home/onur123/go/src/github.com/onurcevik/DummyDump/test.sql")
 
 	if err != nil {
 		t.Errorf("MySQL Import() Error: %s", err.Error())

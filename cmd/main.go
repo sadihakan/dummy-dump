@@ -19,9 +19,10 @@ var (
 )
 
 func main() {
+
 	flag.BoolVar(&importArg, "import", false, "Import process")
 	flag.BoolVar(&exportArg, "export", false, "Export process")
-	flag.StringVar(&sourceType, "source", "", "Source type is: mysql|postgres")
+	flag.StringVar(&sourceType, "source", "", "Source type is: mysql|postgres|mssql")
 	flag.StringVar(&user, "user", "", "User name")
 	flag.StringVar(&path, "path", "", "Import file path")
 	flag.StringVar(&db, "db", "", "Database name")
@@ -57,7 +58,6 @@ func main() {
 	}
 
 	binaryPath = internal.CheckBinary(binaryPath, model.SOURCE_TYPE(sourceType), importArg, exportArg)
-
 	if importArg {
 		if !util.PathExists(path) {
 			panic("Path is not exist")

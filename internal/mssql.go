@@ -28,7 +28,6 @@ func (ms MSSQL) Check() error {
 func (ms MSSQL) Export(binaryPath string, user string, database string) error {
 	cmd := CreateExportCommand(binaryPath, model.MSSQL, user, database)
 	fmt.Println(cmd)
-	fmt.Println("---------")
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
