@@ -6,6 +6,7 @@ import (
 	"github.com/sadihakan/dummy-dump/util"
 	"os/exec"
 	"runtime"
+	"strconv"
 	"time"
 )
 
@@ -39,8 +40,8 @@ func CreateExportBinaryCommand(sourceType model.SOURCE_TYPE) *exec.Cmd {
 }
 
 // CreateExportCommand ...
-func CreateExportCommand(name string, sourceType model.SOURCE_TYPE, user string, database string) *exec.Cmd {
-	return exec.Command(util.Name(name), getExportCommandArg(name, sourceType, user, database)...)
+func CreateExportCommand(binaryPath string, sourceType model.SOURCE_TYPE, user string, database string) *exec.Cmd {
+	return exec.Command(util.Name(binaryPath), getExportCommandArg(binaryPath, sourceType, user, database)...)
 
 }
 
@@ -100,13 +101,14 @@ func getExportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user s
 		case "linux":
 			arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database}
 		case "windows":
-			arg = []string{"/C", binaryName, mysqlFlagUser, user, mysqlFlagPassword, database, pgFlagCreate, pgFlatFormat}
+			arg = []string{"/C", binaryName, mysqlFlagUser, user, mysqlFlagPassword, database}
 		}
 	case model.MSSQL:
 		exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s'`,
 			database,
 			util.GetMSSQLBackupDirectory()+`\`+fmt.Sprintf("%d.bak", today))
-		arg = []string{"/C", binaryName, mssqlFlagUser, user, mssqlFlagQuery, exportQuery}
+
+		arg = []string{"/C", binaryName, mssqlFlagUser, user, mssqlFlagQuery,strconv.Quote(exportQuery)}
 	}
 	return arg
 }
@@ -130,6 +132,13 @@ func getImportCommand(sourceType model.SOURCE_TYPE) (command []string) {
 			command = []string{"mysql"}
 		case "windows":
 			command = []string{"/r", "C:\\Program Files\\MySQL", "mysql"}
+		}
+	case model.MSSQL:
+		switch runtime.GOOS {
+		case "darwin":
+		case "linux":
+		case "windows":
+			command = []string{"sqlcmd"}
 		}
 	}
 
@@ -156,6 +165,14 @@ func getExportCommand(sourceType model.SOURCE_TYPE) (command []string) {
 		case "windows":
 			command = []string{"/r", "C:\\Program Files\\MySQL", "mysqldump"}
 		}
+	case model.MSSQL:
+		switch runtime.GOOS {
+		case "darwin":
+		case "linux":
+		case "windows":
+			command = []string{"sqlcmd"}
+		}
+
 	}
 
 	return command

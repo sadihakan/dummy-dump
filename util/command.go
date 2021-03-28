@@ -48,5 +48,6 @@ func GetMSSQLBackupDirectory() string{
 		log.Fatalln(err)
 	}
 	l := strings.Split(strings.Split(string(b), "\n")[2], "    ")
-	return strings.TrimSpace(l[3])
+
+	return strings.TrimSuffix(l[3],"\r")
 }

@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"fmt"
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/sadihakan/dummy-dump/model"
 	"os"
@@ -26,7 +27,8 @@ func (ms MSSQL) Check() error {
 
 func (ms MSSQL) Export(binaryPath string, user string, database string) error {
 	cmd := CreateExportCommand(binaryPath, model.MSSQL, user, database)
-	//cmd := exec.Command(binaryPath, "-U", "testuser", "-Q", backupQuery)
+	fmt.Println(cmd)
+	fmt.Println("---------")
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

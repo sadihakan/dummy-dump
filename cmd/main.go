@@ -59,7 +59,6 @@ func main() {
 	binaryPath = internal.CheckBinary(binaryPath, model.SOURCE_TYPE(sourceType), importArg, exportArg)
 
 	if importArg {
-
 		if !util.PathExists(path) {
 			panic("Path is not exist")
 		}

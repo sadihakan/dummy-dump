@@ -54,8 +54,10 @@ func (dd *DummyDump) configParser() (err error) {
 		dd.dump = internal.Postgres{}
 		break
 	case model.MySQL:
-		//dd.dump = internal.MySQL{}
+		dd.dump = internal.MySQL{}
 		break
+	case model.MSSQL:
+		dd.dump=internal.MSSQL{}
 	default:
 		err = errors.New("not implemented")
 	}
@@ -70,7 +72,7 @@ func (dd *DummyDump) Import() *DummyDump {
 		dd.Error = errors.New(model.CONFIG_PATH_NOT_EXIST)
 	}
 
-	err := dd.dump.Import(config.BinaryPath, config.User, config.Path)
+	err := dd.dump.Import(config.BinaryPath,config.User,config.DB,config.Path)
 
 	if err != nil {
 		dd.Error = err
