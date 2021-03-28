@@ -92,7 +92,7 @@ func getExportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user s
 		case "linux":
 			arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
 		case "windows":
-			arg = []string{"/C", binaryName, user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
+
 		}
 	case model.MySQL:
 		switch runtime.GOOS {
