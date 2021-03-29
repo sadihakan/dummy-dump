@@ -24,9 +24,102 @@ go run ./cmd -source <postgres/mysql> -import -user=<User Name> -file=<File Path
 ```
 
 ## API Usage
+* How to import database
 
 ```go
+
 package main
+
+import (
+	dummydump "github.com/sadihakan/dummy-dump"
+	"github.com/sadihakan/dummy-dump/config"
+)
+
+func main() {
+	dd, err := dummydump.New(&config.Config{
+		// Init DummyDump
+		Source:     config.PostgreSQL,
+		Import:     true,
+		Export:     false,
+		User:       "<User>",
+		Path:       "<Path>",
+		DB:         "<DB>",
+		BinaryPath: "<Binary Path>",
+	})
+
+	// Check error
+	if err != nil {
+		panic(err)
+	}
+
+	// Call export import
+	dd.Check().Import()
+}
+```
+* How to import database
+```go
+
+package main
+
+import (
+	dummydump "github.com/sadihakan/dummy-dump"
+	"github.com/sadihakan/dummy-dump/config"
+)
+
+func main() {
+	dd, err := dummydump.New(&config.Config{
+		// Init DummyDump
+		Source:     config.PostgreSQL,
+		Import:     true,
+		Export:     false,
+		User:       "<User>",
+		Path:       "<Path>",
+		DB:         "<DB>",
+		BinaryPath: "<Binary Path>",
+	})
+
+	// Check error
+	if err != nil {
+		panic(err)
+	}
+
+	// Call export method
+	dd.Check().Export()
+}
+```
+
+* How to check is there any error while run 
+```go
+
+package main
+
+import (
+	dummydump "github.com/sadihakan/dummy-dump"
+	"github.com/sadihakan/dummy-dump/config"
+)
+
+func main() {
+	dd, err := dummydump.New(&config.Config{
+		// Init DummyDump
+		Source:     config.PostgreSQL,
+		Import:     true,
+		Export:     false,
+		User:       "<User>",
+		Path:       "<Path>",
+		DB:         "<DB>",
+		BinaryPath: "<Binary Path>",
+	})
+
+	// Check error
+	if err != nil {
+		panic(err)
+	}
+
+	// Call export method with check error 
+	if _, err = dd.Check().Export().Run(); err != nil {
+		panic(err)
+	}
+}
 ```
 
 ## CLI Usage
