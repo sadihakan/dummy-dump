@@ -24,13 +24,13 @@ func (p Postgres) Check() error {
 	return nil
 }
 
-func (p Postgres) Export(binaryPath string, user string, database string) error {
+func (p Postgres) Export(config config.Config) error {
 	var out, errBuf bytes.Buffer
 
-	user = fmt.Sprintf("--username=%s", user)
-	database = fmt.Sprintf("--dbname=%s", database)
+	user := fmt.Sprintf("--username=%s", config.User)
+	database := fmt.Sprintf("--dbname=%s", config.DB)
 
-	cmd := CreateExportCommand(binaryPath, config.PostgreSQL, user, database)
+	cmd := CreateExportCommand(config.BinaryPath, config.Source, user, database)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
@@ -42,12 +42,12 @@ func (p Postgres) Export(binaryPath string, user string, database string) error 
 	return nil
 }
 
-func (p Postgres) Import(binaryPath string, user string, database string, path string) error {
+func (p Postgres) Import(config config.Config) error {
 	var out, errBuf bytes.Buffer
 
-	user = fmt.Sprintf("--username=%s", user)
+	user := fmt.Sprintf("--username=%s", config.User)
 
-	cmd := CreateImportCommand(binaryPath, config.PostgreSQL, user,database, path)
+	cmd := CreateImportCommand(config.BinaryPath, config.Source, user,config.DB, config.Path)
 	fmt.Println(cmd)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf

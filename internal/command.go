@@ -60,11 +60,7 @@ func getImportCommandArg(sourceType config.SourceType, user string, database, pa
 		arg = []string{user, pgFlagDatabase, database, pgFlagCreate}
 	case config.MySQL:
 		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database, mysqlFlagExecute, "source " + path}
-	case config.MSSQL:
-		importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s'`,
-			database,
-			path)
-		arg = []string{mssqlFlagUser, user, mssqlFlagQuery, importQuery}
+
 	}
 	return arg
 }
@@ -78,12 +74,7 @@ func getExportCommandArg(sourceType config.SourceType, user string, database str
 		arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
 	case config.MySQL:
 		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database}
-	case config.MSSQL:
-		exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s' WITH STATS = 10`,
-			database,
-			util.GetMSSQLBackupDirectory()+`\`+fmt.Sprintf("%d.bak", today))
 
-		arg = []string{mssqlFlagUser, user, mssqlFlagQuery, exportQuery}
 	}
 	return arg
 }
@@ -132,19 +123,9 @@ func getImportCommand(sourceType config.SourceType) (command []string) {
 		case "linux":
 			command = []string{"mysql"}
 		case "windows":
-
 			command = []string{"/r", "C:\\Program Files\\MySQL", "mysql"}
-
-		}
-	case config.MSSQL:
-		switch runtime.GOOS {
-		case "darwin":
-		case "linux":
-		case "windows":
-			command = []string{"sqlcmd"}
 		}
 	}
-
 	return command
 }
 
@@ -169,15 +150,6 @@ func getExportCommand(sourceType config.SourceType) (command []string) {
 		case "windows":
 			command = []string{"/r", "C:\\Program Files\\MySQL", "mysqldump"}
 		}
-	case config.MSSQL:
-		switch runtime.GOOS {
-		case "darwin":
-		case "linux":
-		case "windows":
-			command = []string{"sqlcmd"}
-		}
-
 	}
-
 	return command
 }

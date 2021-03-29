@@ -7,6 +7,7 @@ type Config struct {
 	Import     bool
 	Export     bool
 	User       string
+	Password   string
 	Path       string
 	DB         string
 	BinaryPath string
@@ -41,7 +42,7 @@ func (c Config) checkAll() error {
 
 func (c Config) CheckConfigPostgreSQL() error {
 	if err := c.checkAll(); err != nil {
-		return  err
+		return err
 	}
 
 	if c.BinaryPath == "" {
@@ -53,7 +54,7 @@ func (c Config) CheckConfigPostgreSQL() error {
 
 func (c Config) CheckConfigMySQL() error {
 	if err := c.checkAll(); err != nil {
-		return  err
+		return err
 	}
 
 	if c.BinaryPath == "" {
@@ -65,7 +66,7 @@ func (c Config) CheckConfigMySQL() error {
 
 func (c Config) CheckConfigMsSQL() error {
 	if err := c.checkAll(); err != nil {
-		return  err
+		return err
 	}
 	return nil
 }
