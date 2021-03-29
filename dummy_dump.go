@@ -44,7 +44,7 @@ func (dd *DummyDump) configParser() (err error) {
 		if err = dd.c.CheckConfigMsSQL(); err != nil {
 			return err
 		}
-		dd.dump=internal.MSSQL{}
+		dd.dump = internal.MSSQL{}
 	default:
 		err = errors.New("not implemented")
 	}
@@ -53,13 +53,13 @@ func (dd *DummyDump) configParser() (err error) {
 }
 
 func (dd *DummyDump) Import() *DummyDump {
-	config := dd.c
+	dumpConfig := dd.c
 
-	if !util.PathExists(config.Path) {
+	if !util.PathExists(dumpConfig.Path) {
 		dd.Error = errors.New(errors.ConfigPathNotExist)
 	}
 
-	err := dd.dump.Import(config.BinaryPath,config.User,config.DB,config.Path)
+	err := dd.dump.Import(dumpConfig.BinaryPath, dumpConfig.User, dumpConfig.DB, dumpConfig.Path)
 
 	if err != nil {
 		dd.Error = err
@@ -69,9 +69,9 @@ func (dd *DummyDump) Import() *DummyDump {
 }
 
 func (dd *DummyDump) Export() *DummyDump {
-	config := dd.c
+	dumpConfig := dd.c
 
-	err := dd.dump.Export(config.BinaryPath, config.User, config.DB)
+	err := dd.dump.Export(dumpConfig.BinaryPath, dumpConfig.User, dumpConfig.DB)
 
 	if err != nil {
 		dd.Error = err
