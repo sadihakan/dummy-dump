@@ -6,6 +6,7 @@ import (
 	"github.com/sadihakan/dummy-dump/util"
 	"os/exec"
 	"runtime"
+	"strings"
 	"time"
 )
 
@@ -24,13 +25,11 @@ const (
 	mysqlFlagExecute  = "-e"
 	//mysqlImport="mysql"
 	//mysqlDump="mysqldump"
-	mssqlFlagUser  = "-U"
-	mssqlFlagQuery = "-Q"
 )
 
 // CreateCheckBinaryCommand ...
-func CreateCheckBinaryCommand(sourceType config.SourceType)*exec.Cmd  {
-	return exec.Command(util.Which(),getCheckCommand(sourceType)...)
+func CreateCheckBinaryCommand(sourceType config.SourceType) *exec.Cmd {
+	return exec.Command(util.Which(), getCheckCommand(sourceType)...)
 }
 
 // CreateImportBinaryCommand ...
@@ -80,7 +79,7 @@ func getExportCommandArg(sourceType config.SourceType, user string, database str
 }
 
 // getCheckCommand ...
-func getCheckCommand(sourceType config.SourceType) (command[]string){
+func getCheckCommand(sourceType config.SourceType) (command []string) {
 	switch sourceType {
 	case config.PostgreSQL:
 		switch runtime.GOOS {
@@ -89,7 +88,8 @@ func getCheckCommand(sourceType config.SourceType) (command[]string){
 		case "linux":
 			command = []string{"psql"}
 		case "windows":
-			command = []string{"/r", "C:\\Program Files\\Postgresql", "psql"}
+			p := strings.TrimSpace(postgresqlBinaryDirectories()[0])
+			command = []string{"/r", p, "psql"}
 		}
 	case config.MySQL:
 		switch runtime.GOOS {
@@ -98,7 +98,8 @@ func getCheckCommand(sourceType config.SourceType) (command[]string){
 		case "linux":
 			command = []string{"mysql"}
 		case "windows":
-			command = []string{"/r", "C:\\Program Files\\MySQL", "mysql"}
+			p := strings.TrimSpace(mysqlBinaryDirectory())
+			command = []string{"/r", p, "mysql"}
 		}
 	}
 	return command
@@ -114,7 +115,8 @@ func getImportCommand(sourceType config.SourceType) (command []string) {
 		case "linux":
 			command = []string{"pg_restore"}
 		case "windows":
-			command = []string{"/r", "C:\\Program Files\\Postgresql", "pg_restore"}
+			p := strings.TrimSpace(postgresqlBinaryDirectories()[0])
+			command = []string{"/r", p, "pg_restore"}
 		}
 	case config.MySQL:
 		switch runtime.GOOS {
@@ -123,7 +125,8 @@ func getImportCommand(sourceType config.SourceType) (command []string) {
 		case "linux":
 			command = []string{"mysql"}
 		case "windows":
-			command = []string{"/r", "C:\\Program Files\\MySQL", "mysql"}
+			p := strings.TrimSpace(mysqlBinaryDirectory())
+			command = []string{"/r", p, "mysql"}
 		}
 	}
 	return command
@@ -139,7 +142,8 @@ func getExportCommand(sourceType config.SourceType) (command []string) {
 		case "linux":
 			command = []string{"pg_dump"}
 		case "windows":
-			command = []string{"/r", "C:\\Program Files\\Postgresql", "pg_dump"}
+			p := strings.TrimSpace(postgresqlBinaryDirectories()[0])
+			command = []string{"/r", p, "pg_dump"}
 		}
 	case config.MySQL:
 		switch runtime.GOOS {
@@ -148,7 +152,9 @@ func getExportCommand(sourceType config.SourceType) (command []string) {
 		case "linux":
 			command = []string{"mysqldump"}
 		case "windows":
-			command = []string{"/r", "C:\\Program Files\\MySQL", "mysqldump"}
+			p := strings.TrimSpace(mysqlBinaryDirectory())
+			command = []string{"/r", p, "mysqldump"}
+
 		}
 	}
 	return command

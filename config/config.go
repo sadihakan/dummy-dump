@@ -18,15 +18,11 @@ func (c Config) checkAll() error {
 		return errors.New(errors.ConfigSourceNil)
 	}
 
-	if c.Source == "" {
-		return errors.New(errors.ConfigSourceNil)
-	}
-
 	if c.User == "" {
 		return errors.New(errors.ConfigUserNil)
 	}
 
-	if c.Path == "" {
+	if c.Import==true && c.Path == "" {
 		return errors.New(errors.ConfigPathNotExist)
 	}
 

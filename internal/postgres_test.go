@@ -57,11 +57,11 @@ func TestImport(t *testing.T) {
 
 	user := "hakankosanoglu"
 	file := filepath.Join(util.GetDirectory(), "test.backup")
-	db:=""//
+	db := "" //
 
 	binaryPath := "pg_dump"
 
-	dump.Import(binaryPath, user, db,file)
+	dump.Import(binaryPath, user, db, file)
 }
 
 func TestImportWithError(t *testing.T) {
@@ -74,6 +74,6 @@ func TestImportWithError(t *testing.T) {
 
 	binaryPath := "pg_dump"
 
-	db:=""//
-	dump.Import(binaryPath, user,db, file)
+	db := "" //
+	dump.Import(binaryPath, user, db, file)
 }

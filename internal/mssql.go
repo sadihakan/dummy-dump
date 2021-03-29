@@ -5,6 +5,7 @@ import (
 	"fmt"
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/sadihakan/dummy-dump/config"
+	"log"
 
 	"net/url"
 
@@ -25,6 +26,7 @@ func (ms MSSQL) NewDB(dump config.Config) (*sql.DB, error) {
 		User:     url.UserPassword(dump.User, dump.Password),
 		Host:     fmt.Sprintf("%s:%d", "localhost", 1433),
 		RawQuery: urlQuery.Encode(),
+		Path:     "/SQLExpress",
 	}
 	db, err := sql.Open("sqlserver", url.QueryEscape(connURL.String()))
 	if err != nil {
@@ -50,13 +52,15 @@ func (ms MSSQL) Check() error {
 }
 
 func (ms MSSQL) Export(dump config.Config) error {
-	cmd := CreateExportCommand(dump.BinaryPath, config.MSSQL, dump.User, dump.DB)
-	fmt.Println(cmd)
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	err := cmd.Run()
-	return err
+	db, err := ms.NewDB(dump)
+	exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s'`,
+		dump.DB,
+		dump.Path)
+	_, err = db.Exec(exportQuery)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return nil
 }
 
 func (ms MSSQL) Import(dump config.Config) error {

@@ -40,7 +40,7 @@ func checkImport(sourceType config.SourceType) string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	lines:=strings.Split(out.String(),"\n")
+	lines := strings.Split(out.String(), "\n")
 	return strings.TrimSpace(lines[0])
 }
 
@@ -59,6 +59,6 @@ func checkExport(sourceType config.SourceType) string {
 		log.Fatal(err)
 	}
 
-	lines:=strings.Split(out.String(),"\n")
+	lines := strings.Split(out.String(), "\n")
 	return strings.TrimSpace(lines[0])
 }

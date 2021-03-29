@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/internal"
 	"github.com/sadihakan/dummy-dump/util"
@@ -34,6 +35,8 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	binaryPath = internal.CheckBinary(binaryPath, config.SourceType(sourceType), importArg, exportArg)
 
 	dumpConfig := config.Config{
 		Source:     config.SourceType(sourceType),
@@ -68,14 +71,13 @@ func main() {
 		dump = internal.MSSQL{}
 
 	default:
-		panic("")
+		fmt.Println("\nYou did not chose a valid database source. Currently supported databases are:\n  - MySQL\n  - PostgreSQL\n  - MSSQL\n")
+		return
 	}
 
 	if err = dump.Check(); err != nil {
 		panic(err)
 	}
-
-	binaryPath = internal.CheckBinary(binaryPath, config.SourceType(sourceType), importArg, exportArg)
 
 	if importArg {
 		if !util.PathExists(path) {

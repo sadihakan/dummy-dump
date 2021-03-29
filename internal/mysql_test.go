@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"github.com/sadihakan/dummy-dump/config"
 	"testing"
 )
 
@@ -22,8 +23,18 @@ func TestMySQL_CheckWithError(t *testing.T) {
 func TestMySQL_Import(t *testing.T) {
 	var d Dump
 	d = MySQL{}
-	binaryPath := "mysql"
-	d.Import(binaryPath, "testuser", "deneme","/home/onur123/go/src/github.com/onurcevik/DummyDump/test.sql")
+
+	config:= config.Config{
+		Source:     "",
+		Import:     false,
+		Export:     false,
+		User:       "",
+		Password:   "",
+		Path:       "",
+		DB:         "",
+		BinaryPath: "",
+	}
+	d.Import(config)
 
 }
 
@@ -31,8 +42,17 @@ func TestMySQL_ImportWithError(t *testing.T) {
 	var d Dump
 	d = MySQL{}
 
-	binaryPath := "mysql"
-	err := d.Import(binaryPath, "testuser", "deneme","/home/onur123/go/src/github.com/onurcevik/DummyDump/test.sql")
+	config:= config.Config{
+		Source:     "",
+		Import:     false,
+		Export:     false,
+		User:       "",
+		Password:   "",
+		Path:       "",
+		DB:         "",
+		BinaryPath: "",
+	}
+	err := d.Import(config)
 
 	if err != nil {
 		t.Errorf("MySQL Import() Error: %s", err.Error())
@@ -42,16 +62,34 @@ func TestMySQL_ImportWithError(t *testing.T) {
 func TestMySQL_Export(t *testing.T) {
 	var d Dump
 	d = MySQL{}
-	binaryPath := "mysqldump"
-	d.Export(binaryPath, "testuser", "deneme")
+	config:= config.Config{
+		Source:     "",
+		Import:     false,
+		Export:     false,
+		User:       "",
+		Password:   "",
+		Path:       "",
+		DB:         "",
+		BinaryPath: "",
+	}
+	d.Export(config)
 
 }
 
 func TestMySQL_ExportWithError(t *testing.T) {
 	var d Dump
 	d = MySQL{}
-	binaryPath := "mysql"
-	err := d.Export(binaryPath, "testuser", "deneme")
+	config:= config.Config{
+		Source:     "",
+		Import:     false,
+		Export:     false,
+		User:       "",
+		Password:   "",
+		Path:       "",
+		DB:         "",
+		BinaryPath: "",
+	}
+	err := d.Export(config)
 	if err != nil {
 		t.Errorf("MySQL Export() Error: %s", err.Error())
 	}

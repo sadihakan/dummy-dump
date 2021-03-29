@@ -48,7 +48,6 @@ func (p Postgres) Import(dump config.Config) error {
 	user := fmt.Sprintf("--username=%s", dump.User)
 
 	cmd := CreateImportCommand(dump.BinaryPath, config.PostgreSQL, user, dump.DB, dump.Path)
-	fmt.Println(cmd)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
