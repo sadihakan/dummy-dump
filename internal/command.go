@@ -28,7 +28,7 @@ const (
 	mssqlFlagQuery = "-Q"
 )
 
-//CreateCheckBinaryCommand
+// CreateCheckBinaryCommand ...
 func CreateCheckBinaryCommand(sourceType config.SourceType)*exec.Cmd  {
 	return exec.Command(util.Which(),getCheckCommand(sourceType)...)
 }
@@ -53,6 +53,7 @@ func CreateImportCommand(binaryPath string, sourceType config.SourceType, user s
 	return exec.Command(binaryPath, getImportCommandArg(sourceType, user, database, path)...)
 }
 
+// getImportCommandArg ...
 func getImportCommandArg(sourceType config.SourceType, user string, database, path string) (arg []string) {
 	switch sourceType {
 	case config.PostgreSQL:
@@ -68,6 +69,7 @@ func getImportCommandArg(sourceType config.SourceType, user string, database, pa
 	return arg
 }
 
+// getExportCommandArg ...
 func getExportCommandArg(sourceType config.SourceType, user string, database string) (arg []string) {
 	today := time.Now().UTC().UnixNano()
 	filename := fmt.Sprintf("%d.backup", today)
@@ -86,6 +88,7 @@ func getExportCommandArg(sourceType config.SourceType, user string, database str
 	return arg
 }
 
+// getCheckCommand ...
 func getCheckCommand(sourceType config.SourceType) (command[]string){
 	switch sourceType {
 	case config.PostgreSQL:
@@ -110,6 +113,7 @@ func getCheckCommand(sourceType config.SourceType) (command[]string){
 	return command
 }
 
+// getImportCommand ...
 func getImportCommand(sourceType config.SourceType) (command []string) {
 	switch sourceType {
 	case config.PostgreSQL:
@@ -144,6 +148,7 @@ func getImportCommand(sourceType config.SourceType) (command []string) {
 	return command
 }
 
+// getExportCommand ...
 func getExportCommand(sourceType config.SourceType) (command []string) {
 	switch sourceType {
 	case config.PostgreSQL:

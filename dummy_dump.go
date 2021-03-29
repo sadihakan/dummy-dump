@@ -29,19 +29,19 @@ func New(config *config.Config) (*DummyDump, error) {
 func (dd *DummyDump) configParser() (err error) {
 	switch dd.c.Source {
 	case config.PostgreSQL:
-		if err = util.CheckConfigPostgreSQL(*dd.c); err != nil {
+		if err = dd.c.CheckConfigPostgreSQL(); err != nil {
 			return err
 		}
 		dd.dump = internal.Postgres{}
 		break
 	case config.MySQL:
-		if err = util.CheckConfigMySQL(*dd.c); err != nil {
+		if err = dd.c.CheckConfigMySQL(); err != nil {
 			return err
 		}
 		dd.dump = internal.MySQL{}
 		break
 	case config.MSSQL:
-		if err = util.CheckConfigMsSQL(*dd.c); err != nil {
+		if err = dd.c.CheckConfigMsSQL(); err != nil {
 			return err
 		}
 		dd.dump=internal.MSSQL{}
