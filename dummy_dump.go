@@ -7,12 +7,14 @@ import (
 	"github.com/sadihakan/dummy-dump/util"
 )
 
+// DummyDump ..
 type DummyDump struct {
 	c     *model.Config
 	dump  internal.Dump
 	Error error
 }
 
+// New ..
 func New(config *model.Config) (*DummyDump, error) {
 	dd := new(DummyDump)
 	dd.c = config
@@ -25,38 +27,23 @@ func New(config *model.Config) (*DummyDump, error) {
 }
 
 func (dd *DummyDump) configParser() (err error) {
-	if dd.c.Source == "" {
-		return errors.New(model.CONFIG_SOURCE_NIL)
-	}
-
-	if dd.c.User == "" {
-		return errors.New(model.CONFIG_USER_NIL)
-	}
-
-	if dd.c.Path == "" {
-		return errors.New(model.CONFIG_USER_NIL)
-	}
-
-	if dd.c.DB == "" {
-		return errors.New(model.CONFIG_DB_NOT_EXIST)
-	}
-
-	if dd.c.BinaryPath == "" {
-		return errors.New(model.CONFIG_BINARY_PATH_NOT_EXIST)
-	}
-
-	if dd.c.Import == dd.c.Export {
-		return errors.New(model.CONFIG_METHOD_ERROR)
-	}
-
 	switch dd.c.Source {
 	case model.PostgreSQL:
+		if err = util.CheckConfigPostgreSQL(*dd.c); err != nil {
+			return err
+		}
 		dd.dump = internal.Postgres{}
 		break
 	case model.MySQL:
+		if err = util.CheckConfigMySQL(*dd.c); err != nil {
+			return err
+		}
 		dd.dump = internal.MySQL{}
 		break
 	case model.MSSQL:
+		if err = util.CheckConfigMsSQL(*dd.c); err != nil {
+			return err
+		}
 		dd.dump=internal.MSSQL{}
 	default:
 		err = errors.New("not implemented")

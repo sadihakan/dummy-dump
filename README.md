@@ -23,7 +23,13 @@ go run ./cmd -source=<postgres/mysql> -export -user=<User Name> -db=<Database Na
 go run ./cmd -source <postgres/mysql> -import -user=<User Name> -file=<File Path> 
 ```
 
-## Usage
+## API Usage
+
+```go
+package main
+```
+
+## CLI Usage
 
 - *import*  
 Flag: -import  
