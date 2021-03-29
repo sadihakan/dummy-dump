@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/sadihakan/dummy-dump/model"
 	"os"
-	"os/exec"
 )
 
 type Postgres struct {
@@ -13,7 +12,7 @@ type Postgres struct {
 }
 
 func (p Postgres) Check() error {
-	cmd := exec.Command("postgres", "-V")
+	cmd := CreateCheckBinaryCommand(model.PostgreSQL)
 	var out, errBuf bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
@@ -43,12 +42,13 @@ func (p Postgres) Export(binaryPath string, user string, database string) error 
 	return nil
 }
 
-func (p Postgres) Import(binaryPath string, user string, path string) error {
+func (p Postgres) Import(binaryPath string, user string, database string, path string) error {
 	var out, errBuf bytes.Buffer
 
 	user = fmt.Sprintf("--username=%s", user)
 
-	cmd := CreateImportCommand(binaryPath, model.PostgreSQL, user, path)
+	cmd := CreateImportCommand(binaryPath, model.PostgreSQL, user,database, path)
+	fmt.Println(cmd)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()

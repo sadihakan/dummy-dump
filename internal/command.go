@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	pgDatabase     = "--dbname=postgres"
+	//pgDatabase     = "--dbname=postgres"
+	pgFlagDatabase = "-d"
 	pgFlagFileName = "-f"
 	pgFlagCreate   = "--create"
 	pgFlatFormat   = "--format=c"
@@ -23,8 +24,14 @@ const (
 	mysqlFlagExecute  = "-e"
 	//mysqlImport="mysql"
 	//mysqlDump="mysqldump"
-
+	mssqlFlagUser  = "-U"
+	mssqlFlagQuery = "-Q"
 )
+
+//CreateCheckBinaryCommand
+func CreateCheckBinaryCommand(sourceType model.SOURCE_TYPE)*exec.Cmd  {
+	return exec.Command(util.Which(),getCheckCommand(sourceType)...)
+}
 
 // CreateImportBinaryCommand ...
 func CreateImportBinaryCommand(sourceType model.SOURCE_TYPE) *exec.Cmd {
@@ -37,69 +44,70 @@ func CreateExportBinaryCommand(sourceType model.SOURCE_TYPE) *exec.Cmd {
 }
 
 // CreateExportCommand ...
-func CreateExportCommand(name string, sourceType model.SOURCE_TYPE, user string, database string) *exec.Cmd {
-	return exec.Command(util.Name(name), getExportCommandArg(name, sourceType, user, database)...)
-
+func CreateExportCommand(binaryPath string, sourceType model.SOURCE_TYPE, user string, database string) *exec.Cmd {
+	return exec.Command(binaryPath, getExportCommandArg(sourceType, user, database)...)
 }
 
 // CreateImportCommand ...
-func CreateImportCommand(name string, sourceType model.SOURCE_TYPE, user string, database string) *exec.Cmd {
-
-	return exec.Command(util.Name(name), getImportCommandArg(name, sourceType, user, database)...)
+func CreateImportCommand(binaryPath string, sourceType model.SOURCE_TYPE, user string, database string, path string) *exec.Cmd {
+	return exec.Command(binaryPath, getImportCommandArg(sourceType, user, database, path)...)
 }
 
-func getImportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user string, path string) (arg []string) {
+func getImportCommandArg(sourceType model.SOURCE_TYPE, user string, database, path string) (arg []string) {
 	switch sourceType {
 	case model.PostgreSQL:
-		switch runtime.GOOS {
-		case "darwin":
-			arg = []string{user, pgDatabase, path, pgFlagCreate}
-		case "linux":
-			arg = []string{user, pgDatabase, path, pgFlagCreate}
-		case "windows":
-			arg = []string{"/C", binaryName, user, pgDatabase, path, pgFlagCreate}
-		}
+		arg = []string{user, pgFlagDatabase, database, pgFlagCreate}
 	case model.MySQL:
-		switch runtime.GOOS {
-		case "darwin":
-			arg = []string{mysqlFlagUser, user, mysqlFlagPassword, mysqlDatabase, mysqlFlagExecute, "source " + path}
-		case "linux":
-			arg = []string{mysqlFlagUser, user, mysqlFlagPassword, mysqlDatabase, mysqlFlagExecute, "source " + path}
-		case "windows":
-			arg = []string{"/C", binaryName, mysqlFlagUser, user, mysqlFlagPassword, mysqlDatabase, mysqlFlagExecute, "source " + path}
-		}
+		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database, mysqlFlagExecute, "source " + path}
+	case model.MSSQL:
+		importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s'`,
+			database,
+			path)
+		arg = []string{mssqlFlagUser, user, mssqlFlagQuery, importQuery}
 	}
-
 	return arg
 }
 
-func getExportCommandArg(binaryName string, sourceType model.SOURCE_TYPE, user string, database string) (arg []string) {
+func getExportCommandArg(sourceType model.SOURCE_TYPE, user string, database string) (arg []string) {
 	today := time.Now().UTC().UnixNano()
 	filename := fmt.Sprintf("%d.backup", today)
 	switch sourceType {
 	case model.PostgreSQL:
+		arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
+	case model.MySQL:
+		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database}
+	case model.MSSQL:
+		exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s' WITH STATS = 10`,
+			database,
+			util.GetMSSQLBackupDirectory()+`\`+fmt.Sprintf("%d.bak", today))
+
+		arg = []string{mssqlFlagUser, user, mssqlFlagQuery, exportQuery}
+	}
+	return arg
+}
+
+func getCheckCommand(sourceType model.SOURCE_TYPE) (command[]string){
+	switch sourceType {
+	case model.PostgreSQL:
 		switch runtime.GOOS {
 		case "darwin":
-			arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
+			command = []string{"psql"}
 		case "linux":
-			arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
+			command = []string{"psql"}
 		case "windows":
-
-			arg = []string{"/C", binaryName, user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
-
+			command = []string{"/r", "C:\\Program Files\\Postgresql", "psql"}
 		}
 	case model.MySQL:
 		switch runtime.GOOS {
 		case "darwin":
-			arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database}
+			command = []string{"mysql"}
 		case "linux":
-			arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database}
+			command = []string{"mysql"}
 		case "windows":
-			arg = []string{"/C", binaryName, mysqlFlagUser, user, mysqlFlagPassword, database, pgFlagCreate, pgFlatFormat}
+			command = []string{"/r", "C:\\Program Files\\MySQL", "mysql"}
 		}
 	}
-
-	return arg
+	return command
 }
 
 func getImportCommand(sourceType model.SOURCE_TYPE) (command []string) {
@@ -120,7 +128,16 @@ func getImportCommand(sourceType model.SOURCE_TYPE) (command []string) {
 		case "linux":
 			command = []string{"mysql"}
 		case "windows":
+
 			command = []string{"/r", "C:\\Program Files\\MySQL", "mysql"}
+
+		}
+	case model.MSSQL:
+		switch runtime.GOOS {
+		case "darwin":
+		case "linux":
+		case "windows":
+			command = []string{"sqlcmd"}
 		}
 	}
 
@@ -147,6 +164,14 @@ func getExportCommand(sourceType model.SOURCE_TYPE) (command []string) {
 		case "windows":
 			command = []string{"/r", "C:\\Program Files\\MySQL", "mysqldump"}
 		}
+	case model.MSSQL:
+		switch runtime.GOOS {
+		case "darwin":
+		case "linux":
+		case "windows":
+			command = []string{"sqlcmd"}
+		}
+
 	}
 
 	return command

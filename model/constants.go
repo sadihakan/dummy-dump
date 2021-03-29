@@ -7,6 +7,7 @@ import (
 var sourceTypes = []string{
 	string(MySQL),
 	string(PostgreSQL),
+	string(MSSQL),
 }
 
 type SOURCE_TYPE string
@@ -14,13 +15,13 @@ type SOURCE_TYPE string
 const (
 	MySQL      SOURCE_TYPE = "mysql"
 	PostgreSQL SOURCE_TYPE = "postgres"
+	MSSQL      SOURCE_TYPE = "mssql"
 )
 
 func (s SOURCE_TYPE) IsValid() bool {
 	e, _ := util.InArray(string(s), sourceTypes)
 	return e
 }
-
 
 type DummyDumpError string
 

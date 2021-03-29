@@ -6,7 +6,6 @@ import (
 	"github.com/sadihakan/dummy-dump/model"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"time"
 )
 
@@ -25,7 +24,7 @@ type MySQL struct {
 }
 
 func (m MySQL) Check() error {
-	cmd := exec.Command("mysql", "--version")
+	cmd := CreateCheckBinaryCommand(model.MySQL)
 	err := cmd.Run()
 	if err != nil {
 		_, _ = os.Stderr.WriteString(err.Error())
@@ -50,14 +49,11 @@ func (m MySQL) Export(binaryPath string, user string, database string) error {
 		return err
 	}
 	err = ioutil.WriteFile(filename+".sql", b, 0644)
-	if err != nil {
-		return err
-	}
 	return err
 }
 
-func (m MySQL) Import(binaryPath string, user string, database string) error {
-	cmd := CreateImportCommand(binaryPath, model.MySQL, user, database)
+func (m MySQL) Import(binaryPath string, user string, database string, path string) error {
+	cmd := CreateImportCommand(binaryPath, model.MySQL, user, database, path)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

@@ -19,7 +19,9 @@ func CheckBinary(binaryPath string, sourceType model.SOURCE_TYPE, importArg bool
 
 		if exportArg {
 			binaryPath = checkExport(sourceType)
+
 		}
+
 	}
 	return binaryPath
 }
@@ -38,8 +40,8 @@ func checkImport(sourceType model.SOURCE_TYPE) string {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	return strings.TrimSuffix(out.String(), "\n")
+	lines:=strings.Split(out.String(),"\n")
+	return strings.TrimSpace(lines[0])
 }
 
 func checkExport(sourceType model.SOURCE_TYPE) string {
@@ -57,5 +59,6 @@ func checkExport(sourceType model.SOURCE_TYPE) string {
 		log.Fatal(err)
 	}
 
-	return strings.TrimSuffix(out.String(), "\n")
+	lines:=strings.Split(out.String(),"\n")
+	return strings.TrimSpace(lines[0])
 }
