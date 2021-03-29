@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/denisenkom/go-mssqldb"
-	"github.com/sadihakan/dummy-dump/model"
+	"github.com/sadihakan/dummy-dump/config"
+
 	"github.com/sadihakan/dummy-dump/util"
 	"net/url"
+
 	"os"
 	"os/exec"
 	"time"
@@ -16,7 +18,7 @@ type MSSQL struct {
 	Dump
 }
 
-func (ms MSSQL) NewDB(config model.Config) (*sql.DB, error) {
+func (ms MSSQL) NewDB(config config.Config) (*sql.DB, error) {
 	urlQuery := url.Values{}
 	urlQuery.Add("app name", "Backup App")
 
@@ -27,7 +29,7 @@ func (ms MSSQL) NewDB(config model.Config) (*sql.DB, error) {
 		RawQuery: urlQuery.Encode(),
 	}
 	db, err := sql.Open("sqlserver", url.QueryEscape(connURL.String()))
-	if err != nil  {
+	if err != nil {
 		return nil, err
 	}
 	if err = db.Ping(); err != nil {
@@ -49,7 +51,7 @@ func (ms MSSQL) Check() error {
 	return nil
 }
 
-func (ms MSSQL) Export(config model.Config) error {
+func (ms MSSQL) Export(config config.Config) error {
 	db, err := ms.NewDB(config)
 
 	if err != nil {
@@ -68,7 +70,7 @@ func (ms MSSQL) Export(config model.Config) error {
 	return nil
 }
 
-func (ms MSSQL) Import(config model.Config) error {
+func (ms MSSQL) Import(config config.Config) error {
 	db, err := ms.NewDB(config)
 	if err != nil {
 		return err

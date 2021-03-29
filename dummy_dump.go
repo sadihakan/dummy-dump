@@ -1,21 +1,21 @@
 package dummy_dump
 
 import (
+	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/errors"
 	"github.com/sadihakan/dummy-dump/internal"
-	"github.com/sadihakan/dummy-dump/model"
 	"github.com/sadihakan/dummy-dump/util"
 )
 
 // DummyDump ..
 type DummyDump struct {
-	c     *model.Config
+	c     *config.Config
 	dump  internal.Dump
 	Error error
 }
 
 // New ..
-func New(config *model.Config) (*DummyDump, error) {
+func New(config *config.Config) (*DummyDump, error) {
 	dd := new(DummyDump)
 	dd.c = config
 
@@ -28,23 +28,23 @@ func New(config *model.Config) (*DummyDump, error) {
 
 func (dd *DummyDump) configParser() (err error) {
 	switch dd.c.Source {
-	case model.PostgreSQL:
-		if err = util.CheckConfigPostgreSQL(*dd.c); err != nil {
+	case config.PostgreSQL:
+		if err = dd.c.CheckConfigPostgreSQL(); err != nil {
 			return err
 		}
 		dd.dump = internal.Postgres{}
 		break
-	case model.MySQL:
-		if err = util.CheckConfigMySQL(*dd.c); err != nil {
+	case config.MySQL:
+		if err = dd.c.CheckConfigMySQL(); err != nil {
 			return err
 		}
 		dd.dump = internal.MySQL{}
 		break
-	case model.MSSQL:
-		if err = util.CheckConfigMsSQL(*dd.c); err != nil {
+	case config.MSSQL:
+		if err = dd.c.CheckConfigMsSQL(); err != nil {
 			return err
 		}
-		dd.dump=internal.MSSQL{}
+		dd.dump = internal.MSSQL{}
 	default:
 		err = errors.New("not implemented")
 	}
@@ -53,13 +53,13 @@ func (dd *DummyDump) configParser() (err error) {
 }
 
 func (dd *DummyDump) Import() *DummyDump {
-	config := dd.c
+	dumpConfig := dd.c
 
-	if !util.PathExists(config.Path) {
-		dd.Error = errors.New(model.CONFIG_PATH_NOT_EXIST)
+	if !util.PathExists(dumpConfig.Path) {
+		dd.Error = errors.New(errors.ConfigPathNotExist)
 	}
 
-	err := dd.dump.Import(config.BinaryPath,config.User,config.DB,config.Path)
+	err := dd.dump.Import(dumpConfig.BinaryPath, dumpConfig.User, dumpConfig.DB, dumpConfig.Path)
 
 	if err != nil {
 		dd.Error = err
@@ -69,9 +69,9 @@ func (dd *DummyDump) Import() *DummyDump {
 }
 
 func (dd *DummyDump) Export() *DummyDump {
-	config := dd.c
+	dumpConfig := dd.c
 
-	err := dd.dump.Export(config.BinaryPath, config.User, config.DB)
+	err := dd.dump.Export(dumpConfig.BinaryPath, dumpConfig.User, dumpConfig.DB)
 
 	if err != nil {
 		dd.Error = err

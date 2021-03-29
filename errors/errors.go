@@ -1,7 +1,5 @@
 package errors
 
-import "github.com/sadihakan/dummy-dump/model"
-
 type DummyDumpError struct {
 	Status int
 	Errors interface{}
@@ -9,7 +7,7 @@ type DummyDumpError struct {
 	s      string
 }
 
-func New(err model.DummyDumpError, args ...interface{}) error {
+func New(err Err, args ...interface{}) error {
 	e := &DummyDumpError{s: string(err)}
 
 	if len(args) >= 1 {

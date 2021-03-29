@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
+	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/internal"
-	"github.com/sadihakan/dummy-dump/model"
 	"github.com/sadihakan/dummy-dump/util"
 	"log"
 )
@@ -30,7 +30,7 @@ func main() {
 	flag.StringVar(&binaryPath, "binaryPath", "", "Binary path")
 	flag.Parse()
 
-	if !model.SOURCE_TYPE(sourceType).IsValid() {
+	if !config.SourceType(sourceType).IsValid() {
 		log.Println("invalid source type")
 		return
 	}
@@ -39,24 +39,32 @@ func main() {
 		log.Fatal("only one operation can be run")
 	}
 
-	password,err:=util.GetPassword()
+	password, err := util.GetPassword()
 	if err != nil {
 		log.Fatalln(err)
 	}
+	config.Config{
+		Source:     "",
+		Import:     false,
+		Export:     false,
+		User:       "",
+		Path:       "",
+		DB:         "",
+		BinaryPath: "",
+	}
 
 	var dump internal.Dump
-	var source model.SOURCE_TYPE
 
 	switch sourceType {
 	case "postgres":
 		dump = internal.Postgres{}
-		source=model.PostgreSQL
+
 	case "mysql":
 		dump = internal.MySQL{}
-		source=model.MySQL
+
 	case "mssql":
 		dump = internal.MSSQL{}
-		source=model.MSSQL
+
 	default:
 		panic("")
 
@@ -66,31 +74,21 @@ func main() {
 		panic(err)
 	}
 
-	binaryPath = internal.CheckBinary(binaryPath, model.SOURCE_TYPE(sourceType), importArg, exportArg)
+	binaryPath = internal.CheckBinary(binaryPath, config.SourceType(sourceType), importArg, exportArg)
 
-	config := model.Config{
-		Source:     source,
-		Import:     importArg,
-		Export:     exportArg,
-		User:       user,
-		Password:   password,
-		Path:       password,
-		DB:         db,
-		BinaryPath: binaryPath,
-	}
 	if importArg {
-		if !util.PathExists(config.Path) {
+		if !util.PathExists(path) {
 			panic("Path is not exist")
 		}
 
-		if err := dump.Import(config); err != nil {
+		if err := dump.Import(binaryPath, user, db, path); err != nil {
 			panic(err)
 		}
 	}
 
 	if exportArg {
 
-		if err := dump.Export(config); err != nil {
+		if err := dump.Export(binaryPath, user, db); err != nil {
 			panic(err)
 		}
 	}

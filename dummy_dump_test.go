@@ -1,13 +1,13 @@
 package dummy_dump
 
 import (
-	"github.com/sadihakan/dummy-dump/model"
+	"github.com/sadihakan/dummy-dump/config"
 	"testing"
 )
 
 func TestNew(t *testing.T) {
-	dd, err := New(&model.Config{
-		Source:     model.PostgreSQL,
+	dd, err := New(&config.Config{
+		Source:     config.PostgreSQL,
 		Import:     true,
 		Export:     false,
 		User:       "sadihakan",
