@@ -13,7 +13,6 @@ var (
 	exportArg  bool
 	sourceType string
 	user       string
-	password   string
 	path       string
 	db         string
 	binaryPath string
