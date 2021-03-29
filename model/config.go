@@ -5,6 +5,7 @@ type Config struct {
 	Import     bool
 	Export     bool
 	User       string
+	Password   string
 	Path       string
 	DB         string
 	BinaryPath string

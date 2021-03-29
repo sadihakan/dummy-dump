@@ -18,6 +18,10 @@ const (
 	MSSQL      SOURCE_TYPE = "mssql"
 )
 
+func (s SOURCE_TYPE) String() string{
+	return string(s)
+}
+
 func (s SOURCE_TYPE) IsValid() bool {
 	e, _ := util.InArray(string(s), sourceTypes)
 	return e
