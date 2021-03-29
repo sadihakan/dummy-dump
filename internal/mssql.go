@@ -25,7 +25,7 @@ func (ms MSSQL) Check() error {
 	return nil
 }
 
-func (ms MSSQL) Export(binaryPath string, user string, database string) error {
+func (ms MSSQL) Export(dump config.Config) error {
 	cmd := CreateExportCommand(binaryPath, config.MSSQL, user, database)
 	fmt.Println(cmd)
 	cmd.Stderr = os.Stderr

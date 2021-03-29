@@ -20,7 +20,10 @@ func main() {
 		panic(err)
 	}
 
-	dd.Check().Import().Run()
+	if _, err = dd.Check().Export().Run(); err != nil {
+		panic(err)
+	}
+
 }
 
 

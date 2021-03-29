@@ -5,7 +5,6 @@ import (
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/internal"
 	"github.com/sadihakan/dummy-dump/util"
-	"log"
 )
 
 var (
@@ -29,28 +28,36 @@ func main() {
 	flag.StringVar(&binaryPath, "binaryPath", "", "Binary path")
 	flag.Parse()
 
-	if !config.SourceType(sourceType).IsValid() {
-		log.Println("invalid source type")
-		return
-	}
-
-	if importArg && exportArg {
-		log.Fatal("only one operation can be run")
+	dumpConfig := config.Config{
+		Source:     config.SourceType(sourceType),
+		Import:     importArg,
+		Export:     exportArg,
+		User:       user,
+		Path:       path,
+		DB:         db,
+		BinaryPath: binaryPath,
 	}
 
 	var dump internal.Dump
 
 	switch sourceType {
 	case "postgres":
+		if err := dumpConfig.CheckConfigPostgreSQL(); err != nil {
+			panic(err)
+		}
 		dump = internal.Postgres{}
 	case "mysql":
+		if err := dumpConfig.CheckConfigMySQL(); err != nil {
+			panic(err)
+		}
 		dump = internal.MySQL{}
 	case "mssql":
+		if err := dumpConfig.CheckConfigMsSQL(); err != nil {
+			panic(err)
+		}
 		dump = internal.MSSQL{}
 	default:
 		panic("")
-
-
 	}
 
 	if err := dump.Check(); err != nil {
