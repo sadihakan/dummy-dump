@@ -6,25 +6,23 @@ import (
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/sadihakan/dummy-dump/config"
 
-	"github.com/sadihakan/dummy-dump/util"
 	"net/url"
 
 	"os"
 	"os/exec"
-	"time"
 )
 
 type MSSQL struct {
 	Dump
 }
 
-func (ms MSSQL) NewDB(config config.Config) (*sql.DB, error) {
+func (ms MSSQL) NewDB(dump config.Config) (*sql.DB, error) {
 	urlQuery := url.Values{}
 	urlQuery.Add("app name", "Backup App")
 
 	connURL := &url.URL{
 		Scheme:   "sqlserver",
-		User:     url.UserPassword(config.User, config.Password),
+		User:     url.UserPassword(dump.User, dump.Password),
 		Host:     fmt.Sprintf("%s:%d", "localhost", 1433),
 		RawQuery: urlQuery.Encode(),
 	}
@@ -52,7 +50,7 @@ func (ms MSSQL) Check() error {
 }
 
 func (ms MSSQL) Export(dump config.Config) error {
-	cmd := CreateExportCommand(binaryPath, config.MSSQL, user, database)
+	cmd := CreateExportCommand(dump.BinaryPath, config.MSSQL, dump.User, dump.DB)
 	fmt.Println(cmd)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
@@ -61,14 +59,14 @@ func (ms MSSQL) Export(dump config.Config) error {
 	return err
 }
 
-func (ms MSSQL) Import(config config.Config) error {
-	db, err := ms.NewDB(config)
+func (ms MSSQL) Import(dump config.Config) error {
+	db, err := ms.NewDB(dump)
 	if err != nil {
 		return err
 	}
 	importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s'`,
-		config.DB,
-		config.Path)
+		dump.DB,
+		dump.Path)
 	_, err = db.Exec(importQuery)
 	if err != nil {
 		return err

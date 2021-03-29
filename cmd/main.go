@@ -5,6 +5,7 @@ import (
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/internal"
 	"github.com/sadihakan/dummy-dump/util"
+	"log"
 )
 
 var (
@@ -29,6 +30,12 @@ func main() {
 	flag.StringVar(&binaryPath, "binaryPath", "", "Binary path")
 	flag.Parse()
 
+	password, err := util.GetPassword()
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	dumpConfig := config.Config{
 		Source:     config.SourceType(sourceType),
 		Import:     importArg,
@@ -37,20 +44,7 @@ func main() {
 		Path:       path,
 		DB:         db,
 		BinaryPath: binaryPath,
-	}
-
-	password, err := util.GetPassword()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	config.Config{
-		Source:     "",
-		Import:     false,
-		Export:     false,
-		User:       "",
-		Path:       "",
-		DB:         "",
-		BinaryPath: "",
+		Password:   password,
 	}
 
 	var dump internal.Dump
@@ -89,14 +83,14 @@ func main() {
 			panic("Path is not exist")
 		}
 
-		if err := dump.Import(binaryPath, user, db, path); err != nil {
+		if err := dump.Import(dumpConfig); err != nil {
 			panic(err)
 		}
 	}
 
 	if exportArg {
 
-		if err := dump.Export(binaryPath, user, db); err != nil {
+		if err := dump.Export(dumpConfig); err != nil {
 			panic(err)
 		}
 	}
