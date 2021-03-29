@@ -88,7 +88,6 @@ func main() {
 	}
 
 	if exportArg {
-
 		if err := dump.Export(dumpConfig); err != nil {
 			panic(err)
 		}
