@@ -16,6 +16,6 @@
 
 # Editor files
 .idea
-
+.vscode
 # Project files
 *.sql

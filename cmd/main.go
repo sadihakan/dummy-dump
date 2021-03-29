@@ -12,6 +12,7 @@ var (
 	exportArg  bool
 	sourceType string
 	user       string
+	password   string
 	path       string
 	db         string
 	binaryPath string
@@ -38,6 +39,20 @@ func main() {
 		BinaryPath: binaryPath,
 	}
 
+	password, err := util.GetPassword()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	config.Config{
+		Source:     "",
+		Import:     false,
+		Export:     false,
+		User:       "",
+		Path:       "",
+		DB:         "",
+		BinaryPath: "",
+	}
+
 	var dump internal.Dump
 
 	switch sourceType {
@@ -46,25 +61,29 @@ func main() {
 			panic(err)
 		}
 		dump = internal.Postgres{}
+
 	case "mysql":
 		if err := dumpConfig.CheckConfigMySQL(); err != nil {
 			panic(err)
 		}
 		dump = internal.MySQL{}
+
 	case "mssql":
 		if err := dumpConfig.CheckConfigMsSQL(); err != nil {
 			panic(err)
 		}
 		dump = internal.MSSQL{}
+
 	default:
 		panic("")
 	}
 
-	if err := dump.Check(); err != nil {
+	if err = dump.Check(); err != nil {
 		panic(err)
 	}
 
 	binaryPath = internal.CheckBinary(binaryPath, config.SourceType(sourceType), importArg, exportArg)
+
 	if importArg {
 		if !util.PathExists(path) {
 			panic("Path is not exist")
