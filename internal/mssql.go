@@ -16,24 +16,25 @@ type MSSQL struct {
 	Dump
 }
 
-func (ms MSSQL) NewDB(config model.Config) (*sql.DB,error){
-	urlQuery:=url.Values{}
-	urlQuery.Add("app name","Backup App")
+func (ms MSSQL) NewDB(config model.Config) (*sql.DB, error) {
+	urlQuery := url.Values{}
+	urlQuery.Add("app name", "Backup App")
 
-	connURL:= &url.URL{
-		Scheme: "sqlserver",
-		User: url.UserPassword(config.User,config.Password),
-		Host: fmt.Sprintf("%s:%d","localhost",1433),
+	connURL := &url.URL{
+		Scheme:   "sqlserver",
+		User:     url.UserPassword(config.User, config.Password),
+		Host:     fmt.Sprintf("%s:%d", "localhost", 1433),
 		RawQuery: urlQuery.Encode(),
 	}
-	db,err:=sql.Open("sqlserver",url.QueryEscape(connURL.String()))
-	err=db.Ping()
-	if err != nil {
-		return nil,err
+	db, err := sql.Open("sqlserver", url.QueryEscape(connURL.String()))
+	if err != nil  {
+		return nil, err
 	}
-	return db,nil
+	if err = db.Ping(); err != nil {
+		return nil, err
+	}
+	return db, nil
 }
-
 
 func (ms MSSQL) Check() error {
 	cmd := exec.Command("reg", "query", "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft", "/f", "mssql", "/k")
@@ -49,7 +50,7 @@ func (ms MSSQL) Check() error {
 }
 
 func (ms MSSQL) Export(config model.Config) error {
-	db,err:=ms.NewDB(config)
+	db, err := ms.NewDB(config)
 
 	if err != nil {
 		return err
@@ -60,7 +61,7 @@ func (ms MSSQL) Export(config model.Config) error {
 		config.DB,
 		util.GetMSSQLBackupDirectory()+`\`+fmt.Sprintf("%d", filename))
 
-	_,err=db.Exec(exportQuery)
+	_, err = db.Exec(exportQuery)
 	if err != nil {
 		return err
 	}
@@ -68,14 +69,14 @@ func (ms MSSQL) Export(config model.Config) error {
 }
 
 func (ms MSSQL) Import(config model.Config) error {
-	db,err:=ms.NewDB(config)
+	db, err := ms.NewDB(config)
 	if err != nil {
 		return err
 	}
 	importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s'`,
 		config.DB,
 		config.Path)
-	_,err=db.Exec(importQuery)
+	_, err = db.Exec(importQuery)
 	if err != nil {
 		return err
 	}
