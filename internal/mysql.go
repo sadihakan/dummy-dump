@@ -3,7 +3,7 @@ package internal
 import (
 	"bytes"
 	"fmt"
-	"github.com/sadihakan/dummy-dump/model"
+	"github.com/sadihakan/dummy-dump/config"
 	"io/ioutil"
 	"os"
 	"time"
@@ -24,7 +24,7 @@ type MySQL struct {
 }
 
 func (m MySQL) Check() error {
-	cmd := CreateCheckBinaryCommand(model.MySQL)
+	cmd := CreateCheckBinaryCommand(config.MySQL)
 	err := cmd.Run()
 	if err != nil {
 		_, _ = os.Stderr.WriteString(err.Error())
@@ -35,7 +35,7 @@ func (m MySQL) Check() error {
 
 func (m MySQL) Export(binaryPath string, user string, database string) error {
 	filename := fmt.Sprintf("%d.backup", time.Now().UTC().UnixNano())
-	cmd := CreateExportCommand(binaryPath, model.MySQL, user, database)
+	cmd := CreateExportCommand(binaryPath, config.MySQL, user, database)
 	var outb bytes.Buffer
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
@@ -53,7 +53,7 @@ func (m MySQL) Export(binaryPath string, user string, database string) error {
 }
 
 func (m MySQL) Import(binaryPath string, user string, database string, path string) error {
-	cmd := CreateImportCommand(binaryPath, model.MySQL, user, database, path)
+	cmd := CreateImportCommand(binaryPath, config.MySQL, user, database, path)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

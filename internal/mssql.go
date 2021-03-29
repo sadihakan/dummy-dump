@@ -3,7 +3,7 @@ package internal
 import (
 	"fmt"
 	_ "github.com/denisenkom/go-mssqldb"
-	"github.com/sadihakan/dummy-dump/model"
+	"github.com/sadihakan/dummy-dump/config"
 	"os"
 	"os/exec"
 )
@@ -26,7 +26,7 @@ func (ms MSSQL) Check() error {
 }
 
 func (ms MSSQL) Export(binaryPath string, user string, database string) error {
-	cmd := CreateExportCommand(binaryPath, model.MSSQL, user, database)
+	cmd := CreateExportCommand(binaryPath, config.MSSQL, user, database)
 	fmt.Println(cmd)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
@@ -36,7 +36,7 @@ func (ms MSSQL) Export(binaryPath string, user string, database string) error {
 }
 
 func (ms MSSQL) Import(binaryPath string, user string, database string, path string) error {
-	cmd := CreateImportCommand(binaryPath, model.MSSQL, user, database, path)
+	cmd := CreateImportCommand(binaryPath, config.MSSQL, user, database, path)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

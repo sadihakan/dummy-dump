@@ -2,12 +2,12 @@ package main
 
 import (
 	dummydump "github.com/sadihakan/dummy-dump"
-	"github.com/sadihakan/dummy-dump/model"
+	"github.com/sadihakan/dummy-dump/config"
 )
 
 func main() {
-	dd, err := dummydump.New(&model.Config{
-		Source:     model.PostgreSQL,
+	dd, err := dummydump.New(&config.Config{
+		Source:     config.PostgreSQL,
 		Import:     true,
 		Export:     false,
 		User:       "sadihakan",

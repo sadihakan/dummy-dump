@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
+	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/internal"
-	"github.com/sadihakan/dummy-dump/model"
 	"github.com/sadihakan/dummy-dump/util"
 	"log"
 )
@@ -29,7 +29,7 @@ func main() {
 	flag.StringVar(&binaryPath, "binaryPath", "", "Binary path")
 	flag.Parse()
 
-	if !model.SOURCE_TYPE(sourceType).IsValid() {
+	if !config.SourceType(sourceType).IsValid() {
 		log.Println("invalid source type")
 		return
 	}
@@ -57,7 +57,7 @@ func main() {
 		panic(err)
 	}
 
-	binaryPath = internal.CheckBinary(binaryPath, model.SOURCE_TYPE(sourceType), importArg, exportArg)
+	binaryPath = internal.CheckBinary(binaryPath, config.SourceType(sourceType), importArg, exportArg)
 	if importArg {
 		if !util.PathExists(path) {
 			panic("Path is not exist")

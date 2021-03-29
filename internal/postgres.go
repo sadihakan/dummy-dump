@@ -3,7 +3,7 @@ package internal
 import (
 	"bytes"
 	"fmt"
-	"github.com/sadihakan/dummy-dump/model"
+	"github.com/sadihakan/dummy-dump/config"
 	"os"
 )
 
@@ -12,7 +12,7 @@ type Postgres struct {
 }
 
 func (p Postgres) Check() error {
-	cmd := CreateCheckBinaryCommand(model.PostgreSQL)
+	cmd := CreateCheckBinaryCommand(config.PostgreSQL)
 	var out, errBuf bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
@@ -30,7 +30,7 @@ func (p Postgres) Export(binaryPath string, user string, database string) error 
 	user = fmt.Sprintf("--username=%s", user)
 	database = fmt.Sprintf("--dbname=%s", database)
 
-	cmd := CreateExportCommand(binaryPath, model.PostgreSQL, user, database)
+	cmd := CreateExportCommand(binaryPath, config.PostgreSQL, user, database)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
@@ -47,7 +47,7 @@ func (p Postgres) Import(binaryPath string, user string, database string, path s
 
 	user = fmt.Sprintf("--username=%s", user)
 
-	cmd := CreateImportCommand(binaryPath, model.PostgreSQL, user,database, path)
+	cmd := CreateImportCommand(binaryPath, config.PostgreSQL, user,database, path)
 	fmt.Println(cmd)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf

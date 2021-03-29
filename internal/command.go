@@ -2,7 +2,7 @@ package internal
 
 import (
 	"fmt"
-	"github.com/sadihakan/dummy-dump/model"
+	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/util"
 	"os/exec"
 	"runtime"
@@ -29,37 +29,37 @@ const (
 )
 
 //CreateCheckBinaryCommand
-func CreateCheckBinaryCommand(sourceType model.SOURCE_TYPE)*exec.Cmd  {
+func CreateCheckBinaryCommand(sourceType config.SourceType)*exec.Cmd  {
 	return exec.Command(util.Which(),getCheckCommand(sourceType)...)
 }
 
 // CreateImportBinaryCommand ...
-func CreateImportBinaryCommand(sourceType model.SOURCE_TYPE) *exec.Cmd {
+func CreateImportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
 	return exec.Command(util.Which(), getImportCommand(sourceType)...)
 }
 
 // CreateExportBinaryCommand ...
-func CreateExportBinaryCommand(sourceType model.SOURCE_TYPE) *exec.Cmd {
+func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
 	return exec.Command(util.Which(), getExportCommand(sourceType)...)
 }
 
 // CreateExportCommand ...
-func CreateExportCommand(binaryPath string, sourceType model.SOURCE_TYPE, user string, database string) *exec.Cmd {
+func CreateExportCommand(binaryPath string, sourceType config.SourceType, user string, database string) *exec.Cmd {
 	return exec.Command(binaryPath, getExportCommandArg(sourceType, user, database)...)
 }
 
 // CreateImportCommand ...
-func CreateImportCommand(binaryPath string, sourceType model.SOURCE_TYPE, user string, database string, path string) *exec.Cmd {
+func CreateImportCommand(binaryPath string, sourceType config.SourceType, user string, database string, path string) *exec.Cmd {
 	return exec.Command(binaryPath, getImportCommandArg(sourceType, user, database, path)...)
 }
 
-func getImportCommandArg(sourceType model.SOURCE_TYPE, user string, database, path string) (arg []string) {
+func getImportCommandArg(sourceType config.SourceType, user string, database, path string) (arg []string) {
 	switch sourceType {
-	case model.PostgreSQL:
+	case config.PostgreSQL:
 		arg = []string{user, pgFlagDatabase, database, pgFlagCreate}
-	case model.MySQL:
+	case config.MySQL:
 		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database, mysqlFlagExecute, "source " + path}
-	case model.MSSQL:
+	case config.MSSQL:
 		importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s'`,
 			database,
 			path)
@@ -68,15 +68,15 @@ func getImportCommandArg(sourceType model.SOURCE_TYPE, user string, database, pa
 	return arg
 }
 
-func getExportCommandArg(sourceType model.SOURCE_TYPE, user string, database string) (arg []string) {
+func getExportCommandArg(sourceType config.SourceType, user string, database string) (arg []string) {
 	today := time.Now().UTC().UnixNano()
 	filename := fmt.Sprintf("%d.backup", today)
 	switch sourceType {
-	case model.PostgreSQL:
+	case config.PostgreSQL:
 		arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
-	case model.MySQL:
+	case config.MySQL:
 		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database}
-	case model.MSSQL:
+	case config.MSSQL:
 		exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s' WITH STATS = 10`,
 			database,
 			util.GetMSSQLBackupDirectory()+`\`+fmt.Sprintf("%d.bak", today))
@@ -86,9 +86,9 @@ func getExportCommandArg(sourceType model.SOURCE_TYPE, user string, database str
 	return arg
 }
 
-func getCheckCommand(sourceType model.SOURCE_TYPE) (command[]string){
+func getCheckCommand(sourceType config.SourceType) (command[]string){
 	switch sourceType {
-	case model.PostgreSQL:
+	case config.PostgreSQL:
 		switch runtime.GOOS {
 		case "darwin":
 			command = []string{"psql"}
@@ -97,7 +97,7 @@ func getCheckCommand(sourceType model.SOURCE_TYPE) (command[]string){
 		case "windows":
 			command = []string{"/r", "C:\\Program Files\\Postgresql", "psql"}
 		}
-	case model.MySQL:
+	case config.MySQL:
 		switch runtime.GOOS {
 		case "darwin":
 			command = []string{"mysql"}
@@ -110,9 +110,9 @@ func getCheckCommand(sourceType model.SOURCE_TYPE) (command[]string){
 	return command
 }
 
-func getImportCommand(sourceType model.SOURCE_TYPE) (command []string) {
+func getImportCommand(sourceType config.SourceType) (command []string) {
 	switch sourceType {
-	case model.PostgreSQL:
+	case config.PostgreSQL:
 		switch runtime.GOOS {
 		case "darwin":
 			command = []string{"pg_restore"}
@@ -121,7 +121,7 @@ func getImportCommand(sourceType model.SOURCE_TYPE) (command []string) {
 		case "windows":
 			command = []string{"/r", "C:\\Program Files\\Postgresql", "pg_restore"}
 		}
-	case model.MySQL:
+	case config.MySQL:
 		switch runtime.GOOS {
 		case "darwin":
 			command = []string{"mysql"}
@@ -132,7 +132,7 @@ func getImportCommand(sourceType model.SOURCE_TYPE) (command []string) {
 			command = []string{"/r", "C:\\Program Files\\MySQL", "mysql"}
 
 		}
-	case model.MSSQL:
+	case config.MSSQL:
 		switch runtime.GOOS {
 		case "darwin":
 		case "linux":
@@ -144,9 +144,9 @@ func getImportCommand(sourceType model.SOURCE_TYPE) (command []string) {
 	return command
 }
 
-func getExportCommand(sourceType model.SOURCE_TYPE) (command []string) {
+func getExportCommand(sourceType config.SourceType) (command []string) {
 	switch sourceType {
-	case model.PostgreSQL:
+	case config.PostgreSQL:
 		switch runtime.GOOS {
 		case "darwin":
 			command = []string{"pg_dump"}
@@ -155,7 +155,7 @@ func getExportCommand(sourceType model.SOURCE_TYPE) (command []string) {
 		case "windows":
 			command = []string{"/r", "C:\\Program Files\\Postgresql", "pg_dump"}
 		}
-	case model.MySQL:
+	case config.MySQL:
 		switch runtime.GOOS {
 		case "darwin":
 			command = []string{"mysqldump"}
@@ -164,7 +164,7 @@ func getExportCommand(sourceType model.SOURCE_TYPE) (command []string) {
 		case "windows":
 			command = []string{"/r", "C:\\Program Files\\MySQL", "mysqldump"}
 		}
-	case model.MSSQL:
+	case config.MSSQL:
 		switch runtime.GOOS {
 		case "darwin":
 		case "linux":

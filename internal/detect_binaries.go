@@ -2,7 +2,7 @@ package internal
 
 import (
 	"bytes"
-	"github.com/sadihakan/dummy-dump/model"
+	"github.com/sadihakan/dummy-dump/config"
 	"log"
 	"os"
 	"os/exec"
@@ -10,7 +10,7 @@ import (
 )
 
 // CheckBinary ...
-func CheckBinary(binaryPath string, sourceType model.SOURCE_TYPE, importArg bool, exportArg bool) string {
+func CheckBinary(binaryPath string, sourceType config.SourceType, importArg bool, exportArg bool) string {
 	if binaryPath == "" {
 
 		if importArg {
@@ -26,7 +26,7 @@ func CheckBinary(binaryPath string, sourceType model.SOURCE_TYPE, importArg bool
 	return binaryPath
 }
 
-func checkImport(sourceType model.SOURCE_TYPE) string {
+func checkImport(sourceType config.SourceType) string {
 	var out bytes.Buffer
 	var cmd *exec.Cmd
 
@@ -44,7 +44,7 @@ func checkImport(sourceType model.SOURCE_TYPE) string {
 	return strings.TrimSpace(lines[0])
 }
 
-func checkExport(sourceType model.SOURCE_TYPE) string {
+func checkExport(sourceType config.SourceType) string {
 	var out bytes.Buffer
 	var cmd *exec.Cmd
 

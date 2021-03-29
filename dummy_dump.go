@@ -1,21 +1,21 @@
 package dummy_dump
 
 import (
+	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/errors"
 	"github.com/sadihakan/dummy-dump/internal"
-	"github.com/sadihakan/dummy-dump/model"
 	"github.com/sadihakan/dummy-dump/util"
 )
 
 // DummyDump ..
 type DummyDump struct {
-	c     *model.Config
+	c     *config.Config
 	dump  internal.Dump
 	Error error
 }
 
 // New ..
-func New(config *model.Config) (*DummyDump, error) {
+func New(config *config.Config) (*DummyDump, error) {
 	dd := new(DummyDump)
 	dd.c = config
 
@@ -28,19 +28,19 @@ func New(config *model.Config) (*DummyDump, error) {
 
 func (dd *DummyDump) configParser() (err error) {
 	switch dd.c.Source {
-	case model.PostgreSQL:
+	case config.PostgreSQL:
 		if err = util.CheckConfigPostgreSQL(*dd.c); err != nil {
 			return err
 		}
 		dd.dump = internal.Postgres{}
 		break
-	case model.MySQL:
+	case config.MySQL:
 		if err = util.CheckConfigMySQL(*dd.c); err != nil {
 			return err
 		}
 		dd.dump = internal.MySQL{}
 		break
-	case model.MSSQL:
+	case config.MSSQL:
 		if err = util.CheckConfigMsSQL(*dd.c); err != nil {
 			return err
 		}
@@ -56,7 +56,7 @@ func (dd *DummyDump) Import() *DummyDump {
 	config := dd.c
 
 	if !util.PathExists(config.Path) {
-		dd.Error = errors.New(model.CONFIG_PATH_NOT_EXIST)
+		dd.Error = errors.New(errors.ConfigPathNotExist)
 	}
 
 	err := dd.dump.Import(config.BinaryPath,config.User,config.DB,config.Path)
