@@ -24,13 +24,12 @@ const (
 	mysqlFlagExecute  = "-e"
 	//mysqlImport="mysql"
 	//mysqlDump="mysqldump"
-	mssqlFlagUser  = "-U"
-	mssqlFlagQuery = "-Q"
+
 )
 
 //CreateCheckBinaryCommand
-func CreateCheckBinaryCommand(sourceType model.SOURCE_TYPE)*exec.Cmd  {
-	return exec.Command(util.Which(),getCheckCommand(sourceType)...)
+func CreateCheckBinaryCommand(sourceType model.SOURCE_TYPE) *exec.Cmd {
+	return exec.Command(util.Which(), getCheckCommand(sourceType)...)
 }
 
 // CreateImportBinaryCommand ...
@@ -59,11 +58,6 @@ func getImportCommandArg(sourceType model.SOURCE_TYPE, user string, database, pa
 		arg = []string{user, pgFlagDatabase, database, pgFlagCreate}
 	case model.MySQL:
 		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database, mysqlFlagExecute, "source " + path}
-	case model.MSSQL:
-		importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s'`,
-			database,
-			path)
-		arg = []string{mssqlFlagUser, user, mssqlFlagQuery, importQuery}
 	}
 	return arg
 }
@@ -76,17 +70,11 @@ func getExportCommandArg(sourceType model.SOURCE_TYPE, user string, database str
 		arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
 	case model.MySQL:
 		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database}
-	case model.MSSQL:
-		exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s' WITH STATS = 10`,
-			database,
-			util.GetMSSQLBackupDirectory()+`\`+fmt.Sprintf("%d.bak", today))
-
-		arg = []string{mssqlFlagUser, user, mssqlFlagQuery, exportQuery}
 	}
 	return arg
 }
 
-func getCheckCommand(sourceType model.SOURCE_TYPE) (command[]string){
+func getCheckCommand(sourceType model.SOURCE_TYPE) (command []string) {
 	switch sourceType {
 	case model.PostgreSQL:
 		switch runtime.GOOS {
@@ -132,13 +120,6 @@ func getImportCommand(sourceType model.SOURCE_TYPE) (command []string) {
 			command = []string{"/r", "C:\\Program Files\\MySQL", "mysql"}
 
 		}
-	case model.MSSQL:
-		switch runtime.GOOS {
-		case "darwin":
-		case "linux":
-		case "windows":
-			command = []string{"sqlcmd"}
-		}
 	}
 
 	return command
@@ -164,14 +145,6 @@ func getExportCommand(sourceType model.SOURCE_TYPE) (command []string) {
 		case "windows":
 			command = []string{"/r", "C:\\Program Files\\MySQL", "mysqldump"}
 		}
-	case model.MSSQL:
-		switch runtime.GOOS {
-		case "darwin":
-		case "linux":
-		case "windows":
-			command = []string{"sqlcmd"}
-		}
-
 	}
 
 	return command
