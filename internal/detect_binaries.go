@@ -3,30 +3,34 @@ package internal
 import (
 	"bytes"
 	"github.com/sadihakan/dummy-dump/config"
-	"log"
 	"os"
 	"os/exec"
 	"strings"
 )
 
 // CheckBinary ...
-func CheckBinary(binaryPath string, sourceType config.SourceType, importArg bool, exportArg bool) string {
+func CheckBinary(binaryPath string, sourceType config.SourceType, importArg bool, exportArg bool) (string,error) {
+	var err error
 	if binaryPath == "" {
-
 		if importArg {
-			binaryPath = checkImport(sourceType)
+			binaryPath,err= checkImport(sourceType)
+			if err != nil {
+				return "", err
+			}
 		}
 
 		if exportArg {
-			binaryPath = checkExport(sourceType)
-
+			binaryPath,err= checkExport(sourceType)
+			if err != nil {
+				return "", err
+			}
 		}
 
 	}
-	return binaryPath
+	return binaryPath,nil
 }
 
-func checkImport(sourceType config.SourceType) string {
+func checkImport(sourceType config.SourceType) (string,error) {
 	var out bytes.Buffer
 	var cmd *exec.Cmd
 
@@ -38,13 +42,13 @@ func checkImport(sourceType config.SourceType) string {
 	err := cmd.Run()
 
 	if err != nil {
-		log.Fatal(err)
+		return "",err
 	}
 	lines := strings.Split(out.String(), "\n")
-	return strings.TrimSpace(lines[0])
+	return strings.TrimSpace(lines[0]),nil
 }
 
-func checkExport(sourceType config.SourceType) string {
+func checkExport(sourceType config.SourceType)  (string,error) {
 	var out bytes.Buffer
 	var cmd *exec.Cmd
 
@@ -56,9 +60,9 @@ func checkExport(sourceType config.SourceType) string {
 	err := cmd.Run()
 
 	if err != nil {
-		log.Fatal(err)
+		return "",err
 	}
 
 	lines := strings.Split(out.String(), "\n")
-	return strings.TrimSpace(lines[0])
+	return strings.TrimSpace(lines[0]),nil
 }

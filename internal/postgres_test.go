@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/util"
 	"path/filepath"
 	"testing"
@@ -29,12 +30,18 @@ func TestExport(t *testing.T) {
 	var dump Dump
 	dump = Postgres{}
 
-	user := "hakankosanoglu"
-	db := "test"
+	 config := config.Config{
+		Source:     "",
+		Import:     false,
+		Export:     true,
+		User:       "hakankosanoglu",
+		Password:   "",
+		Path:       "",
+		DB:         "test",
+		BinaryPath: "pg_dump",
+	}
 
-	binaryPath := "pg_restore"
-
-	dump.Export(binaryPath, user, db)
+	dump.Export(config)
 }
 
 func TestExportWithError(t *testing.T) {
@@ -42,12 +49,19 @@ func TestExportWithError(t *testing.T) {
 	var dump Dump
 	dump = Postgres{}
 
-	user := "none"
-	db := "test"
 
-	binaryPath := "pg_restore"
+	config := config.Config{
+		Source:     "",
+		Import:     false,
+		Export:     true,
+		User:       "none",
+		Password:   "",
+		Path:       "",
+		DB:         "test",
+		BinaryPath: "pg_dump",
+	}
 
-	dump.Export(binaryPath, user, db)
+	dump.Export(config)
 }
 
 func TestImport(t *testing.T) {
@@ -55,25 +69,39 @@ func TestImport(t *testing.T) {
 	var dump Dump
 	dump = Postgres{}
 
-	user := "hakankosanoglu"
 	file := filepath.Join(util.GetDirectory(), "test.backup")
-	db := "" //
 
-	binaryPath := "pg_dump"
 
-	dump.Import(binaryPath, user, db, file)
+	config := config.Config{
+		Source:     "",
+		Import:     true,
+		Export:     false,
+		User:       "hakankosanoglu",
+		Password:   "",
+		Path:       file,
+		DB:         "",
+		BinaryPath: "pg_restore",
+	}
+
+	dump.Import(config)
 }
 
 func TestImportWithError(t *testing.T) {
 
 	var dump Dump
 	dump = Postgres{}
-
-	user := "hakankosanoglu"
 	file := "test"
 
-	binaryPath := "pg_dump"
+	config := config.Config{
+		Source:     "",
+		Import:     true,
+		Export:     false,
+		User:       "hakankosanoglu",
+		Password:   "",
+		Path:       file,
+		DB:         "",
+		BinaryPath: "pg_restore",
+	}
 
-	db := "" //
-	dump.Import(binaryPath, user, db, file)
+	dump.Import(config)
 }

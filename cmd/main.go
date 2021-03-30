@@ -30,13 +30,12 @@ func main() {
 	flag.StringVar(&binaryPath, "binaryPath", "", "Binary path")
 	flag.Parse()
 
-	password, err := util.GetPassword()
 
+	var err error
+	binaryPath,err = internal.CheckBinary(binaryPath, config.SourceType(sourceType), importArg, exportArg)
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
 	}
-
-	binaryPath = internal.CheckBinary(binaryPath, config.SourceType(sourceType), importArg, exportArg)
 
 	dumpConfig := config.Config{
 		Source:     config.SourceType(sourceType),
@@ -46,7 +45,7 @@ func main() {
 		Path:       path,
 		DB:         db,
 		BinaryPath: binaryPath,
-		Password:   password,
+		Password:   "",
 	}
 
 	var dump internal.Dump
@@ -59,12 +58,23 @@ func main() {
 		dump = internal.Postgres{}
 
 	case "mysql":
+		password, err := util.GetPassword()
+		if err != nil {
+			log.Fatalln(err)
+		}
+		dumpConfig.Password=password
 		if err := dumpConfig.CheckConfigMySQL(); err != nil {
 			panic(err)
 		}
 		dump = internal.MySQL{}
 
 	case "mssql":
+		password, err := util.GetPassword()
+
+		if err != nil {
+			log.Fatalln(err)
+		}
+		dumpConfig.Password=password
 		if err := dumpConfig.CheckConfigMsSQL(); err != nil {
 			panic(err)
 		}
@@ -75,7 +85,7 @@ func main() {
 		return
 	}
 
-	if err = dump.Check(); err != nil {
+	if err := dump.Check(); err != nil {
 		panic(err)
 	}
 

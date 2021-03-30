@@ -15,7 +15,7 @@ func mysqlBinaryDirectory() string {
 	connstr := fmt.Sprintf("%s:%s@/%s", "root", "deneme332", "deneme")
 	db, err := sql.Open("mysql", connstr)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 	err = db.Ping()
 	if err != nil {
