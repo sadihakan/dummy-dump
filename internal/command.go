@@ -12,10 +12,11 @@ import (
 
 const (
 	//pgDatabase     = "--dbname=postgres"
-	pgFlagDatabase = "-d"
-	pgFlagFileName = "-f"
-	pgFlagCreate   = "--create"
-	pgFlatFormat   = "--format=c"
+	pgFlagDatabase      = "-d"
+	pgFlagFileName      = "-f"
+	pgFlagCreateDatabase = "-C"
+	pgFlagCreate        = "--create"
+	pgFlatFormat        = "--format=c"
 
 	//pgRestore="pg_restore"
 	//pgDump="pg_dump"
@@ -43,8 +44,8 @@ func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
 }
 
 // CreateExportCommand ...
-func CreateExportCommand(binaryPath string, sourceType config.SourceType, user string, database string) *exec.Cmd {
-	return exec.Command(binaryPath, getExportCommandArg(sourceType, user, database)...)
+func CreateExportCommand(binaryPath string, sourceType config.SourceType, user string, database string, path string) *exec.Cmd {
+	return exec.Command(binaryPath, getExportCommandArg(sourceType, user, database, path)...)
 }
 
 // CreateImportCommand ...
@@ -56,7 +57,7 @@ func CreateImportCommand(binaryPath string, sourceType config.SourceType, user s
 func getImportCommandArg(sourceType config.SourceType, user string, database, path string) (arg []string) {
 	switch sourceType {
 	case config.PostgreSQL:
-		arg = []string{user, pgFlagDatabase, database, pgFlagCreate, path}
+		arg = []string{user, pgFlagCreateDatabase, pgFlagDatabase, database, pgFlagCreate, path}
 	case config.MySQL:
 		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database, mysqlFlagExecute, "source " + path}
 
@@ -65,15 +66,14 @@ func getImportCommandArg(sourceType config.SourceType, user string, database, pa
 }
 
 // getExportCommandArg ...
-func getExportCommandArg(sourceType config.SourceType, user string, database string) (arg []string) {
+func getExportCommandArg(sourceType config.SourceType, user string, database string, path string) (arg []string) {
 	today := time.Now().UTC().UnixNano()
-	filename := fmt.Sprintf("%d.backup", today)
+	filename := fmt.Sprintf("%s/%d.backup", path, today)
 	switch sourceType {
 	case config.PostgreSQL:
 		arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
 	case config.MySQL:
 		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database}
-
 	}
 	return arg
 }

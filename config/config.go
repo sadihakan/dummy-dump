@@ -1,6 +1,8 @@
 package config
 
-import "github.com/sadihakan/dummy-dump/errors"
+import (
+	"github.com/sadihakan/dummy-dump/errors"
+)
 
 type Config struct {
 	Source     SourceType
@@ -13,7 +15,7 @@ type Config struct {
 	BinaryPath string
 }
 
-func (c Config) checkAll() error {
+func (c *Config) checkAll() error {
 	if c.Source == "" {
 		return errors.New(errors.ConfigSourceNil)
 	}
@@ -22,7 +24,7 @@ func (c Config) checkAll() error {
 		return errors.New(errors.ConfigUserNil)
 	}
 
-	if c.Import==true && c.Path == "" {
+	if c.Import == true && c.Path == "" {
 		return errors.New(errors.ConfigPathNotExist)
 	}
 
@@ -33,13 +35,14 @@ func (c Config) checkAll() error {
 	if c.Import == c.Export {
 		return errors.New(errors.ConfigMethodError)
 	}
+
+	if c.Export && c.Path == "" {
+		c.Path = "."
+	}
 	return nil
 }
 
-func (c Config) CheckConfigPostgreSQL() error {
-	if c.Import {
-		c.DB = "postgres"
-	}
+func (c *Config) CheckConfigPostgreSQL() error {
 
 	if err := c.checkAll(); err != nil {
 		return err
@@ -52,7 +55,7 @@ func (c Config) CheckConfigPostgreSQL() error {
 	return nil
 }
 
-func (c Config) CheckConfigMySQL() error {
+func (c *Config) CheckConfigMySQL() error {
 	if err := c.checkAll(); err != nil {
 		return err
 	}
@@ -64,7 +67,7 @@ func (c Config) CheckConfigMySQL() error {
 	return nil
 }
 
-func (c Config) CheckConfigMsSQL() error {
+func (c *Config) CheckConfigMsSQL() error {
 	if err := c.checkAll(); err != nil {
 		return err
 	}
