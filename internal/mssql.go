@@ -5,7 +5,9 @@ import (
 	"fmt"
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/sadihakan/dummy-dump/config"
+	"github.com/sadihakan/dummy-dump/util"
 	"log"
+	"time"
 
 	"net/url"
 
@@ -53,9 +55,21 @@ func (ms MSSQL) Check() error {
 
 func (ms MSSQL) Export(dump config.Config) error {
 	db, err := ms.NewDB(dump)
+	var location string
+
+	if dump.Path == "." {
+		today := time.Now().UTC().UnixNano()
+		p := util.GetMSSQLBackupDirectory()
+		filename := fmt.Sprintf("%s/%d.backup", p, today)
+		location = filename
+	} else {
+		location = dump.Path
+	}
+
 	exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s'`,
 		dump.DB,
-		dump.Path)
+		location)
+	fmt.Println(exportQuery)
 	_, err = db.Exec(exportQuery)
 	if err != nil {
 		log.Fatalln(err)

@@ -30,11 +30,7 @@ func main() {
 	flag.StringVar(&binaryPath, "binaryPath", "", "Binary path")
 	flag.Parse()
 
-	var err error
-	binaryPath, err = internal.CheckBinary(binaryPath, config.SourceType(sourceType), importArg, exportArg)
-	if err != nil {
-		panic(err)
-	}
+
 
 	dumpConfig := config.Config{
 		Source:     config.SourceType(sourceType),
@@ -48,9 +44,15 @@ func main() {
 	}
 
 	var dump internal.Dump
+	var err error
 
 	switch sourceType {
 	case "postgres":
+		binaryPath, err = internal.CheckBinary(binaryPath, config.SourceType(sourceType), importArg, exportArg)
+		if err != nil {
+			panic(err)
+		}
+		dumpConfig.BinaryPath=binaryPath
 		if err := dumpConfig.CheckConfigPostgreSQL(); err != nil {
 			panic(err)
 		}
@@ -58,18 +60,14 @@ func main() {
 		dump = internal.Postgres{}
 
 	case "mysql":
-		password, err := util.GetPassword()
-
+		binaryPath, err = internal.CheckBinary(binaryPath, config.SourceType(sourceType), importArg, exportArg)
 		if err != nil {
-			log.Fatalln(err)
+			panic(err)
 		}
-
-		dumpConfig.Password = password
-
+		dumpConfig.BinaryPath=binaryPath
 		if err := dumpConfig.CheckConfigMySQL(); err != nil {
 			panic(err)
 		}
-
 		dump = internal.MySQL{}
 
 	case "mssql":
@@ -100,7 +98,6 @@ func main() {
 		if !util.PathExists(path) {
 			panic("Path is not exist")
 		}
-
 		if err := dump.Import(dumpConfig); err != nil {
 			panic(err)
 		}

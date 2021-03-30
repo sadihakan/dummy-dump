@@ -44,11 +44,8 @@ func (m MySQL) Export(dump config.Config) error {
 	if err != nil {
 		return err
 	}
-	b, err := ioutil.ReadAll(&outb)
-	if err != nil {
-		return err
-	}
-	err = ioutil.WriteFile(filename+".sql", b, 0644)
+
+	err = ioutil.WriteFile(filename,outb.Bytes(),0644)
 	return err
 }
 
