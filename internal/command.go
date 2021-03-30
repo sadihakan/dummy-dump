@@ -56,7 +56,7 @@ func CreateImportCommand(binaryPath string, sourceType config.SourceType, user s
 func getImportCommandArg(sourceType config.SourceType, user string, database, path string) (arg []string) {
 	switch sourceType {
 	case config.PostgreSQL:
-		arg = []string{user, pgFlagDatabase, database, pgFlagCreate}
+		arg = []string{user, pgFlagDatabase, database, pgFlagCreate, path}
 	case config.MySQL:
 		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database, mysqlFlagExecute, "source " + path}
 

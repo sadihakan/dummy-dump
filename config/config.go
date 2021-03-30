@@ -37,6 +37,10 @@ func (c Config) checkAll() error {
 }
 
 func (c Config) CheckConfigPostgreSQL() error {
+	if c.Import {
+		c.DB = "postgres"
+	}
+
 	if err := c.checkAll(); err != nil {
 		return err
 	}
@@ -64,5 +68,6 @@ func (c Config) CheckConfigMsSQL() error {
 	if err := c.checkAll(); err != nil {
 		return err
 	}
+
 	return nil
 }

@@ -30,9 +30,8 @@ func main() {
 	flag.StringVar(&binaryPath, "binaryPath", "", "Binary path")
 	flag.Parse()
 
-
 	var err error
-	binaryPath,err = internal.CheckBinary(binaryPath, config.SourceType(sourceType), importArg, exportArg)
+	binaryPath, err = internal.CheckBinary(binaryPath, config.SourceType(sourceType), importArg, exportArg)
 	if err != nil {
 		panic(err)
 	}
@@ -55,17 +54,22 @@ func main() {
 		if err := dumpConfig.CheckConfigPostgreSQL(); err != nil {
 			panic(err)
 		}
+
 		dump = internal.Postgres{}
 
 	case "mysql":
 		password, err := util.GetPassword()
+
 		if err != nil {
 			log.Fatalln(err)
 		}
-		dumpConfig.Password=password
+
+		dumpConfig.Password = password
+
 		if err := dumpConfig.CheckConfigMySQL(); err != nil {
 			panic(err)
 		}
+
 		dump = internal.MySQL{}
 
 	case "mssql":
@@ -74,10 +78,13 @@ func main() {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		dumpConfig.Password=password
+
+		dumpConfig.Password = password
+
 		if err := dumpConfig.CheckConfigMsSQL(); err != nil {
 			panic(err)
 		}
+
 		dump = internal.MSSQL{}
 
 	default:

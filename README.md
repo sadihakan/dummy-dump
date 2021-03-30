@@ -22,7 +22,7 @@ go run ./cmd -source=<postgres/mysql> -export -user=<User Name> -db=<Database Na
 * How to run the program
 
 ```
-go run ./cmd -source <postgres/mysql> -import -user=<User Name> -file=<File Path> 
+go run ./cmd -source <postgres/mysql> -import -user=<User Name> -path=<File Path> 
 ```
 
 - *import*  
