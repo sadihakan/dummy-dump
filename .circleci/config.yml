@@ -16,7 +16,6 @@ jobs:
     working_directory: /go/src/github.com/sadihakan/dummy-dump
     steps:
       - checkout
-      - run: sleep 10
       - run: go mod tidy
       - run: sleep 10
       - run: go run ./cmd
