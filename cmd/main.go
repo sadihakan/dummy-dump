@@ -17,6 +17,7 @@ var (
 	path       string
 	db         string
 	binaryPath string
+	backupName string
 )
 
 func main() {
@@ -28,6 +29,7 @@ func main() {
 	flag.StringVar(&path, "path", "", "Import file path")
 	flag.StringVar(&db, "db", "", "Database name")
 	flag.StringVar(&binaryPath, "binaryPath", "", "Binary path")
+	flag.StringVar(&backupName, "backupName", "", "Backup Name")
 	flag.Parse()
 
 
@@ -41,6 +43,7 @@ func main() {
 		DB:         db,
 		BinaryPath: binaryPath,
 		Password:   "",
+		BackupName: backupName,
 	}
 
 	var dump internal.Dump

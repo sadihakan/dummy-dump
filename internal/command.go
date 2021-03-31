@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
-	"time"
 )
 
 const (
@@ -44,8 +43,8 @@ func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
 }
 
 // CreateExportCommand ...
-func CreateExportCommand(binaryPath string, sourceType config.SourceType, user string, database string, path string) *exec.Cmd {
-	return exec.Command(binaryPath, getExportCommandArg(sourceType, user, database, path)...)
+func CreateExportCommand(binaryPath string, sourceType config.SourceType, user string, database string, path string, backupName string) *exec.Cmd {
+	return exec.Command(binaryPath, getExportCommandArg(sourceType, user, database, path, backupName)...)
 }
 
 // CreateImportCommand ...
@@ -66,9 +65,8 @@ func getImportCommandArg(sourceType config.SourceType, user string, database, pa
 }
 
 // getExportCommandArg ...
-func getExportCommandArg(sourceType config.SourceType, user string, database string, path string) (arg []string) {
-	today := time.Now().UTC().UnixNano()
-	filename := fmt.Sprintf("%s/%d.backup", path, today)
+func getExportCommandArg(sourceType config.SourceType, user string, database string, path string, backupName string) (arg []string) {
+	filename := fmt.Sprintf("%s/%s.backup", path, backupName)
 	switch sourceType {
 	case config.PostgreSQL:
 		arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}

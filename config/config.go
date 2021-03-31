@@ -2,6 +2,8 @@ package config
 
 import (
 	"github.com/sadihakan/dummy-dump/errors"
+	"strconv"
+	"time"
 )
 
 type Config struct {
@@ -13,6 +15,7 @@ type Config struct {
 	Path       string
 	DB         string
 	BinaryPath string
+	BackupName string
 }
 
 func (c *Config) checkAll() error {
@@ -39,6 +42,11 @@ func (c *Config) checkAll() error {
 	if c.Export && c.Path == "" {
 		c.Path = "."
 	}
+
+	if c.BackupName == "" {
+		c.BackupName = strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
+	}
+
 	return nil
 }
 

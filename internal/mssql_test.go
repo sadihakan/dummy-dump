@@ -33,6 +33,7 @@ func TestMSSQL_Import(t *testing.T) {
 		Path:       "",
 		DB:         "",
 		BinaryPath: "",
+		BackupName: "",
 	}
 	d.Import(config)
 }
@@ -50,6 +51,7 @@ func TestMSSQL_ImportWithError(t *testing.T) {
 		Path:       "",
 		DB:         "",
 		BinaryPath: "",
+		BackupName: "",
 	}
 	err := d.Import(config)
 	if err != nil {
@@ -70,6 +72,7 @@ func TestMSSQL_Export(t *testing.T) {
 		Path:       "",
 		DB:         "",
 		BinaryPath: "",
+		BackupName: "",
 	}
 	d.Export(config)
 }
@@ -87,6 +90,7 @@ func TestMSSQL_ExportWithError(t *testing.T) {
 		Path:       "",
 		DB:         "",
 		BinaryPath: "",
+		BackupName: "",
 	}
 	err := d.Export(config)
 	if err != nil {

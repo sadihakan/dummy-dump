@@ -31,9 +31,7 @@ func (p Postgres) Export(dump config.Config) error {
 	user := fmt.Sprintf("--username=%s", dump.User)
 	database := fmt.Sprintf("--dbname=%s", dump.DB)
 
-	fmt.Println(dump.Path)
-	cmd := CreateExportCommand(dump.BinaryPath, config.PostgreSQL, user, database, dump.Path)
-	fmt.Println(cmd)
+	cmd := CreateExportCommand(dump.BinaryPath, config.PostgreSQL, user, database, dump.Path, dump.BackupName)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
@@ -50,7 +48,6 @@ func (p Postgres) Import(dump config.Config) error {
 
 	user := fmt.Sprintf("--username=%s", dump.User)
 	cmd := CreateImportCommand(dump.BinaryPath, config.PostgreSQL, user, dump.DB, dump.Path)
-	fmt.Println(cmd)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
