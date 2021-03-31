@@ -59,7 +59,7 @@ func (ms MSSQL) Export(dump config.Config) error {
 
 	if dump.Path == "." {
 		today := time.Now().UTC().UnixNano()
-		p := util.GetMSSQLBackupDirectory()
+		p := util.GetBackupDirectory()
 		filename := fmt.Sprintf("%s/%d.backup", p, today)
 		location = filename
 	} else {

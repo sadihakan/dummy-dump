@@ -1,4 +1,4 @@
-//+build windows
+//+build windows,!linux
 package util
 
 import (
@@ -12,7 +12,7 @@ import (
 
 //The function below is for Windows systems only
 //GetMSSQLBackupDirectory ...
-func GetMSSQLBackupDirectory() string{
+func GetBackupDirectory() string{
 	cmd := exec.Command("reg", "query", "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\MICROSOFT SQL SERVER", "/s", "/v", "/f", "BackupDirectory", "/k")
 	var outb bytes.Buffer
 	cmd.Stderr = os.Stderr
