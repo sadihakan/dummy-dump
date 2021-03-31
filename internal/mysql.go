@@ -2,6 +2,7 @@ package internal
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
 	"io/ioutil"
@@ -36,16 +37,17 @@ func (m MySQL) Check() error {
 func (m MySQL) Export(dump config.Config) error {
 	filename := fmt.Sprintf("%d.backup", time.Now().UTC().UnixNano())
 	cmd := CreateExportCommand(dump)
-	var outb bytes.Buffer
-	cmd.Stderr = os.Stderr
+	fmt.Println(cmd)
+	var outb, errBuf bytes.Buffer
+	cmd.Stderr = &errBuf
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = &outb
 	err := cmd.Run()
 	if err != nil {
-		return err
+		return errors.New(errBuf.String())
 	}
 
-	err = ioutil.WriteFile(filename,outb.Bytes(),0644)
+	err = ioutil.WriteFile(filename, outb.Bytes(), 0644)
 	return err
 }
 
