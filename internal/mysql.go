@@ -35,7 +35,7 @@ func (m MySQL) Check() error {
 
 func (m MySQL) Export(dump config.Config) error {
 	filename := fmt.Sprintf("%d.backup", time.Now().UTC().UnixNano())
-	cmd := CreateExportCommand(dump.BinaryPath, config.MySQL, dump.User, dump.DB, dump.Path, dump.BackupName)
+	cmd := CreateExportCommand(dump)
 	var outb bytes.Buffer
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
@@ -50,7 +50,7 @@ func (m MySQL) Export(dump config.Config) error {
 }
 
 func (m MySQL) Import(dump config.Config) error {
-	cmd := CreateImportCommand(dump.BinaryPath, config.MySQL, dump.User, dump.DB, dump.Path)
+	cmd := CreateImportCommand(dump)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

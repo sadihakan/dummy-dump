@@ -33,6 +33,11 @@ func main() {
 	flag.Parse()
 
 
+	password, err := util.GetPassword()
+
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	dumpConfig := config.Config{
 		Source:     config.SourceType(sourceType),
@@ -46,8 +51,9 @@ func main() {
 		BackupName: backupName,
 	}
 
+	dumpConfig.Password = password
+
 	var dump internal.Dump
-	var err error
 
 	switch sourceType {
 	case "postgres":
@@ -56,7 +62,7 @@ func main() {
 			panic(err)
 		}
 		dumpConfig.BinaryPath=binaryPath
-		if err := dumpConfig.CheckConfigPostgreSQL(); err != nil {
+		if err = dumpConfig.CheckConfigPostgreSQL(); err != nil {
 			panic(err)
 		}
 
@@ -74,13 +80,7 @@ func main() {
 		dump = internal.MySQL{}
 
 	case "mssql":
-		password, err := util.GetPassword()
 
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		dumpConfig.Password = password
 
 		if err := dumpConfig.CheckConfigMsSQL(); err != nil {
 			panic(err)

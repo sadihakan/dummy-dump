@@ -11,11 +11,11 @@ import (
 
 const (
 	//pgDatabase     = "--dbname=postgres"
-	pgFlagDatabase      = "-d"
-	pgFlagFileName      = "-f"
+	pgFlagDatabase       = "-d"
+	pgFlagFileName       = "-f"
 	pgFlagCreateDatabase = "-C"
-	pgFlagCreate        = "--create"
-	pgFlatFormat        = "--format=c"
+	pgFlagCreate         = "--create"
+	pgFlagFormat         = "--format=c"
 
 	//pgRestore="pg_restore"
 	//pgDump="pg_dump"
@@ -43,35 +43,37 @@ func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
 }
 
 // CreateExportCommand ...
-func CreateExportCommand(binaryPath string, sourceType config.SourceType, user string, database string, path string, backupName string) *exec.Cmd {
-	return exec.Command(binaryPath, getExportCommandArg(sourceType, user, database, path, backupName)...)
+func CreateExportCommand(cfg config.Config) *exec.Cmd {
+	return exec.Command(cfg.BinaryPath, getExportCommandArg(cfg)...)
 }
 
 // CreateImportCommand ...
-func CreateImportCommand(binaryPath string, sourceType config.SourceType, user string, database string, path string) *exec.Cmd {
-	return exec.Command(binaryPath, getImportCommandArg(sourceType, user, database, path)...)
+func CreateImportCommand(cfg config.Config) *exec.Cmd {
+	return exec.Command(cfg.BinaryPath, getImportCommandArg(cfg)...)
 }
 
 // getImportCommandArg ...
-func getImportCommandArg(sourceType config.SourceType, user string, database, path string) (arg []string) {
-	switch sourceType {
+func getImportCommandArg(cfg config.Config) (arg []string) {
+	switch cfg.Source {
 	case config.PostgreSQL:
-		arg = []string{user, pgFlagCreateDatabase, pgFlagDatabase, database, pgFlagCreate, path}
+		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
+		arg = []string{dns, pgFlagCreateDatabase, pgFlagCreate, cfg.Path}
 	case config.MySQL:
-		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database, mysqlFlagExecute, "source " + path}
+		arg = []string{mysqlFlagUser, cfg.User, mysqlFlagPassword, cfg.Password, cfg.DB, mysqlFlagExecute, "source " + cfg.Path}
 
 	}
 	return arg
 }
 
 // getExportCommandArg ...
-func getExportCommandArg(sourceType config.SourceType, user string, database string, path string, backupName string) (arg []string) {
-	filename := fmt.Sprintf("%s/%s.backup", path, backupName)
-	switch sourceType {
+func getExportCommandArg(cfg config.Config) (arg []string) {
+	filename := fmt.Sprintf("%s/%s.backup", cfg.Path, cfg.BackupName)
+	switch cfg.Source {
 	case config.PostgreSQL:
-		arg = []string{user, database, pgFlagFileName, filename, pgFlagCreate, pgFlatFormat}
+		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
+		arg = []string{dns, pgFlagFileName, filename, pgFlagCreate, pgFlagFormat}
 	case config.MySQL:
-		arg = []string{mysqlFlagUser, user, mysqlFlagPassword, database}
+		arg = []string{mysqlFlagUser, cfg.User, mysqlFlagPassword, cfg.Password, cfg.DB}
 	}
 	return arg
 }

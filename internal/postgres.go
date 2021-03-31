@@ -3,7 +3,6 @@ package internal
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
 	"os"
 )
@@ -28,10 +27,7 @@ func (p Postgres) Check() error {
 func (p Postgres) Export(dump config.Config) error {
 	var out, errBuf bytes.Buffer
 
-	user := fmt.Sprintf("--username=%s", dump.User)
-	database := fmt.Sprintf("--dbname=%s", dump.DB)
-
-	cmd := CreateExportCommand(dump.BinaryPath, config.PostgreSQL, user, database, dump.Path, dump.BackupName)
+	cmd := CreateExportCommand(dump)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
@@ -46,8 +42,7 @@ func (p Postgres) Export(dump config.Config) error {
 func (p Postgres) Import(dump config.Config) error {
 	var out, errBuf bytes.Buffer
 
-	user := fmt.Sprintf("--username=%s", dump.User)
-	cmd := CreateImportCommand(dump.BinaryPath, config.PostgreSQL, user, dump.DB, dump.Path)
+	cmd := CreateImportCommand(dump)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
