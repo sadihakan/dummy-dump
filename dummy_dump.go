@@ -70,7 +70,6 @@ func (dd *DummyDump) Import() *DummyDump {
 
 func (dd *DummyDump) Export() *DummyDump {
 	dumpConfig := dd.c
-
 	err := dd.dump.Export(*dumpConfig)
 
 	if err != nil {

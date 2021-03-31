@@ -6,14 +6,16 @@ import (
 )
 
 func main() {
-	dd, err := dummydump.New(&config.Config{
-		Source:     config.PostgreSQL,
-		Import:     true,
-		Export:     false,
-		User:       "sadihakan",
-		Path:       "/path",
-		DB:         "db",
-		BinaryPath: "/binaryPath",
+	dd , err:= dummydump.New(&config.Config{
+		Source:     "postgres",
+		Import:     false,
+		Export:     true,
+		User:       "hakankosanoglu",
+		Password:   "",
+		Path:       "",
+		DB:         "testt",
+		BinaryPath: "/usr/local/opt/postgresql@12/bin/pg_dump",
+		BackupName: "hakan",
 	})
 
 	if err != nil {
