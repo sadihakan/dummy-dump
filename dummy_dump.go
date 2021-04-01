@@ -43,6 +43,13 @@ func (dd *DummyDump) SetBinaryPath(binaryPath string) {
 	dd.c.BinaryPath = binaryPath
 }
 
+// SetBinaryPath ..
+func (dd *DummyDump) SetBinaryConfig(source config.SourceType, importArg bool, exportArg bool) {
+	dd.c.Source = source
+	dd.c.Import = importArg
+	dd.c.Export = exportArg
+}
+
 func (dd *DummyDump) configParser() (err error) {
 	switch dd.c.Source {
 	case config.PostgreSQL:
