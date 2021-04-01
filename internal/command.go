@@ -87,7 +87,7 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 
 // getExportCommandArg ...
 func getExportCommandArg(cfg config.Config) (arg []string) {
-	filename := fmt.Sprintf("%s/%s.backup", cfg.Path, cfg.BackupName)
+	filename := fmt.Sprintf("%s.backup", cfg.BackupName)
 	switch cfg.Source {
 	case config.PostgreSQL:
 		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)

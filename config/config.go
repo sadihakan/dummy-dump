@@ -2,8 +2,6 @@ package config
 
 import (
 	"github.com/sadihakan/dummy-dump/errors"
-	"strconv"
-	"time"
 )
 
 type Config struct {
@@ -41,10 +39,6 @@ func (c *Config) checkAll() error {
 
 	if c.Export && c.Path == "" {
 		c.Path = "."
-	}
-
-	if c.BackupName == "" {
-		c.BackupName = strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	}
 
 	return nil

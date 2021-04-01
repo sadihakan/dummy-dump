@@ -3,6 +3,7 @@ package internal
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
 	"os"
 )
@@ -28,6 +29,7 @@ func (p Postgres) Export(dump config.Config) error {
 	var out, errBuf bytes.Buffer
 
 	cmd := CreateExportCommand(dump)
+	fmt.Println(cmd)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
