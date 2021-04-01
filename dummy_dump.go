@@ -15,15 +15,31 @@ type DummyDump struct {
 }
 
 // New ..
-func New(config *config.Config) (*DummyDump, error) {
+func New(cfg ...*config.Config) (*DummyDump, error) {
 	dd := new(DummyDump)
-	dd.c = config
+
+	if len(cfg) > 0 {
+		dd.c = cfg[0]
+	} else {
+		dd.c = new(config.Config)
+	}
 
 	if err := dd.configParser(); err != nil {
 		return nil, err
 	}
 
 	return dd, nil
+}
+
+// SetUser ..
+func (dd *DummyDump) SetUser(username, password string) {
+	dd.c.User = username
+	dd.c.Password = password
+}
+
+// SetBinaryPath ..
+func (dd *DummyDump) SetBinaryPath(binaryPath string) {
+	dd.c.BinaryPath = binaryPath
 }
 
 func (dd *DummyDump) configParser() (err error) {
