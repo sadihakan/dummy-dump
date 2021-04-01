@@ -16,6 +16,8 @@ const (
 	pgFlagCreateDatabase = "-C"
 	pgFlagCreate         = "--create"
 	pgFlagFormat         = "--format=c"
+	pgVersion         = "--version"
+	mysqlVersion         = "--version"
 
 	//pgRestore="pg_restore"
 	//pgDump="pg_dump"
@@ -37,6 +39,11 @@ func CreateImportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
 	return exec.Command(util.Which(), getImportCommand(sourceType)...)
 }
 
+// CreateVersionCommand ...
+func CreateVersionCommand(binaryPath string, sourceType config.SourceType) *exec.Cmd {
+	return exec.Command(binaryPath, getVersionCommandArg(sourceType)...)
+}
+
 // CreateExportBinaryCommand ...
 func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
 	return exec.Command(util.Which(), getExportCommand(sourceType)...)
@@ -50,6 +57,17 @@ func CreateExportCommand(cfg config.Config) *exec.Cmd {
 // CreateImportCommand ...
 func CreateImportCommand(cfg config.Config) *exec.Cmd {
 	return exec.Command(cfg.BinaryPath, getImportCommandArg(cfg)...)
+}
+
+// getVersionCommandArg ...
+func getVersionCommandArg(sourceType config.SourceType) (arg []string) {
+	switch sourceType {
+	case config.PostgreSQL:
+		arg = []string{pgVersion}
+	case config.MySQL:
+		arg = []string{mysqlVersion}
+	}
+	return arg
 }
 
 // getImportCommandArg ...

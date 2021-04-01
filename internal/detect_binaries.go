@@ -9,28 +9,57 @@ import (
 )
 
 // CheckBinary ...
-func CheckBinary(binaryPath string, sourceType config.SourceType, importArg bool, exportArg bool) (string,error) {
+func CheckBinary(binaryPath string, sourceType config.SourceType, importArg bool, exportArg bool) (string, error) {
 	var err error
 	if binaryPath == "" {
 		if importArg {
-			binaryPath,err= checkImport(sourceType)
+			binaryPath, err = checkImport(sourceType)
 			if err != nil {
 				return "", err
 			}
 		}
 
 		if exportArg {
-			binaryPath,err= checkExport(sourceType)
+			binaryPath, err = checkExport(sourceType)
 			if err != nil {
 				return "", err
 			}
 		}
 
 	}
-	return binaryPath,nil
+	return binaryPath, nil
 }
 
-func checkImport(sourceType config.SourceType) (string,error) {
+// CheckVersion ...
+func CheckVersion(binaryPath string, sourceType config.SourceType) (string, error) {
+	version, err := checkVersion(binaryPath, sourceType)
+
+	if err != nil {
+		return "", err
+	}
+
+	return version, nil
+}
+
+func checkVersion(binaryPath string, sourceType config.SourceType) (string, error) {
+	var out bytes.Buffer
+	var cmd *exec.Cmd
+
+	cmd = CreateVersionCommand(binaryPath, sourceType)
+
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = &out
+	err := cmd.Run()
+
+	if err != nil {
+		return "", err
+	}
+	lines := strings.Split(out.String(), "\n")
+	return strings.TrimSpace(lines[0]), nil
+}
+
+func checkImport(sourceType config.SourceType) (string, error) {
 	var out bytes.Buffer
 	var cmd *exec.Cmd
 
@@ -42,13 +71,13 @@ func checkImport(sourceType config.SourceType) (string,error) {
 	err := cmd.Run()
 
 	if err != nil {
-		return "",err
+		return "", err
 	}
 	lines := strings.Split(out.String(), "\n")
-	return strings.TrimSpace(lines[0]),nil
+	return strings.TrimSpace(lines[0]), nil
 }
 
-func checkExport(sourceType config.SourceType)  (string,error) {
+func checkExport(sourceType config.SourceType) (string, error) {
 	var out bytes.Buffer
 	var cmd *exec.Cmd
 
@@ -60,9 +89,9 @@ func checkExport(sourceType config.SourceType)  (string,error) {
 	err := cmd.Run()
 
 	if err != nil {
-		return "",err
+		return "", err
 	}
 
 	lines := strings.Split(out.String(), "\n")
-	return strings.TrimSpace(lines[0]),nil
+	return strings.TrimSpace(lines[0]), nil
 }

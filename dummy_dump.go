@@ -92,3 +92,15 @@ func (dd *DummyDump) Run() (*DummyDump, error) {
 
 	return dd, nil
 }
+
+func (dd *DummyDump) GetBinary() (binaryPath string, version string) {
+	dumpConfig := dd.c
+	binaryPath, err := internal.CheckBinary("", dumpConfig.Source, dumpConfig.Import, dumpConfig.Export)
+	version, err = internal.CheckVersion(binaryPath, dumpConfig.Source)
+
+	if err != nil {
+		dd.Error = err
+	}
+
+	return binaryPath, version
+}

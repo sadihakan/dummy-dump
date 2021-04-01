@@ -1,26 +1,30 @@
 package main
 
 import (
+	"fmt"
 	dummydump "github.com/sadihakan/dummy-dump"
 	"github.com/sadihakan/dummy-dump/config"
 )
 
 func main() {
 	dd , err:= dummydump.New(&config.Config{
-		Source:     "mysql",
+		Source:     "postgres",
 		Import:     false,
 		Export:     true,
-		User:       "testuser",
-		Password:   "123456",
+		User:       "hakankosanoglu",
+		Password:   "",
 		Path:       "",
-		DB:         "deneme",
-		BinaryPath: "/usr/bin/mysqldump",
-		BackupName: "deneme",
+		DB:         "test",
+		BinaryPath: "/usr/local/opt/postgresql@12/bin/pg_dump",
+		BackupName: "test",
 	})
 
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println(dd.GetBinary())
+
 
 	if _, err = dd.Check().Export().Run(); err != nil {
 		panic(err)
