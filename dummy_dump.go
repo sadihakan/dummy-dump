@@ -20,12 +20,13 @@ func New(cfg ...*config.Config) (*DummyDump, error) {
 
 	if len(cfg) > 0 {
 		dd.c = cfg[0]
+
+		if err := dd.configParser(); err != nil {
+			return nil, err
+		}
+
 	} else {
 		dd.c = new(config.Config)
-	}
-
-	if err := dd.configParser(); err != nil {
-		return nil, err
 	}
 
 	return dd, nil
