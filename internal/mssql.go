@@ -53,6 +53,11 @@ func (ms MSSQL) Check() error {
 	return nil
 }
 
+func (ms MSSQL) CheckPath(dump config.Config) error {
+	return nil
+}
+
+
 func (ms MSSQL) Export(dump config.Config) error {
 	db, err := ms.NewDB(dump)
 	var location string
