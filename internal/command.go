@@ -30,8 +30,8 @@ const (
 )
 
 // CreateCheckBinaryCommand ...
-func CreateCheckBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return exec.Command(util.Which(), getCheckCommand(sourceType)...)
+func CreateCheckBinaryCommand(cfg config.Config) *exec.Cmd {
+	return exec.Command(util.Which(), getCheckCommand(cfg)...)
 }
 
 // CreateImportBinaryCommand ...
@@ -101,8 +101,14 @@ func getExportCommandArg(cfg config.Config) (arg []string) {
 }
 
 // getCheckCommand ...
-func getCheckCommand(sourceType config.SourceType) (command []string) {
-	switch sourceType {
+func getCheckCommand(cfg config.Config) (command []string) {
+
+	fmt.Println(cfg.BinaryPath)
+	if cfg.BinaryPath != "" {
+		return []string{cfg.BinaryPath}
+	}
+
+	switch cfg.Source {
 	case config.PostgreSQL:
 		switch runtime.GOOS {
 		case "darwin":

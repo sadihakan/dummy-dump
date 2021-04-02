@@ -25,7 +25,7 @@ type MySQL struct {
 }
 
 func (m MySQL) Check() error {
-	cmd := CreateCheckBinaryCommand(config.MySQL)
+	cmd := CreateCheckBinaryCommand(config.Config{Source: config.MySQL})
 	err := cmd.Run()
 	if err != nil {
 		_, _ = os.Stderr.WriteString(err.Error())

@@ -13,7 +13,8 @@ type Postgres struct {
 }
 
 func (p Postgres) Check() error {
-	cmd := CreateCheckBinaryCommand(config.PostgreSQL)
+	cmd := CreateCheckBinaryCommand(config.Config{Source: config.PostgreSQL})
+	fmt.Println(cmd)
 	var out, errBuf bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
