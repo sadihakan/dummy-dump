@@ -25,11 +25,23 @@ type MySQL struct {
 }
 
 func (m MySQL) Check() error {
-	cmd := CreateCheckBinaryCommand(config.Config{Source: config.MySQL})
+	cmd := CreateCheckBinaryCommand(config.MySQL)
 	err := cmd.Run()
 	if err != nil {
 		_, _ = os.Stderr.WriteString(err.Error())
 		return err
+	}
+	return nil
+}
+
+func (p MySQL) CheckPath(dump config.Config) error {
+	cmd := CreateCheckBinaryPathCommand(dump)
+	var out, errBuf bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &errBuf
+	err := cmd.Run()
+	if err != nil {
+		return errors.New("path does not located")
 	}
 	return nil
 }

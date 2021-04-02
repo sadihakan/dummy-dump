@@ -13,8 +13,7 @@ type Postgres struct {
 }
 
 func (p Postgres) Check() error {
-	cmd := CreateCheckBinaryCommand(config.Config{Source: config.PostgreSQL})
-	fmt.Println(cmd)
+	cmd := CreateCheckBinaryCommand(config.PostgreSQL)
 	var out, errBuf bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
@@ -22,6 +21,19 @@ func (p Postgres) Check() error {
 	if err != nil {
 		_, _ = os.Stderr.WriteString(err.Error())
 		return errors.New(errBuf.String())
+	}
+	return nil
+}
+
+func (p Postgres) CheckPath(dump config.Config) error {
+	cmd := CreateCheckBinaryPathCommand(dump)
+	fmt.Println(cmd)
+	var out, errBuf bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &errBuf
+	err := cmd.Run()
+	if err != nil {
+		return errors.New("path does not located")
 	}
 	return nil
 }

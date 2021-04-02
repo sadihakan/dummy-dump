@@ -37,14 +37,14 @@ func (dd *DummyDump) SetUser(username, password string, sourceType config.Source
 	dd.c.Source = sourceType
 	dd.c.User = username
 	dd.c.Password = password
-	_ = dd.configParserWithoutCheck()
+	dd.configParserWithoutCheck()
 }
 
 // SetBinaryPath ..
 func (dd *DummyDump) SetBinaryPath(binaryPath string, sourceType config.SourceType) {
 	dd.c.Source = sourceType
 	dd.c.BinaryPath = binaryPath
-	_ = dd.configParserWithoutCheck()
+	dd.configParserWithoutCheck()
 }
 
 // SetBinaryPath ..
@@ -54,7 +54,7 @@ func (dd *DummyDump) SetBinaryConfig(source config.SourceType, importArg bool, e
 	dd.c.Export = exportArg
 }
 
-func (dd *DummyDump) configParserWithoutCheck() (err error) {
+func (dd *DummyDump) configParserWithoutCheck() {
 	switch dd.c.Source {
 	case config.PostgreSQL:
 		dd.dump = internal.Postgres{}
@@ -65,10 +65,8 @@ func (dd *DummyDump) configParserWithoutCheck() (err error) {
 	case config.MSSQL:
 		dd.dump = internal.MSSQL{}
 	default:
-		err = errors.New("not implemented")
+		panic(errors.New("not implemented"))
 	}
-
-	return err
 }
 
 func (dd *DummyDump) configParser() (err error) {
@@ -126,6 +124,13 @@ func (dd *DummyDump) Export() *DummyDump {
 
 func (dd *DummyDump) Check() *DummyDump {
 	dd.Error = dd.dump.Check()
+
+	return dd
+}
+
+func (dd *DummyDump) CheckPath() *DummyDump {
+	dumpConfig := dd.c
+	dd.Error = dd.dump.CheckPath(*dumpConfig)
 
 	return dd
 }
