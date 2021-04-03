@@ -83,7 +83,7 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 		arg = []string{dns, pgFlagCreateDatabase, pgFlagCreate, cfg.Path}
 	case config.MySQL:
 		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
-		password := fmt.Sprintf("%s=%s", mysqlFlagPassword, cfg.Password)
+		password := fmt.Sprintf("%s=\"%s\"", mysqlFlagPassword, cfg.Password)
 		arg = []string{user, password, cfg.DB, mysqlFlagExecute, "source " + cfg.Path}
 
 	}
@@ -99,7 +99,7 @@ func getExportCommandArg(cfg config.Config) (arg []string) {
 		arg = []string{dns, pgFlagFileName, filename, pgFlagCreate, pgFlagFormat}
 	case config.MySQL:
 		user := fmt.Sprintf("%s%s", mysqlFlagUser, cfg.User)
-		password := fmt.Sprintf("%s%s", mysqlFlagPassword, cfg.Password)
+		password := fmt.Sprintf("%s\"%s\"", mysqlFlagPassword, cfg.Password)
 		arg = []string{user,password, cfg.DB}
 	}
 	return arg
