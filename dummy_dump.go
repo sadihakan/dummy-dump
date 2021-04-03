@@ -41,9 +41,11 @@ func (dd *DummyDump) SetUser(username, password string, sourceType config.Source
 }
 
 // SetBinaryPath ..
-func (dd *DummyDump) SetBinaryPath(binaryPath string, sourceType config.SourceType) {
+func (dd *DummyDump) SetBinaryPath(binaryPath string, sourceType config.SourceType, importArg bool, exportArg bool) {
 	dd.c.Source = sourceType
 	dd.c.BinaryPath = binaryPath
+	dd.c.Export = exportArg
+	dd.c.Import = importArg
 	dd.configParserWithoutCheck()
 }
 
@@ -145,7 +147,7 @@ func (dd *DummyDump) Run() (*DummyDump, error) {
 
 func (dd *DummyDump) GetBinary() (binaryPath string, version string) {
 	dumpConfig := dd.c
-	binaryPath, err := internal.CheckBinary("", dumpConfig.Source, dumpConfig.Import, dumpConfig.Export)
+	binaryPath, err := internal.CheckBinary(dumpConfig.BinaryPath, dumpConfig.Source, dumpConfig.Import, dumpConfig.Export)
 	version, err = internal.CheckVersion(binaryPath, dumpConfig.Source)
 
 	if err != nil {
