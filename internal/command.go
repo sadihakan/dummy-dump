@@ -81,7 +81,7 @@ func getVersionCommandArg(sourceType config.SourceType) (arg []string) {
 // getImportCommandArg ...
 func getImportCommandArg(cfg config.Config) (arg []string) {
 	host := fmt.Sprintf("%s%s", host, cfg.Host)
-	port := fmt.Sprintf("%s%s", port, cfg.Port)
+	port := fmt.Sprintf("%s%d", port, cfg.Port)
 	switch cfg.Source {
 	case config.PostgreSQL:
 		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
@@ -99,7 +99,7 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 func getExportCommandArg(cfg config.Config) (arg []string) {
 	filename := fmt.Sprintf("%s", cfg.BackupName)
 	host := fmt.Sprintf("%s%s", host, cfg.Host)
-	port := fmt.Sprintf("%s%s", port, cfg.Port)
+	port := fmt.Sprintf("%s%d", port, cfg.Port)
 	switch cfg.Source {
 	case config.PostgreSQL:
 		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
