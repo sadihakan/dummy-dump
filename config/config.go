@@ -14,6 +14,8 @@ type Config struct {
 	DB         string
 	BinaryPath string
 	BackupName string
+	Host       string
+	Port       string
 }
 
 func (c *Config) checkAll() error {
