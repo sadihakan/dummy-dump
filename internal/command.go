@@ -106,9 +106,9 @@ func getExportCommandArg(cfg config.Config) (arg []string) {
 		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
 		arg = []string{dns, host, port, pgFlagCreate, pgFlagFormat, pgFlagFileName, filename}
 	case config.MySQL:
-		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
-		password := fmt.Sprintf("%s=\"%s\"", mysqlFlagPassword, cfg.Password)
-		resultFile := fmt.Sprintf("%s=%s", mysqlFlagResultFile, filename)
+		user := fmt.Sprintf(`%s=%s`, mysqlFlagUser, cfg.User)
+		password := fmt.Sprintf(`%s='%s'`, mysqlFlagPassword, cfg.Password)
+		resultFile := fmt.Sprintf(`%s=%s`, mysqlFlagResultFile, filename)
 		arg = []string{user, password, host, port, cfg.DB, resultFile}
 	}
 	return arg
