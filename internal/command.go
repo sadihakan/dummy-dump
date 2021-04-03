@@ -81,7 +81,7 @@ func getVersionCommandArg(sourceType config.SourceType) (arg []string) {
 func getImportCommandArg(cfg config.Config) (arg []string) {
 	switch cfg.Source {
 	case config.PostgreSQL:
-		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
+		dns := fmt.Sprintf(`user=%s password=%s dbname=%s --host=%s --port=%s`, cfg.User, cfg.Password, cfg.DB, cfg.Host, cfg.Port)
 		arg = []string{dns, pgFlagCreateDatabase, pgFlagCreate, cfg.Path}
 	case config.MySQL:
 		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
@@ -97,7 +97,7 @@ func getExportCommandArg(cfg config.Config) (arg []string) {
 	filename := fmt.Sprintf("%s", cfg.BackupName)
 	switch cfg.Source {
 	case config.PostgreSQL:
-		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
+		dns := fmt.Sprintf(`user=%s password=%s dbname=%s --host=%s --port=%s`, cfg.User, cfg.Password, cfg.DB, cfg.Host, cfg.Port)
 		arg = []string{dns, pgFlagFileName, filename, pgFlagCreate, pgFlagFormat}
 	case config.MySQL:
 
