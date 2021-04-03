@@ -25,6 +25,8 @@ const (
 	mysqlFlagUser     = "-u"
 	mysqlFlagPassword = "-p"
 	mysqlFlagExecute  = "-e"
+	mysqlHost="--host="
+	mysqlPort="--port="
 	//mysqlImport="mysql"
 	//mysqlDump="mysqldump"
 )
@@ -98,9 +100,12 @@ func getExportCommandArg(cfg config.Config) (arg []string) {
 		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
 		arg = []string{dns, pgFlagFileName, filename, pgFlagCreate, pgFlagFormat}
 	case config.MySQL:
+
 		user := fmt.Sprintf("%s%s", mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf("%s\"%s\"", mysqlFlagPassword, cfg.Password)
-		arg = []string{user,password, cfg.DB}
+		host:=fmt.Sprintf("%s%s",mysqlHost,cfg.Host)
+		port:=fmt.Sprintf("%s%s",mysqlPort,cfg.Port)
+		arg = []string{user,password,host,port,cfg.DB}
 	}
 	return arg
 }
