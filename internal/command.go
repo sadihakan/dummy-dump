@@ -21,10 +21,11 @@ const (
 
 	//pgRestore="pg_restore"
 	//pgDump="pg_dump"
-	mysqlDatabase     = "deneme"
-	mysqlFlagUser     = "-u"
-	mysqlFlagPassword = "-p"
-	mysqlFlagExecute  = "-e"
+	mysqlDatabase       = "deneme"
+	mysqlFlagUser       = "-u"
+	mysqlFlagPassword   = "-p"
+	mysqlFlagExecute    = "-e"
+	mysqlFlagResultFile = "--result-file"
 	//mysqlImport="mysql"
 	//mysqlDump="mysqldump"
 
@@ -107,7 +108,8 @@ func getExportCommandArg(cfg config.Config) (arg []string) {
 	case config.MySQL:
 		user := fmt.Sprintf("%s%s", mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf("%s\"%s\"", mysqlFlagPassword, cfg.Password)
-		arg = []string{user, password, host, port, cfg.DB}
+		resultFile := fmt.Sprintf("%s=%s", mysqlFlagResultFile, filename)
+		arg = []string{user, password, host, port, cfg.DB, resultFile}
 	}
 	return arg
 }
