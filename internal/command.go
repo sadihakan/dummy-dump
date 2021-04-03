@@ -25,10 +25,11 @@ const (
 	mysqlFlagUser     = "-u"
 	mysqlFlagPassword = "-p"
 	mysqlFlagExecute  = "-e"
-	mysqlHost="--host="
-	mysqlPort="--port="
 	//mysqlImport="mysql"
 	//mysqlDump="mysqldump"
+
+	host="--host="
+	port="--port="
 )
 
 // CreateCheckBinaryCommand ...
@@ -79,15 +80,15 @@ func getVersionCommandArg(sourceType config.SourceType) (arg []string) {
 
 // getImportCommandArg ...
 func getImportCommandArg(cfg config.Config) (arg []string) {
+	host:=fmt.Sprintf("%s%s",host,cfg.Host)
+	port:=fmt.Sprintf("%s%s",port,cfg.Port)
 	switch cfg.Source {
 	case config.PostgreSQL:
-		dns := fmt.Sprintf(`user=%s password=%s dbname=%s --host=%s --port=%s`, cfg.User, cfg.Password, cfg.DB, cfg.Host, cfg.Port)
-		arg = []string{dns, pgFlagCreateDatabase, pgFlagCreate, cfg.Path}
+		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
+		arg = []string{dns, host, port, pgFlagCreateDatabase, pgFlagCreate, cfg.Path}
 	case config.MySQL:
 		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf("%s=\"%s\"", mysqlFlagPassword, cfg.Password)
-		host:=fmt.Sprintf("%s%s",mysqlHost,cfg.Host)
-		port:=fmt.Sprintf("%s%s",mysqlPort,cfg.Port)
 		arg = []string{user, password, host,port, cfg.DB, mysqlFlagExecute, "source " + cfg.Path}
 
 
@@ -98,16 +99,15 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 // getExportCommandArg ...
 func getExportCommandArg(cfg config.Config) (arg []string) {
 	filename := fmt.Sprintf("%s", cfg.BackupName)
+	host:=fmt.Sprintf("%s%s",host,cfg.Host)
+	port:=fmt.Sprintf("%s%s",port,cfg.Port)
 	switch cfg.Source {
 	case config.PostgreSQL:
-		dns := fmt.Sprintf(`user=%s password=%s dbname=%s --host=%s --port=%s`, cfg.User, cfg.Password, cfg.DB, cfg.Host, cfg.Port)
-		arg = []string{dns, pgFlagFileName, filename, pgFlagCreate, pgFlagFormat}
+		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
+		arg = []string{dns, host, port, pgFlagFileName, filename, pgFlagCreate, pgFlagFormat}
 	case config.MySQL:
-
 		user := fmt.Sprintf("%s%s", mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf("%s\"%s\"", mysqlFlagPassword, cfg.Password)
-		host:=fmt.Sprintf("%s%s",mysqlHost,cfg.Host)
-		port:=fmt.Sprintf("%s%s",mysqlPort,cfg.Port)
 		arg = []string{user,password,host,port,cfg.DB}
 	}
 	return arg
