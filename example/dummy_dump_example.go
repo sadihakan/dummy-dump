@@ -12,12 +12,10 @@ func main() {
 		panic(err)
 	}
 
-	dd.SetBinaryPath("/usr/bin/psql", config.PostgreSQL)
+	dd.SetBinaryPath("/usr/bin/psql", config.PostgreSQL, false, true)
 
 	if _, err = dd.CheckPath().Run(); err != nil {
 		panic(err)
 	}
 
 }
-
-
