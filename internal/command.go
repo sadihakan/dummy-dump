@@ -16,7 +16,7 @@ const (
 	pgFlagCreateDatabase = "-C"
 	pgFlagCreate         = "--create"
 	pgFlagFormat         = "--format=c"
-	pgVersion         = "--version"
+	pgVersion            = "--version"
 	mysqlVersion         = "--version"
 
 	//pgRestore="pg_restore"
@@ -27,6 +27,9 @@ const (
 	mysqlFlagExecute  = "-e"
 	//mysqlImport="mysql"
 	//mysqlDump="mysqldump"
+
+	host = "--host="
+	port = "--port="
 )
 
 // CreateCheckBinaryCommand ...
@@ -77,14 +80,16 @@ func getVersionCommandArg(sourceType config.SourceType) (arg []string) {
 
 // getImportCommandArg ...
 func getImportCommandArg(cfg config.Config) (arg []string) {
+	host := fmt.Sprintf("%s%s", host, cfg.Host)
+	port := fmt.Sprintf("%s%s", port, cfg.Port)
 	switch cfg.Source {
 	case config.PostgreSQL:
 		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
-		arg = []string{dns, pgFlagCreateDatabase, pgFlagCreate, cfg.Path}
+		arg = []string{dns, host, port, pgFlagCreateDatabase, pgFlagCreate, cfg.Path}
 	case config.MySQL:
 		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf("%s=\"%s\"", mysqlFlagPassword, cfg.Password)
-		arg = []string{user, password, cfg.DB, mysqlFlagExecute, "source " + cfg.Path}
+		arg = []string{user, password, host, port, cfg.DB, mysqlFlagExecute, "source " + cfg.Path}
 
 	}
 	return arg
@@ -93,14 +98,16 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 // getExportCommandArg ...
 func getExportCommandArg(cfg config.Config) (arg []string) {
 	filename := fmt.Sprintf("%s", cfg.BackupName)
+	host := fmt.Sprintf("%s%s", host, cfg.Host)
+	port := fmt.Sprintf("%s%s", port, cfg.Port)
 	switch cfg.Source {
 	case config.PostgreSQL:
 		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
-		arg = []string{dns, pgFlagFileName, filename, pgFlagCreate, pgFlagFormat}
+		arg = []string{dns, host, port, pgFlagCreate, pgFlagFormat, pgFlagFileName, filename}
 	case config.MySQL:
 		user := fmt.Sprintf("%s%s", mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf("%s\"%s\"", mysqlFlagPassword, cfg.Password)
-		arg = []string{user,password, cfg.DB}
+		arg = []string{user, password, host, port, cfg.DB}
 	}
 	return arg
 }
