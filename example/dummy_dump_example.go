@@ -6,15 +6,27 @@ import (
 )
 
 func main() {
-	dd, err := dummydump.New()
+	dd, err := dummydump.New(&config.Config{
+		Source:     "postgres",
+		Import:     true,
+		Export:     false,
+		User:       "hakankosanoglu",
+		Password:   "",
+		Path:       "/Users/hakankosanoglu/Desktop/backup.backup",
+		DB:         "test",
+		BinaryPath: "/usr/local/opt/postgresql@12/bin/pg_restore",
+		BackupName: "",
+		Host:       "localhost",
+		Port:       5432,
+	})
 
 	if err != nil {
 		panic(err)
 	}
 
-	dd.SetBinaryPath("/usr/bin/psql", config.PostgreSQL, false, true)
+	_, err = dd.Import().Run()
 
-	if _, err = dd.CheckPath().Run(); err != nil {
+	if err != nil {
 		panic(err)
 	}
 
