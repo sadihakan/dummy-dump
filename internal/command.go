@@ -11,13 +11,14 @@ import (
 )
 
 const (
-	//pgDatabase     = "--dbname=postgres"
+	pgDatabase           = "--dbname=postgres"
 	pgFlagDatabase       = "-d"
 	pgFlagFileName       = "-f"
 	pgFlagCreateDatabase = "-C"
 	pgFlagCreate         = "--create"
 	pgFlagFormat         = "--format=c"
 	pgVersion            = "--version"
+	pgFlagPassword       = "-W"
 	mysqlVersion         = "--version"
 
 	//pgRestore="pg_restore"
@@ -99,8 +100,9 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 	port := fmt.Sprintf("%s%d", port, cfg.Port)
 	switch cfg.Source {
 	case config.PostgreSQL:
-		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
-		arg = []string{dns, host, port, pgFlagCreateDatabase, pgFlagCreate, cfg.Path}
+		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
+		password := fmt.Sprintf("%s%s", pgFlagPassword, cfg.Password)
+		arg = []string{user, password, host, port, pgFlagCreate, pgDatabase, cfg.Path}
 	case config.MySQL:
 		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf("%s=%s", mysqlFlagPassword, cfg.Password)
