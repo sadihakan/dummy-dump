@@ -2,8 +2,6 @@ package internal
 
 import (
 	"bytes"
-	"database/sql"
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"os"
@@ -11,28 +9,36 @@ import (
 	"strings"
 )
 
-func mysqlBinaryDirectory() string {
-	connstr := fmt.Sprintf("%s:%s@/%s", "root", "deneme332", "deneme")
-	db, err := sql.Open("mysql", connstr)
-	if err != nil {
-		log.Println(err)
-	}
-	err = db.Ping()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	r, err := db.Query("select @@basedir")
+func mysqlBinaryDirectory() []string {
+	cmd := exec.Command("reg", "query", "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\MySQL AB", "/s", "/v", "/f", "Location", "/k")
+	var outb bytes.Buffer
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = &outb
+	err := cmd.Run()
 	if err != nil {
 		log.Fatalln(err)
 	}
-	var p string
-	for r.Next() {
-		err = r.Scan(&p)
-		if err != nil {
-			log.Fatalln(err)
+	var datas []string
+	var inArray = false
+	lines := strings.Split(outb.String(), "\n")
+	for i := 0; i < len(lines); i++ {
+
+		if strings.Contains(lines[i], "Location") {
+			l := strings.Split(lines[i], "    ")
+			data := strings.TrimSpace(l[3])
+			for _, v := range datas {
+				if data == v {
+					inArray = true
+				}
+			}
+			if !inArray {
+				datas = append(datas, data)
+			}
+			inArray = false
 		}
 	}
-	return p
+	return datas
 }
 
 func postgresqlBinaryDirectories() []string {

@@ -5,6 +5,7 @@ import (
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/util"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 )
@@ -40,7 +41,7 @@ func CreateCheckBinaryCommand(sourceType config.SourceType) *exec.Cmd {
 
 // CreateCheckBinaryPathCommand ...
 func CreateCheckBinaryPathCommand(cfg config.Config) *exec.Cmd {
-	return exec.Command(util.Which(), cfg.BinaryPath)
+	return exec.Command(util.Which(), getCheckBinaryPathCommand(cfg)...)
 }
 
 // CreateImportBinaryCommand ...
@@ -66,6 +67,19 @@ func CreateExportCommand(cfg config.Config) *exec.Cmd {
 // CreateImportCommand ...
 func CreateImportCommand(cfg config.Config) *exec.Cmd {
 	return exec.Command(cfg.BinaryPath, getImportCommandArg(cfg)...)
+}
+
+func getCheckBinaryPathCommand(cfg config.Config) (command []string) {
+	switch runtime.GOOS {
+	case "darwin":
+		command = []string{cfg.BinaryPath}
+	case "linux":
+		command = []string{cfg.BinaryPath}
+	case "windows":
+		path, file := filepath.Split(cfg.BinaryPath)
+		command = []string{"/r", path, file}
+	}
+	return command
 }
 
 // getVersionCommandArg ...
@@ -134,7 +148,7 @@ func getCheckCommand(sourceType config.SourceType) (command []string) {
 		case "linux":
 			command = []string{"mysql"}
 		case "windows":
-			p := strings.TrimSpace(mysqlBinaryDirectory())
+			p := strings.TrimSpace(mysqlBinaryDirectory()[0])
 			command = []string{"/r", p, "mysql"}
 		}
 	}
@@ -161,7 +175,7 @@ func getImportCommand(sourceType config.SourceType) (command []string) {
 		case "linux":
 			command = []string{"mysql"}
 		case "windows":
-			p := strings.TrimSpace(mysqlBinaryDirectory())
+			p := strings.TrimSpace(mysqlBinaryDirectory()[0])
 			command = []string{"/r", p, "mysql"}
 		}
 	}
@@ -188,7 +202,7 @@ func getExportCommand(sourceType config.SourceType) (command []string) {
 		case "linux":
 			command = []string{"mysqldump"}
 		case "windows":
-			p := strings.TrimSpace(mysqlBinaryDirectory())
+			p := strings.TrimSpace(mysqlBinaryDirectory()[0])
 			command = []string{"/r", p, "mysqldump"}
 
 		}
