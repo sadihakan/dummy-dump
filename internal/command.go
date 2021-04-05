@@ -30,8 +30,9 @@ const (
 	//mysqlImport="mysql"
 	//mysqlDump="mysqldump"
 
-	host = "--host="
-	port = "--port="
+	host    = "--host="
+	port    = "--port="
+	noOwner = "-x"
 )
 
 // CreateCheckBinaryCommand ...
@@ -106,7 +107,7 @@ func getExportCommandArg(cfg config.Config) (arg []string) {
 	switch cfg.Source {
 	case config.PostgreSQL:
 		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
-		arg = []string{dns, host, port, pgFlagCreate, pgFlagFormat, pgFlagFileName, filename}
+		arg = []string{dns, host, port, pgFlagCreate, pgFlagFormat, noOwner, pgFlagFileName, filename}
 	case config.MySQL:
 		user := fmt.Sprintf(`%s=%s`, mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf(`%s=%s`, mysqlFlagPassword, cfg.Password)
