@@ -32,7 +32,6 @@ func main() {
 	flag.StringVar(&backupName, "backupName", "", "Backup Name")
 	flag.Parse()
 
-
 	password, err := util.GetPassword()
 
 	if err != nil {
@@ -61,11 +60,10 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		dumpConfig.BinaryPath=binaryPath
+		dumpConfig.BinaryPath = binaryPath
 		if err = dumpConfig.CheckConfigPostgreSQL(); err != nil {
 			panic(err)
 		}
-
 		dump = internal.Postgres{}
 
 	case "mysql":
@@ -73,19 +71,16 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		dumpConfig.BinaryPath=binaryPath
+		dumpConfig.BinaryPath = binaryPath
 		if err := dumpConfig.CheckConfigMySQL(); err != nil {
 			panic(err)
 		}
 		dump = internal.MySQL{}
 
 	case "mssql":
-
-
 		if err := dumpConfig.CheckConfigMsSQL(); err != nil {
 			panic(err)
 		}
-
 		dump = internal.MSSQL{}
 
 	default:

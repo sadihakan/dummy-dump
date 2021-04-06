@@ -6,7 +6,6 @@ import (
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/util"
-	"log"
 	"time"
 
 	"net/url"
@@ -26,7 +25,7 @@ func (ms MSSQL) NewDB(dump config.Config) (*sql.DB, error) {
 	connURL := &url.URL{
 		Scheme:   "sqlserver",
 		User:     url.UserPassword(dump.User, dump.Password),
-		Host:     fmt.Sprintf("%s:%d", "localhost", 1433),
+		Host:     fmt.Sprintf("%s:%d", dump.Host, dump.Port),
 		RawQuery: urlQuery.Encode(),
 		Path:     "/SQLExpress",
 	}
@@ -60,13 +59,18 @@ func (ms MSSQL) CheckPath(dump config.Config) error {
 
 func (ms MSSQL) Export(dump config.Config) error {
 	db, err := ms.NewDB(dump)
+	if err != nil {
+		return err
+	}
+
 	var location string
 
-	if dump.Path == "." {
+	if dump.Path == "." || dump.Path==""|| dump.Path==" " {
 		today := time.Now().UTC().UnixNano()
 		p := util.GetBackupDirectory()
-		filename := fmt.Sprintf("%s/%d.backup", p, today)
+		filename := fmt.Sprintf(`%s\%d.BAK`, p, today)
 		location = filename
+
 	} else {
 		location = dump.Path
 	}
@@ -74,9 +78,10 @@ func (ms MSSQL) Export(dump config.Config) error {
 	exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s'`,
 		dump.DB,
 		location)
+	fmt.Print(exportQuery)
 	_, err = db.Exec(exportQuery)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
 	return nil
 }
