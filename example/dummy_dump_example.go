@@ -11,7 +11,7 @@ func main() {
 		Import:     true,
 		Export:     false,
 		User:       "postgres",
-		Password:   "",
+		Password:   "********",
 		Path:       "/Users/hakankosanoglu/Desktop/backup.backup",
 		DB:         "postgres",
 		BinaryPath: "/usr/local/opt/postgresql@12/bin/pg_restore",
