@@ -56,7 +56,6 @@ func (ms MSSQL) CheckPath(dump config.Config) error {
 	return nil
 }
 
-
 func (ms MSSQL) Export(dump config.Config) error {
 	db, err := ms.NewDB(dump)
 	if err != nil {
@@ -65,14 +64,14 @@ func (ms MSSQL) Export(dump config.Config) error {
 
 	var location string
 
-	if dump.Path == "." || dump.Path==""|| dump.Path==" " {
+	if dump.BackupFilePath == "." || dump.BackupFilePath == "" || dump.BackupFilePath == " " {
 		today := time.Now().UTC().UnixNano()
 		p := util.GetBackupDirectory()
 		filename := fmt.Sprintf(`%s\%d.BAK`, p, today)
 		location = filename
 
 	} else {
-		location = dump.Path
+		location = dump.BackupFilePath
 	}
 
 	exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s'`,
@@ -93,7 +92,7 @@ func (ms MSSQL) Import(dump config.Config) error {
 	}
 	importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s'`,
 		dump.DB,
-		dump.Path)
+		dump.BackupFilePath)
 	_, err = db.Exec(importQuery)
 	if err != nil {
 		return err

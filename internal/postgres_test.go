@@ -30,15 +30,15 @@ func TestExport(t *testing.T) {
 	var dump Dump
 	dump = Postgres{}
 
-	 config := config.Config{
-		Source:     "",
-		Import:     false,
-		Export:     true,
-		User:       "hakankosanoglu",
-		Password:   "",
-		Path:       "",
-		DB:         "test",
-		BinaryPath: "pg_dump",
+	config := config.Config{
+		Source:         "",
+		Import:         false,
+		Export:         true,
+		User:           "hakankosanoglu",
+		Password:       "",
+		BackupFilePath: "",
+		DB:             "test",
+		BinaryPath:     "pg_dump",
 	}
 
 	dump.Export(config)
@@ -49,16 +49,15 @@ func TestExportWithError(t *testing.T) {
 	var dump Dump
 	dump = Postgres{}
 
-
 	config := config.Config{
-		Source:     "",
-		Import:     false,
-		Export:     true,
-		User:       "none",
-		Password:   "",
-		Path:       "",
-		DB:         "test",
-		BinaryPath: "pg_dump",
+		Source:         "",
+		Import:         false,
+		Export:         true,
+		User:           "none",
+		Password:       "",
+		BackupFilePath: "",
+		DB:             "test",
+		BinaryPath:     "pg_dump",
 	}
 
 	dump.Export(config)
@@ -71,16 +70,15 @@ func TestImport(t *testing.T) {
 
 	file := filepath.Join(util.GetDirectory(), "test.backup")
 
-
 	config := config.Config{
-		Source:     "",
-		Import:     true,
-		Export:     false,
-		User:       "hakankosanoglu",
-		Password:   "",
-		Path:       file,
-		DB:         "",
-		BinaryPath: "pg_restore",
+		Source:         "",
+		Import:         true,
+		Export:         false,
+		User:           "hakankosanoglu",
+		Password:       "",
+		BackupFilePath: file,
+		DB:             "",
+		BinaryPath:     "pg_restore",
 	}
 
 	dump.Import(config)
@@ -93,14 +91,14 @@ func TestImportWithError(t *testing.T) {
 	file := "test"
 
 	config := config.Config{
-		Source:     "",
-		Import:     true,
-		Export:     false,
-		User:       "hakankosanoglu",
-		Password:   "",
-		Path:       file,
-		DB:         "",
-		BinaryPath: "pg_restore",
+		Source:         "",
+		Import:         true,
+		Export:         false,
+		User:           "hakankosanoglu",
+		Password:       "",
+		BackupFilePath: file,
+		DB:             "",
+		BinaryPath:     "pg_restore",
 	}
 
 	dump.Import(config)

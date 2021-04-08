@@ -52,7 +52,8 @@ func (p Postgres) Export(dump config.Config) error {
 	}
 
 	if writeFile {
-		if err = ioutil.WriteFile(dump.BackupName, out.Bytes(), 0644); err != nil {
+		filename := fmt.Sprintf("%s/%s",dump.BackupFilePath, dump.BackupName)
+		if err = ioutil.WriteFile(filename, out.Bytes(), 0644); err != nil {
 			return err
 		}
 	}

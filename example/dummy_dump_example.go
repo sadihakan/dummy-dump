@@ -7,17 +7,17 @@ import (
 
 func main() {
 	dd, err := dummydump.New(&config.Config{
-		Source:     "postgres",
-		Import:     true,
-		Export:     false,
-		User:       "postgres",
-		Password:   "********",
-		Path:       "/Users/hakankosanoglu/Desktop/backup.backup",
-		DB:         "postgres",
-		BinaryPath: "/usr/local/opt/postgresql@12/bin/pg_restore",
-		BackupName: "backup.backup",
-		Host:       "localhost",
-		Port:       5432,
+		Source:         "postgres",
+		Import:         true,
+		Export:         false,
+		User:           "postgres",
+		Password:       "********",
+		BackupFilePath: "/Users/hakankosanoglu/Desktop/backup.backup",
+		DB:             "postgres",
+		BinaryPath:     "/usr/local/opt/postgresql@12/bin/pg_restore",
+		BackupName:     "backup.backup",
+		Host:           "localhost",
+		Port:           5432,
 	})
 
 	if err != nil {

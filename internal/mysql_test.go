@@ -24,15 +24,15 @@ func TestMySQL_Import(t *testing.T) {
 	var d Dump
 	d = MySQL{}
 
-	config:= config.Config{
-		Source:     "",
-		Import:     false,
-		Export:     false,
-		User:       "",
-		Password:   "",
-		Path:       "",
-		DB:         "",
-		BinaryPath: "",
+	config := config.Config{
+		Source:         "",
+		Import:         false,
+		Export:         false,
+		User:           "",
+		Password:       "",
+		BackupFilePath: "",
+		DB:             "",
+		BinaryPath:     "",
 	}
 	d.Import(config)
 
@@ -42,15 +42,15 @@ func TestMySQL_ImportWithError(t *testing.T) {
 	var d Dump
 	d = MySQL{}
 
-	config:= config.Config{
-		Source:     "",
-		Import:     false,
-		Export:     false,
-		User:       "",
-		Password:   "",
-		Path:       "",
-		DB:         "",
-		BinaryPath: "",
+	config := config.Config{
+		Source:         "",
+		Import:         false,
+		Export:         false,
+		User:           "",
+		Password:       "",
+		BackupFilePath: "",
+		DB:             "",
+		BinaryPath:     "",
 	}
 	err := d.Import(config)
 
@@ -62,15 +62,15 @@ func TestMySQL_ImportWithError(t *testing.T) {
 func TestMySQL_Export(t *testing.T) {
 	var d Dump
 	d = MySQL{}
-	config:= config.Config{
-		Source:     "",
-		Import:     false,
-		Export:     false,
-		User:       "",
-		Password:   "",
-		Path:       "",
-		DB:         "",
-		BinaryPath: "",
+	config := config.Config{
+		Source:         "",
+		Import:         false,
+		Export:         false,
+		User:           "",
+		Password:       "",
+		BackupFilePath: "",
+		DB:             "",
+		BinaryPath:     "",
 	}
 	d.Export(config)
 
@@ -79,15 +79,15 @@ func TestMySQL_Export(t *testing.T) {
 func TestMySQL_ExportWithError(t *testing.T) {
 	var d Dump
 	d = MySQL{}
-	config:= config.Config{
-		Source:     "",
-		Import:     false,
-		Export:     false,
-		User:       "",
-		Password:   "",
-		Path:       "",
-		DB:         "",
-		BinaryPath: "",
+	config := config.Config{
+		Source:         "",
+		Import:         false,
+		Export:         false,
+		User:           "",
+		Password:       "",
+		BackupFilePath: "",
+		DB:             "",
+		BinaryPath:     "",
 	}
 	err := d.Export(config)
 	if err != nil {

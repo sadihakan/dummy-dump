@@ -5,17 +5,24 @@ import (
 )
 
 type Config struct {
+	//source: mysql-postgres-mssql
 	Source     SourceType
+
+	//methods
 	Import     bool
 	Export     bool
+
+	//database configuration
 	User       string
 	Password   string
-	Path       string
 	DB         string
-	BinaryPath string
-	BackupName string
 	Host       string
-	Port       int64
+	Port       int
+
+	//os configuration
+	BackupFilePath string //path where to save or retrieve
+	BackupName string //name which to save or retrieve
+	BinaryPath string //etc: usr/bin/pg_dump
 }
 
 func (c *Config) checkAll() error {
@@ -27,7 +34,7 @@ func (c *Config) checkAll() error {
 		return errors.New(errors.ConfigUserNil)
 	}
 
-	if c.Import == true && c.Path == "" {
+	if c.Import == true && c.BackupFilePath == "" {
 		return errors.New(errors.ConfigPathNotExist)
 	}
 
@@ -39,8 +46,8 @@ func (c *Config) checkAll() error {
 		return errors.New(errors.ConfigMethodError)
 	}
 
-	if c.Export && c.Path == "" {
-		c.Path = "."
+	if c.Export && c.BackupFilePath == "" {
+		c.BackupFilePath = "."
 	}
 
 	return nil

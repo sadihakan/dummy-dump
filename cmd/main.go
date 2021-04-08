@@ -39,15 +39,15 @@ func main() {
 	}
 
 	dumpConfig := config.Config{
-		Source:     config.SourceType(sourceType),
-		Import:     importArg,
-		Export:     exportArg,
-		User:       user,
-		Path:       path,
-		DB:         db,
-		BinaryPath: binaryPath,
-		Password:   "",
-		BackupName: backupName,
+		Source:         config.SourceType(sourceType),
+		Import:         importArg,
+		Export:         exportArg,
+		User:           user,
+		BackupFilePath: path,
+		DB:             db,
+		BinaryPath:     binaryPath,
+		Password:       "",
+		BackupName:     backupName,
 	}
 
 	dumpConfig.Password = password
