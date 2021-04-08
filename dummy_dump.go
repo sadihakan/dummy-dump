@@ -100,7 +100,7 @@ func (dd *DummyDump) configParser() (err error) {
 func (dd *DummyDump) Import() *DummyDump {
 	dumpConfig := dd.c
 
-	if !util.PathExists(dumpConfig.Path) {
+	if !util.PathExists(dumpConfig.BackupFilePath) {
 		dd.Error = errors.New(errors.ConfigPathNotExist)
 	}
 

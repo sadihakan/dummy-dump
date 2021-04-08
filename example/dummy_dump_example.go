@@ -8,23 +8,23 @@ import (
 func main() {
 	dd, err := dummydump.New(&config.Config{
 		Source:         "postgres",
-		Import:         true,
-		Export:         false,
-		User:           "postgres",
-		Password:       "********",
-		BackupFilePath: "/Users/hakankosanoglu/Desktop/backup.backup",
-		DB:             "postgres",
-		BinaryPath:     "/usr/local/opt/postgresql@12/bin/pg_restore",
-		BackupName:     "backup.backup",
+		Import:         false,
+		Export:         true,
+		User:           "hakankosanoglu",
+		Password:       "",
+		DB:             "test",
 		Host:           "localhost",
 		Port:           5432,
+		BackupFilePath: "",
+		BackupName:     "test.backup",
+		BinaryPath:     "/usr/local/opt/postgresql@12/bin/pg_dump",
 	})
 
 	if err != nil {
 		panic(err)
 	}
 
-	_, err = dd.Import().Run()
+	_, err = dd.Export().Run()
 
 	if err != nil {
 		panic(err)

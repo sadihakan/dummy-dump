@@ -21,7 +21,7 @@ type Config struct {
 
 	//os configuration
 	BackupFilePath string //path where to save or retrieve
-	BackupName string //name which to save or retrieve
+	BackupName string //name which to save or retrieve, don't forget to add .bak or .backup!
 	BinaryPath string //etc: usr/bin/pg_dump
 }
 
