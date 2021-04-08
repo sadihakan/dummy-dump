@@ -6,8 +6,6 @@ import (
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/util"
-	"time"
-
 	"net/url"
 
 	"os"
@@ -65,13 +63,12 @@ func (ms MSSQL) Export(dump config.Config) error {
 	var location string
 
 	if dump.BackupFilePath == "." || dump.BackupFilePath == "" || dump.BackupFilePath == " " {
-		today := time.Now().UTC().UnixNano()
 		p := util.GetBackupDirectory()
-		filename := fmt.Sprintf(`%s\%d.BAK`, p, today)
+		filename := fmt.Sprintf(`%s\%s`, p, dump.BackupName)
 		location = filename
 
 	} else {
-		location = dump.BackupFilePath
+		location = fmt.Sprintf(`%s\%s`, dump.BackupFilePath, dump.BackupName)
 	}
 
 	exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s'`,

@@ -122,7 +122,7 @@ func getExportCommandArg(cfg config.Config) (arg []string, writeFile bool) {
 	case config.PostgreSQL:
 		arg, writeFile = checkOSExportArg(cfg)
 	case config.MySQL:
-		filename := fmt.Sprintf("%s", cfg.BackupName)
+		filename := filepath.Join(cfg.BackupFilePath, cfg.BackupName)
 		user := fmt.Sprintf(`%s=%s`, mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf(`%s=%s`, mysqlFlagPassword, cfg.Password)
 		resultFile := fmt.Sprintf(`%s=%s`, mysqlFlagResultFile, filename)
@@ -215,7 +215,7 @@ func getExportCommand(sourceType config.SourceType) (command []string) {
 }
 
 func checkOSExportArg(cfg config.Config) (arg []string, writeFile bool) {
-	filename := fmt.Sprintf("%s/%s",cfg.BackupFilePath, cfg.BackupName)
+	filename := fmt.Sprintf("%s/%s", cfg.BackupFilePath, cfg.BackupName)
 	switch runtime.GOOS {
 	case "windows":
 		arg, writeFile = []string{fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB)}, true
