@@ -5,7 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
+	"io/ioutil"
 	"os"
+	"os/exec"
+	"runtime"
 )
 
 type Postgres struct {
@@ -41,15 +44,32 @@ func (p Postgres) CheckPath(dump config.Config) error {
 func (p Postgres) Export(dump config.Config) error {
 	var out, errBuf bytes.Buffer
 
-	cmd := CreateExportCommand(dump)
-	fmt.Println(cmd)
-	cmd.Stdout = &out
-	cmd.Stderr = &errBuf
-	err := cmd.Run()
+	switch runtime.GOOS {
+	case "windows":
+		exportArg:=fmt.Sprintf("postgresql://%s:%s@%s:%d/%s",dump.User,dump.Password,dump.Host,dump.Port,dump.DB)
+		cmd:=exec.Command(dump.BinaryPath,exportArg)
+		fmt.Println(cmd)
+		cmd.Stdout = &out
+		cmd.Stderr = &errBuf
+		err := cmd.Run()
+		if err != nil {
+			return errors.New(errBuf.String())
+		}
+		err = ioutil.WriteFile(dump.BackupName, out.Bytes(), 0644)
+		return err
+	default:
+		cmd := CreateExportCommand(dump)
+		fmt.Println(cmd)
+		cmd.Stdout = &out
+		cmd.Stderr = &errBuf
+		err := cmd.Run()
 
-	if err != nil {
-		return errors.New(errBuf.String())
+		if err != nil {
+			return errors.New(errBuf.String())
+		}
+
 	}
+
 
 	return nil
 }
