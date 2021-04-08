@@ -62,8 +62,9 @@ func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
 }
 
 // CreateExportCommand ...
-func CreateExportCommand(cfg config.Config) *exec.Cmd {
-	return exec.Command(cfg.BinaryPath, getExportCommandArg(cfg)...)
+func CreateExportCommand(cfg config.Config) (*exec.Cmd, bool) {
+	arg, writeFile := getExportCommandArg(cfg)
+	return exec.Command(cfg.BinaryPath, arg...), writeFile
 }
 
 // CreateImportCommand ...
@@ -114,21 +115,21 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 }
 
 // getExportCommandArg ...
-func getExportCommandArg(cfg config.Config) (arg []string) {
-	filename := fmt.Sprintf("%s", cfg.BackupName)
+func getExportCommandArg(cfg config.Config) (arg []string, writeFile bool) {
 	host := fmt.Sprintf("%s%s", host, cfg.Host)
 	port := fmt.Sprintf("%s%d", port, cfg.Port)
 	switch cfg.Source {
 	case config.PostgreSQL:
-		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
-		arg = []string{dns, host, port, pgFlagCreate, pgFlagFormat, noOwner, pgFlagFileName, filename}
+		arg, writeFile = checkOSExportArg(cfg)
 	case config.MySQL:
+		filename := fmt.Sprintf("%s", cfg.BackupName)
 		user := fmt.Sprintf(`%s=%s`, mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf(`%s=%s`, mysqlFlagPassword, cfg.Password)
 		resultFile := fmt.Sprintf(`%s=%s`, mysqlFlagResultFile, filename)
 		arg = []string{user, password, host, port, cfg.DB, resultFile}
+		writeFile = false
 	}
-	return arg
+	return arg, writeFile
 }
 
 // getCheckCommand ...
@@ -211,4 +212,17 @@ func getExportCommand(sourceType config.SourceType) (command []string) {
 		}
 	}
 	return command
+}
+
+func checkOSExportArg(cfg config.Config) (arg []string, writeFile bool) {
+	filename := fmt.Sprintf("%s", cfg.BackupName)
+	switch runtime.GOOS {
+	case "windows":
+		arg, writeFile = []string{fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB)}, true
+	default:
+		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
+		arg, writeFile = []string{dns, host, port, pgFlagCreate, pgFlagFormat, noOwner, pgFlagFileName, filename}, false
+	}
+
+	return arg, writeFile
 }

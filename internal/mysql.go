@@ -44,7 +44,7 @@ func (m MySQL) CheckPath(dump config.Config) error {
 }
 
 func (m MySQL) Export(dump config.Config) error {
-	cmd := CreateExportCommand(dump)
+	cmd, _ := CreateExportCommand(dump)
 	var outb, errBuf bytes.Buffer
 	cmd.Stderr = &errBuf
 	cmd.Stdin = os.Stdin
