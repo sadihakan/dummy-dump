@@ -102,7 +102,7 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 	port := fmt.Sprintf("%s%d", port, cfg.Port)
 	switch cfg.Source {
 	case config.PostgreSQL:
-		arg = []string{"-d",fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB),cfg.BackupFilePath}
+		arg = []string{"-d", fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB), cfg.BackupFilePath}
 	case config.MySQL:
 		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf("%s=%s", mysqlFlagPassword, cfg.Password)
