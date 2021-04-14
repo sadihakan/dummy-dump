@@ -102,9 +102,7 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 	port := fmt.Sprintf("%s%d", port, cfg.Port)
 	switch cfg.Source {
 	case config.PostgreSQL:
-		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
-		//password := fmt.Sprintf("%s%s", pgFlagPassword, cfg.Password)
-		arg = []string{user, pgFlagPassword, host, port, pgFlagCreate, pgDatabase, cfg.BackupFilePath}
+		arg = []string{"-d",fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB),cfg.BackupFilePath}
 	case config.MySQL:
 		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf("%s=%s", mysqlFlagPassword, cfg.Password)
@@ -225,3 +223,16 @@ func checkOSExportArg(cfg config.Config) (arg []string, writeFile bool) {
 
 	return arg, writeFile
 }
+
+//func checkOSImportArg(cfg config.Config)(arg[] string){
+//	filename := fmt.Sprintf("%s/%s", cfg.BackupFilePath, cfg.BackupName)
+//	// -d "postgresql://postgres:123456@localhost:5432/denemeler" deneme.backup
+//	switch runtime.GOOS {
+//	case "windows":
+//		arg = []string{"-d",fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB)}
+//	default:
+//		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
+//		arg= []string{dns, host, port, pgFlagCreate, pgFlagFormat, noOwner, pgFlagFileName, filename}
+//	}
+//	return arg
+//}
