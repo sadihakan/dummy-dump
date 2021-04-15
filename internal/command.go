@@ -62,9 +62,9 @@ func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
 }
 
 // CreateExportCommand ...
-func CreateExportCommand(cfg config.Config) (*exec.Cmd, bool) {
-	arg, writeFile := getExportCommandArg(cfg)
-	return exec.Command(cfg.BinaryPath, arg...), writeFile
+func CreateExportCommand(cfg config.Config) (*exec.Cmd) {
+	arg := getExportCommandArg(cfg)
+	return exec.Command(cfg.BinaryPath, arg...)
 }
 
 // CreateImportCommand ...
@@ -103,6 +103,8 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 	switch cfg.Source {
 	case config.PostgreSQL:
 		arg = []string{"-d",fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB),cfg.BackupFilePath}
+		//dns := fmt.Sprintf(`user=%s password=%s dbname=%s host=%s port=%d`, cfg.User, cfg.Password, cfg.DB, cfg.Host, cfg.Port)
+		//arg = []string{cfg.BackupFilePath,"-d",dns}
 	case config.MySQL:
 		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf("%s=%s", mysqlFlagPassword, cfg.Password)
@@ -112,21 +114,22 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 }
 
 // getExportCommandArg ...
-func getExportCommandArg(cfg config.Config) (arg []string, writeFile bool) {
+func getExportCommandArg(cfg config.Config) (arg []string) {
 	host := fmt.Sprintf("%s%s", host, cfg.Host)
 	port := fmt.Sprintf("%s%d", port, cfg.Port)
 	switch cfg.Source {
 	case config.PostgreSQL:
-		arg, writeFile = checkOSExportArg(cfg)
+		filename := fmt.Sprintf("%s/%s", cfg.BackupFilePath, cfg.BackupName)
+		dns := fmt.Sprintf(`user=%s password=%s dbname=%s host=%s port=%d`, cfg.User, cfg.Password, cfg.DB, cfg.Host, cfg.Port)
+		arg = []string{pgFlagCreate, pgFlagFormat, noOwner, pgFlagFileName, filename,dns}
 	case config.MySQL:
 		filename := filepath.Join(cfg.BackupFilePath, cfg.BackupName)
 		user := fmt.Sprintf(`%s=%s`, mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf(`%s=%s`, mysqlFlagPassword, cfg.Password)
 		resultFile := fmt.Sprintf(`%s=%s`, mysqlFlagResultFile, filename)
 		arg = []string{user, password, host, port, cfg.DB, resultFile}
-		writeFile = false
 	}
-	return arg, writeFile
+	return arg
 }
 
 // getCheckCommand ...
@@ -211,18 +214,18 @@ func getExportCommand(sourceType config.SourceType) (command []string) {
 	return command
 }
 
-func checkOSExportArg(cfg config.Config) (arg []string, writeFile bool) {
-	filename := fmt.Sprintf("%s/%s", cfg.BackupFilePath, cfg.BackupName)
-	switch runtime.GOOS {
-	case "windows":
-		arg, writeFile = []string{fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB)}, true
-	default:
-		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
-		arg, writeFile = []string{dns, host, port, pgFlagCreate, pgFlagFormat, noOwner, pgFlagFileName, filename}, false
-	}
-
-	return arg, writeFile
-}
+//func checkOSExportArg(cfg config.Config) (arg []string, writeFile bool) {
+//	filename := fmt.Sprintf("%s/%s", cfg.BackupFilePath, cfg.BackupName)
+//	switch runtime.GOOS {
+//	case "windows":
+//		arg, writeFile = []string{fmt.Sprintf("-d","postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB),pgFlagCreate,pgFlagFormat,noOwner}, true
+//	default:
+//		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
+//		arg, writeFile = []string{dns, host, port, pgFlagCreate, pgFlagFormat, noOwner, pgFlagFileName, filename}, false
+//	}
+//
+//	return arg, writeFile
+//}
 
 //func checkOSImportArg(cfg config.Config)(arg[] string){
 //	filename := fmt.Sprintf("%s/%s", cfg.BackupFilePath, cfg.BackupName)

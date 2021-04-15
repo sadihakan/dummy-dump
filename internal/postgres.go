@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
-	"io/ioutil"
 	"os"
 )
 
@@ -42,20 +41,13 @@ func (p Postgres) CheckPath(dump config.Config) error {
 func (p Postgres) Export(dump config.Config) error {
 	var out, errBuf bytes.Buffer
 
-	cmd, writeFile := CreateExportCommand(dump)
+	cmd := CreateExportCommand(dump)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
 
 	if err != nil {
 		return errors.New(errBuf.String())
-	}
-
-	if writeFile {
-		filename := fmt.Sprintf("%s/%s",dump.BackupFilePath, dump.BackupName)
-		if err = ioutil.WriteFile(filename, out.Bytes(), 0644); err != nil {
-			return err
-		}
 	}
 
 	return nil
