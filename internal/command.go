@@ -62,7 +62,7 @@ func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
 }
 
 // CreateExportCommand ...
-func CreateExportCommand(cfg config.Config) (*exec.Cmd) {
+func CreateExportCommand(cfg config.Config) *exec.Cmd {
 	arg := getExportCommandArg(cfg)
 	return exec.Command(cfg.BinaryPath, arg...)
 }
@@ -102,7 +102,7 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 	port := fmt.Sprintf("%s%d", port, cfg.Port)
 	switch cfg.Source {
 	case config.PostgreSQL:
-		arg = []string{"-d",fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB),cfg.BackupFilePath}
+		arg = []string{"-d", fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB), fmt.Sprintf("%s/%s", cfg.BackupFilePath, cfg.BackupName), pgFlagCreate}
 		//dns := fmt.Sprintf(`user=%s password=%s dbname=%s host=%s port=%d`, cfg.User, cfg.Password, cfg.DB, cfg.Host, cfg.Port)
 		//arg = []string{cfg.BackupFilePath,"-d",dns}
 	case config.MySQL:
@@ -120,8 +120,8 @@ func getExportCommandArg(cfg config.Config) (arg []string) {
 	switch cfg.Source {
 	case config.PostgreSQL:
 		filename := fmt.Sprintf("%s/%s", cfg.BackupFilePath, cfg.BackupName)
-		dns := fmt.Sprintf(`user=%s password=%s dbname=%s host=%s port=%d`, cfg.User, cfg.Password, cfg.DB, cfg.Host, cfg.Port)
-		arg = []string{pgFlagCreate, pgFlagFormat, noOwner, pgFlagFileName, filename,dns}
+		dns := fmt.Sprintf(`--dbname=postgresql://%s:%s@%s:%d/%s`, cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB)
+		arg = []string{dns, pgFlagFormat, noOwner, pgFlagFileName, filename}
 	case config.MySQL:
 		filename := filepath.Join(cfg.BackupFilePath, cfg.BackupName)
 		user := fmt.Sprintf(`%s=%s`, mysqlFlagUser, cfg.User)
