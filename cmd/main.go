@@ -46,11 +46,9 @@ func main() {
 		BackupFilePath: path,
 		DB:             db,
 		BinaryPath:     binaryPath,
-		Password:       "",
+		Password:       password,
 		BackupName:     backupName,
 	}
-
-	dumpConfig.Password = password
 
 	var dump internal.Dump
 
