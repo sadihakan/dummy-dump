@@ -15,14 +15,14 @@ Simple Database Backup Tool
 * How to run the program
 
 ```
-go run ./cmd -source=<postgres/mysql> -export -user=<User Name> -db=<Database Name>
+go run ./cmd -source=<postgres/mysql/mssql> -export -user=<User Name> -db=<Database Name> -host=<Host> -port=<Port> -backupFilePath<Backup File Path> -backupName=<Backup Name> 
 ```
 ### Import
 
 * How to run the program
 
 ```
-go run ./cmd -source <postgres/mysql> -import -user=<User Name> -path=<File Path> 
+go run ./cmd -source=<postgres/mysql/mssql> -import -user=<User Name> -db=<Database Name> -host=<Host> -port=<Port> -backupFilePath<Backup File Path> -backupName=<Backup Name> 
 ```
 
 - *import*  
@@ -56,10 +56,30 @@ Flag: -db
 Type: string  
 Default: null
 
+- *host*  
+  Flag: -host  
+  Type: string  
+  Default: null
+
+- *port*  
+  Flag: -port  
+  Type: int  
+  Default: null
+
 - *binaryPath*  
 Flag: -binaryPath  
 Type: string  
 Default: null  
+
+- *backupName*  
+  Flag: -backupName  
+  Type: string  
+  Default: null
+
+- *backupFilePath*  
+  Flag: -backupFilePath  
+  Type: string  
+  Default: null
 
 ## API Usage
 * How to import database

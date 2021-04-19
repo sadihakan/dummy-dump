@@ -16,8 +16,11 @@ var (
 	user       string
 	path       string
 	db         string
+	host string
+	port int
 	binaryPath string
 	backupName string
+	backupFilePath string
 )
 
 func main() {
@@ -28,8 +31,11 @@ func main() {
 	flag.StringVar(&user, "user", "", "User name")
 	flag.StringVar(&path, "path", "", "Import file path")
 	flag.StringVar(&db, "db", "", "Database name")
+	flag.StringVar(&host, "host", "", "Host name")
+	flag.IntVar(&port, "port", 0, "Port number")
 	flag.StringVar(&binaryPath, "binaryPath", "", "Binary path")
-	flag.StringVar(&backupName, "backupName", "", "Backup Name")
+	flag.StringVar(&backupName, "backupName", "", "Backup name")
+	flag.StringVar(&backupFilePath, "backupFilePath", "", "Backup file path")
 	flag.Parse()
 
 	password, err := util.GetPassword()
@@ -43,11 +49,13 @@ func main() {
 		Import:         importArg,
 		Export:         exportArg,
 		User:           user,
-		BackupFilePath: path,
-		DB:             db,
-		BinaryPath:     binaryPath,
 		Password:       password,
+		DB:             db,
+		Host:           host,
+		Port:           port,
+		BackupFilePath: backupFilePath,
 		BackupName:     backupName,
+		BinaryPath:     binaryPath,
 	}
 
 	var dump internal.Dump
