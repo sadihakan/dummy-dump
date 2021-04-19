@@ -39,7 +39,7 @@ Default: false
 Flag: -source  
 Type: string  
 Default: null  
-Values: **mysql**, **postgres** 
+Values: **mysql**, **postgres**, **mssql** 
 
 - *user*  
 Flag: -user  
