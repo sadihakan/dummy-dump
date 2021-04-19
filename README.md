@@ -97,7 +97,7 @@ func main() {
 	dd.Check().Import()
 }
 ```
-* How to import database
+* How to export database
 ```go
 
 package main
