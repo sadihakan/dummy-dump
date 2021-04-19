@@ -102,7 +102,7 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 	case config.MySQL:
 		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf("%s=%s", mysqlFlagPassword, cfg.Password)
-		arg = []string{user, password, host, port, cfg.DB, mysqlFlagExecute, "source " + cfg.BackupFilePath}
+		arg = []string{user, password, host, port, cfg.DB, mysqlFlagExecute, "source " + filepath.Join(cfg.BackupFilePath, cfg.BackupName)}
 	}
 	return arg
 }
