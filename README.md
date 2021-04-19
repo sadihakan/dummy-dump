@@ -110,8 +110,8 @@ import (
 func main() {
 	dd, err := dummydump.New(&config.Config{
 		Source:         <postgres\\mysql\\mssql>,
-		Import:         true,
-		Export:         false,
+		Import:         false,
+		Export:         true,
 		User:           <user>,
 		Password:       <password>,
 		DB:             <database name>,
