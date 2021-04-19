@@ -106,14 +106,17 @@ import (
 
 func main() {
 	dd, err := dummydump.New(&config.Config{
-		// Init DummyDump
-		Source:     config.PostgreSQL,
-		Import:     true,
-		Export:     false,
-		User:       "<User>",
-		Path:       "<Path>",
-		DB:         "<DB>",
-		BinaryPath: "<Binary Path>",
+		Source:         <postgres\\mysql\\mssql>,
+		Import:         true,
+		Export:         false,
+		User:           <user>,
+		Password:       <password>,
+		DB:             <database name>,
+		Host:           <host>,
+		Port:           <port>,
+		BackupFilePath: <path where to save or retrieve>,
+		BackupName:     <backup name>,
+		BinaryPath:     <binary path>,
 	})
 
 	// Check error
@@ -138,14 +141,17 @@ import (
 
 func main() {
 	dd, err := dummydump.New(&config.Config{
-		// Init DummyDump
-		Source:     config.PostgreSQL,
-		Import:     true,
-		Export:     false,
-		User:       "<User>",
-		Path:       "<Path>",
-		DB:         "<DB>",
-		BinaryPath: "<Binary Path>",
+		Source:         <postgres\\mysql\\mssql>,
+		Import:         false,
+		Export:         true,
+		User:           <user>,
+		Password:       <password>,
+		DB:             <database name>,
+		Host:           <host>,
+		Port:           <port>,
+		BackupFilePath: <path where to save or retrieve>,
+		BackupName:     <backup name>,
+		BinaryPath:     <binary path>,
 	})
 
 	// Check error
