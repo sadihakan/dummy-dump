@@ -1,10 +1,12 @@
 package dummy_dump
 
 import (
+	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/errors"
 	"github.com/sadihakan/dummy-dump/internal"
 	"github.com/sadihakan/dummy-dump/util"
+	"path/filepath"
 )
 
 // DummyDump ..
@@ -155,4 +157,21 @@ func (dd *DummyDump) GetBinary() (binaryPath string, version string) {
 	}
 
 	return binaryPath, version
+}
+
+//temprorary
+func (dd *DummyDump) RestoreMSSQLToDB(cfg config.Config) error {
+	ms := internal.MSSQL{}
+	db, err := ms.NewDB(cfg)
+	if err != nil {
+		return err
+	}
+	importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s' WITH REPLACE`,
+		cfg.DB,
+		filepath.Join(cfg.BackupFilePath, cfg.BackupName))
+	_, err = db.Exec(importQuery)
+	if err != nil {
+		return err
+	}
+	return nil
 }
