@@ -3,7 +3,6 @@ package internal
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
 	"os"
 )
@@ -27,7 +26,6 @@ func (p Postgres) Check() error {
 
 func (p Postgres) CheckPath(dump config.Config) error {
 	cmd := CreateCheckBinaryPathCommand(dump)
-	fmt.Println(cmd)
 	var out, errBuf bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf

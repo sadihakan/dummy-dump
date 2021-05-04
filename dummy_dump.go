@@ -134,6 +134,7 @@ func (dd *DummyDump) Check() *DummyDump {
 
 func (dd *DummyDump) CheckPath() *DummyDump {
 	dumpConfig := dd.c
+	//TODO: Not passing error
 	dd.Error = dd.dump.CheckPath(*dumpConfig)
 
 	return dd
