@@ -102,13 +102,13 @@ func (dd *DummyDump) configParser() (err error) {
 func (dd *DummyDump) Import() *DummyDump {
 	dumpConfig := dd.c
 
-	if !util.PathExists(dumpConfig.BackupFilePath) {
+	if !util.PathExists(dumpConfig.BackupFilePath) && dd.Error == nil {
 		dd.Error = errors.New(errors.ConfigPathNotExist)
 	}
 
 	err := dd.dump.Import(*dumpConfig)
 
-	if err != nil {
+	if err != nil && dd.Error == nil {
 		dd.Error = err
 	}
 
@@ -119,7 +119,7 @@ func (dd *DummyDump) Export() *DummyDump {
 	dumpConfig := dd.c
 	err := dd.dump.Export(*dumpConfig)
 
-	if err != nil {
+	if err != nil && dd.Error == nil {
 		dd.Error = err
 	}
 
@@ -134,7 +134,7 @@ func (dd *DummyDump) Check() *DummyDump {
 
 func (dd *DummyDump) CheckPath() *DummyDump {
 	dumpConfig := dd.c
-	//TODO: Not passing error
+
 	dd.Error = dd.dump.CheckPath(*dumpConfig)
 
 	return dd

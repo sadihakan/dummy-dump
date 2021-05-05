@@ -31,7 +31,7 @@ func (p Postgres) CheckPath(dump config.Config) error {
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
 	if err != nil {
-		return errors.New("path does not located")
+		return errors.New("psql path does not located")
 	}
 	return nil
 }

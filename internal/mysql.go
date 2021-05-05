@@ -38,7 +38,7 @@ func (m MySQL) CheckPath(dump config.Config) error {
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
 	if err != nil {
-		return errors.New("path does not located")
+		return errors.New("mysql path does not located")
 	}
 	return nil
 }
