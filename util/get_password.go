@@ -8,7 +8,7 @@ import (
 )
 
 func GetPassword() (string, error) {
-	fmt.Print("Enter Password (Press Enter if you dont have any): ")
+	fmt.Println("Enter Password (Press Enter if you dont have any): ")
 	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return "", err
