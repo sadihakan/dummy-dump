@@ -10,6 +10,12 @@ Simple Database Backup Tool
 
 ## CLI Usage
 
+### Scan
+
+```
+go run ./cmd -scan 
+```
+
 ### Export
 
 * How to run the program
