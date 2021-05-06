@@ -145,7 +145,8 @@ func main() {
 		dump = internal.MSSQL{}
 
 	default:
-		fmt.Println("\nYou did not chose a valid database source. Currently supported databases are:\n  - MySQL\n  - PostgreSQL\n  - MSSQL\n")
+		fmt.Println("\nYou did not chose a valid database source. " +
+			"Currently supported databases are:\n  - MySQL\n  - PostgreSQL\n  - MSSQL\n")
 		return
 	}
 
