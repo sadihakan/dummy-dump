@@ -11,6 +11,7 @@ Simple Database Backup Tool
 ## CLI Usage
 
 ### Scan
+* How to use the program via scan
 
 ```
 go run ./cmd -scan 
