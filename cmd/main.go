@@ -95,6 +95,8 @@ func main() {
 				fmt.Println(err)
 			}
 		}
+	} else {
+		password, _ = util.GetPassword()
 	}
 
 	dumpConfig := config.Config{
