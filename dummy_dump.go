@@ -92,6 +92,10 @@ func (dd *DummyDump) configParser() (err error) {
 			return err
 		}
 		dd.dump = internal.MSSQL{}
+	case config.Sqlcompact:
+		dd.dump = internal.SqlCompact{}
+	case config.Sqlite:
+		dd.dump = internal.Sqlite{}
 	default:
 		err = errors.New("not implemented")
 	}

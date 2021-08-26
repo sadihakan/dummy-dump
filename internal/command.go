@@ -207,29 +207,3 @@ func getExportCommand(sourceType config.SourceType) (command []string) {
 	}
 	return command
 }
-
-//func checkOSExportArg(cfg config.Config) (arg []string, writeFile bool) {
-//	filename := fmt.Sprintf("%s/%s", cfg.BackupFilePath, cfg.BackupName)
-//	switch runtime.GOOS {
-//	case "windows":
-//		arg, writeFile = []string{fmt.Sprintf("-d","postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB),pgFlagCreate,pgFlagFormat,noOwner}, true
-//	default:
-//		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
-//		arg, writeFile = []string{dns, host, port, pgFlagCreate, pgFlagFormat, noOwner, pgFlagFileName, filename}, false
-//	}
-//
-//	return arg, writeFile
-//}
-
-//func checkOSImportArg(cfg config.Config)(arg[] string){
-//	filename := fmt.Sprintf("%s/%s", cfg.BackupFilePath, cfg.BackupName)
-//	// -d "postgresql://postgres:123456@localhost:5432/denemeler" deneme.backup
-//	switch runtime.GOOS {
-//	case "windows":
-//		arg = []string{"-d",fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB)}
-//	default:
-//		dns := fmt.Sprintf(`user=%s password=%s dbname=%s`, cfg.User, cfg.Password, cfg.DB)
-//		arg= []string{dns, host, port, pgFlagCreate, pgFlagFormat, noOwner, pgFlagFileName, filename}
-//	}
-//	return arg
-//}
