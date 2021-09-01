@@ -6,23 +6,23 @@ import (
 
 type Config struct {
 	//source: mysql-postgres-mssql
-	Source     SourceType
+	Source SourceType
 
 	//methods
-	Import     bool
-	Export     bool
+	Import bool
+	Export bool
 
 	//database configuration
-	User       string
-	Password   string
-	DB         string
-	Host       string
-	Port       int
+	User     string
+	Password string
+	DB       string
+	Host     string
+	Port     int
 
 	//os configuration
 	BackupFilePath string //path where to save or retrieve
-	BackupName string //name which to save or retrieve, don't forget to add .bak or .backup!
-	BinaryPath string //etc: usr/bin/pg_dump
+	BackupName     string //name which to save or retrieve, don't forget to add .bak or .backup!
+	BinaryPath     string //etc: usr/bin/pg_dump
 }
 
 func (c *Config) checkAll() error {
@@ -83,5 +83,15 @@ func (c *Config) CheckConfigMsSQL() error {
 		return err
 	}
 
+	return nil
+}
+
+func (c *Config) CheckConfigOracle() error {
+	if err := c.checkAll(); err != nil {
+		return err
+	}
+	if c.BinaryPath == "" {
+		return errors.New(errors.ConfigBinaryPathNotExist)
+	}
 	return nil
 }

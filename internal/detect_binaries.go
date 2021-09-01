@@ -5,6 +5,7 @@ import (
 	"github.com/sadihakan/dummy-dump/config"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -45,7 +46,15 @@ func checkVersion(binaryPath string, sourceType config.SourceType) (string, erro
 	var out bytes.Buffer
 	var cmd *exec.Cmd
 
-	cmd = CreateVersionCommand(binaryPath, sourceType)
+	if sourceType == config.Oracle {
+
+	}
+	switch sourceType {
+	case config.Oracle:
+		cmd = CreateVersionCommand(filepath.Join(oraclelBinaryDirectories()[0], "sqlplus.exe"), sourceType)
+	default:
+		cmd = CreateVersionCommand(binaryPath, sourceType)
+	}
 
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin

@@ -11,7 +11,7 @@ func TestNew(t *testing.T) {
 		Import:     true,
 		Export:     false,
 		User:       "sadihakan",
-		Path:       "/path",
+		BackupFilePath:       "/path",
 		DB:         "db",
 		BinaryPath: "/binaryPath",
 	})

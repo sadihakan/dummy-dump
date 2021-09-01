@@ -8,6 +8,7 @@ var sourceTypes = []string{
 	string(MySQL),
 	string(PostgreSQL),
 	string(MSSQL),
+	string(Oracle),
 	string(Sqlite),
 	string(Sqlcompact),
 }
@@ -18,6 +19,7 @@ const (
 	MySQL      SourceType = "mysql"
 	PostgreSQL SourceType = "postgres"
 	MSSQL      SourceType = "mssql"
+	Oracle     SourceType = "oracle"
 	Sqlite     SourceType = "sqlite"
 	Sqlcompact SourceType = "sqlcompact"
 )

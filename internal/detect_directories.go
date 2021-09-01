@@ -72,3 +72,35 @@ func postgresqlBinaryDirectories() []string {
 	}
 	return datas
 }
+
+func oraclelBinaryDirectories() []string {
+	cmd := exec.Command("reg", "query", "HKEY_LOCAL_MACHINE\\SOFTWARE\\Oracle", "/s", "/v", "/f", "dllpath", "/k")
+	var outb bytes.Buffer
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = &outb
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	var datas []string
+	var inArray = false
+	lines := strings.Split(outb.String(), "\n")
+	for i := 0; i < len(lines); i++ {
+
+		if strings.Contains(lines[i], "DllPath") {
+			l := strings.Split(lines[i], "    ")
+			data := strings.TrimSpace(l[3])
+			for _, v := range datas {
+				if data == v {
+					inArray = true
+				}
+			}
+			if !inArray {
+				datas = append(datas, data)
+			}
+			inArray = false
+		}
+	}
+	return datas
+}

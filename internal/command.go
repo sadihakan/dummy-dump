@@ -20,6 +20,7 @@ const (
 	pgVersion            = "--version"
 	pgFlagPassword       = "-W"
 	mysqlVersion         = "--version"
+	oracleVersion        = "-V"
 
 	mysqlDatabase       = "deneme"
 	mysqlFlagUser       = "--user"
@@ -88,6 +89,8 @@ func getVersionCommandArg(sourceType config.SourceType) (arg []string) {
 		arg = []string{pgVersion}
 	case config.MySQL:
 		arg = []string{mysqlVersion}
+	case config.Oracle:
+		arg = []string{oracleVersion}
 	}
 	return arg
 }
@@ -103,6 +106,12 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 		user := fmt.Sprintf("%s=%s", mysqlFlagUser, cfg.User)
 		password := fmt.Sprintf("%s=%s", mysqlFlagPassword, cfg.Password)
 		arg = []string{user, password, host, port, cfg.DB, mysqlFlagExecute, "source " + filepath.Join(cfg.BackupFilePath, cfg.BackupName)}
+	case config.Oracle:
+		//impdp user/password@db full=y directory=directory dumpfile=filename
+		connStr := fmt.Sprintf("%s/%s@%s", cfg.User, cfg.Password, cfg.DB)
+		directory := fmt.Sprintf("directory=%s", cfg.BackupFilePath)
+		filename := fmt.Sprintf("dumpfile=%s", cfg.BackupName)
+		arg = []string{connStr, "full=y", directory, filename}
 	}
 	return arg
 }
@@ -122,6 +131,12 @@ func getExportCommandArg(cfg config.Config) (arg []string) {
 		password := fmt.Sprintf(`%s=%s`, mysqlFlagPassword, cfg.Password)
 		resultFile := fmt.Sprintf(`%s=%s`, mysqlFlagResultFile, filename)
 		arg = []string{user, password, host, port, cfg.DB, resultFile}
+	case config.Oracle:
+		//expdp user/password@db full=y directory=directory dumpfile=filename
+		connStr := fmt.Sprintf("%s/%s@%s", cfg.User, cfg.Password, cfg.DB)
+		directory := fmt.Sprintf("directory=%s", cfg.BackupFilePath)
+		filename := fmt.Sprintf("dumpfile=%s", cfg.BackupName)
+		arg = []string{connStr, "full=y", directory, filename}
 	}
 	return arg
 }
@@ -148,6 +163,16 @@ func getCheckCommand(sourceType config.SourceType) (command []string) {
 		case "windows":
 			p := strings.TrimSpace(mysqlBinaryDirectory()[0])
 			command = []string{"/r", p, "mysql"}
+		}
+	case config.Oracle:
+		switch runtime.GOOS {
+		case "darwin":
+			command = []string{"oracle"}
+		case "linux":
+			command = []string{"oracle"}
+		case "windows":
+			p := strings.TrimSpace(oraclelBinaryDirectories()[0])
+			command = []string{"/r", p, "oracle"}
 		}
 	}
 	return command
@@ -176,6 +201,16 @@ func getImportCommand(sourceType config.SourceType) (command []string) {
 			p := strings.TrimSpace(mysqlBinaryDirectory()[0])
 			command = []string{"/r", p, "mysql"}
 		}
+	case config.Oracle:
+		switch runtime.GOOS {
+		case "darwin":
+			command = []string{"impdp"}
+		case "linux":
+			command = []string{"impdp"}
+		case "windows":
+			p := strings.TrimSpace(oraclelBinaryDirectories()[0])
+			command = []string{"/r", p, "impdp"}
+		}
 	}
 	return command
 }
@@ -202,7 +237,16 @@ func getExportCommand(sourceType config.SourceType) (command []string) {
 		case "windows":
 			p := strings.TrimSpace(mysqlBinaryDirectory()[0])
 			command = []string{"/r", p, "mysqldump"}
-
+		}
+	case config.Oracle:
+		switch runtime.GOOS {
+		case "darwin":
+			command = []string{"expdp"}
+		case "linux":
+			command = []string{"expdp"}
+		case "windows":
+			p := strings.TrimSpace(oraclelBinaryDirectories()[0])
+			command = []string{"/r", p, "expdp"}
 		}
 	}
 	return command

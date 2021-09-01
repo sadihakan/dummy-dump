@@ -68,6 +68,12 @@ func (dd *DummyDump) configParserWithoutCheck() {
 		break
 	case config.MSSQL:
 		dd.dump = internal.MSSQL{}
+	case config.Oracle:
+		dd.dump = internal.Oracle{}
+	case config.Sqlite:
+		dd.dump = internal.Sqlite{}
+	case config.Sqlcompact:
+		dd.dump = internal.SqlCompact{}
 	default:
 		panic(errors.New("not implemented"))
 	}
@@ -92,6 +98,11 @@ func (dd *DummyDump) configParser() (err error) {
 			return err
 		}
 		dd.dump = internal.MSSQL{}
+	case config.Oracle:
+		if err = dd.c.CheckConfigOracle(); err != nil {
+			return err
+		}
+		dd.dump = internal.Oracle{}
 	case config.Sqlcompact:
 		dd.dump = internal.SqlCompact{}
 	case config.Sqlite:
