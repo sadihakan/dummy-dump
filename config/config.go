@@ -5,7 +5,7 @@ import (
 )
 
 type Config struct {
-	//source: mysql-postgres-mssql
+	//source: mysql-postgres-mssql-oracle-sqlite-sqlcompact
 	Source SourceType
 
 	//methods
@@ -18,6 +18,9 @@ type Config struct {
 	DB       string
 	Host     string
 	Port     int
+
+	//For Oracle
+	Service string
 
 	//os configuration
 	BackupFilePath string //path where to save or retrieve

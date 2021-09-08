@@ -107,11 +107,12 @@ func getImportCommandArg(cfg config.Config) (arg []string) {
 		password := fmt.Sprintf("%s=%s", mysqlFlagPassword, cfg.Password)
 		arg = []string{user, password, host, port, cfg.DB, mysqlFlagExecute, "source " + filepath.Join(cfg.BackupFilePath, cfg.BackupName)}
 	case config.Oracle:
-		//impdp user/password@db full=y directory=directory dumpfile=filename
-		connStr := fmt.Sprintf("%s/%s@%s", cfg.User, cfg.Password, cfg.DB)
+		//impdp user/password@service schemas=db1,db2.. directory=directory dumpfile=filename
+		connStr := fmt.Sprintf("%s/%s@%s", cfg.User, cfg.Password, cfg.Service)
 		directory := fmt.Sprintf("directory=%s", cfg.BackupFilePath)
 		filename := fmt.Sprintf("dumpfile=%s", cfg.BackupName)
-		arg = []string{connStr, "full=y", directory, filename}
+		schemas := fmt.Sprintf("schemas=%s", cfg.DB)
+		arg = []string{connStr, schemas, directory, filename}
 	}
 	return arg
 }
@@ -132,11 +133,12 @@ func getExportCommandArg(cfg config.Config) (arg []string) {
 		resultFile := fmt.Sprintf(`%s=%s`, mysqlFlagResultFile, filename)
 		arg = []string{user, password, host, port, cfg.DB, resultFile}
 	case config.Oracle:
-		//expdp user/password@db full=y directory=directory dumpfile=filename
-		connStr := fmt.Sprintf("%s/%s@%s", cfg.User, cfg.Password, cfg.DB)
+		//expdp user/password@db schemas=DB1,DB2... directory=directory dumpfile=filename
+		connStr := fmt.Sprintf("%s/%s@%s", cfg.User, cfg.Password, cfg.Service)
 		directory := fmt.Sprintf("directory=%s", cfg.BackupFilePath)
 		filename := fmt.Sprintf("dumpfile=%s", cfg.BackupName)
-		arg = []string{connStr, "full=y", directory, filename}
+		schemas := fmt.Sprintf("schemas=%s", cfg.DB)
+		arg = []string{connStr, schemas, directory, filename}
 	}
 	return arg
 }

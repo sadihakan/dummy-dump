@@ -7,13 +7,13 @@ import (
 
 func TestNew(t *testing.T) {
 	dd, err := New(&config.Config{
-		Source:     config.PostgreSQL,
-		Import:     true,
-		Export:     false,
-		User:       "sadihakan",
-		BackupFilePath:       "/path",
-		DB:         "db",
-		BinaryPath: "/binaryPath",
+		Source:         config.PostgreSQL,
+		Import:         true,
+		Export:         false,
+		User:           "sadihakan",
+		BackupFilePath: "/path",
+		DB:             "db",
+		BinaryPath:     "/binaryPath",
 	})
 
 	if err != nil {

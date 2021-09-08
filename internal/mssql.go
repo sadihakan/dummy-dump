@@ -7,6 +7,7 @@ import (
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/util"
 	"net/url"
+	"path/filepath"
 
 	"os"
 	"os/exec"
@@ -87,13 +88,12 @@ func (ms MSSQL) Import(dump config.Config) error {
 	if err != nil {
 		return err
 	}
-	importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s'`,
+	importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s' WITH REPLACE`,
 		dump.DB,
-		dump.BackupFilePath)
+		filepath.Join(dump.BackupFilePath, dump.BackupName))
 	_, err = db.Exec(importQuery)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
