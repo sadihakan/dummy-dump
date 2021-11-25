@@ -1,4 +1,6 @@
-//+build windows,!linux
+//go:build windows
+// +build windows
+
 package util
 
 import (
@@ -12,7 +14,7 @@ import (
 
 //The function below is for Windows systems only
 //GetMSSQLBackupDirectory ...
-func GetBackupDirectory() string{
+func GetBackupDirectory() string {
 	cmd := exec.Command("reg", "query", "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\MICROSOFT SQL SERVER", "/s", "/v", "/f", "BackupDirectory", "/k")
 	var outb bytes.Buffer
 	cmd.Stderr = os.Stderr
@@ -28,5 +30,5 @@ func GetBackupDirectory() string{
 	}
 	l := strings.Split(strings.Split(string(b), "\n")[2], "    ")
 
-	return strings.TrimSuffix(l[3],"\r")
+	return strings.TrimSuffix(l[3], "\r")
 }
