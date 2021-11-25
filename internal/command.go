@@ -35,38 +35,43 @@ const (
 
 // CreateCheckBinaryCommand ...
 func CreateCheckBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return exec.Command(util.Which(), getCheckCommand(sourceType)...)
+	return homeDirCommand(exec.Command(util.Which(), getCheckCommand(sourceType)...))
 }
 
 // CreateCheckBinaryPathCommand ...
 func CreateCheckBinaryPathCommand(cfg config.Config) *exec.Cmd {
-	return exec.Command(util.Which(), getCheckBinaryPathCommand(cfg)...)
+	return homeDirCommand(exec.Command(util.Which(), getCheckBinaryPathCommand(cfg)...))
 }
 
 // CreateImportBinaryCommand ...
 func CreateImportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return exec.Command(util.Which(), getImportCommand(sourceType)...)
+	return homeDirCommand(exec.Command(util.Which(), getImportCommand(sourceType)...))
 }
 
 // CreateVersionCommand ...
 func CreateVersionCommand(binaryPath string, sourceType config.SourceType) *exec.Cmd {
-	return exec.Command(binaryPath, getVersionCommandArg(sourceType)...)
+	return homeDirCommand(exec.Command(binaryPath, getVersionCommandArg(sourceType)...))
 }
 
 // CreateExportBinaryCommand ...
 func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return exec.Command(util.Which(), getExportCommand(sourceType)...)
+	return homeDirCommand(exec.Command(util.Which(), getExportCommand(sourceType)...))
 }
 
 // CreateExportCommand ...
 func CreateExportCommand(cfg config.Config) *exec.Cmd {
 	arg := getExportCommandArg(cfg)
-	return exec.Command(cfg.BinaryPath, arg...)
+	return homeDirCommand(exec.Command(cfg.BinaryPath, arg...))
 }
 
 // CreateImportCommand ...
 func CreateImportCommand(cfg config.Config) *exec.Cmd {
-	return exec.Command(cfg.BinaryPath, getImportCommandArg(cfg)...)
+	return homeDirCommand(exec.Command(cfg.BinaryPath, getImportCommandArg(cfg)...))
+}
+
+func homeDirCommand(cmd *exec.Cmd) *exec.Cmd {
+	cmd.Dir = util.HomeDir()
+	return cmd
 }
 
 func getCheckBinaryPathCommand(cfg config.Config) (command []string) {
