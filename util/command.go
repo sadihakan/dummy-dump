@@ -1,20 +1,14 @@
 package util
 
-import (
-	"runtime"
-)
+import "os"
 
-// Which ...
-func Which() (which string) {
-	switch runtime.GOOS {
-	case "darwin":
-		which = "which"
-	case "linux":
-		which = "which"
-	case "windows":
-		which = "where"
+func checkCommands(commands []string) (command string) {
+	for _, c := range commands {
+		if _, err := os.Stat(c); err == nil {
+			command = c
+			break
+		}
 	}
 
-	return which
+	return command
 }
-
