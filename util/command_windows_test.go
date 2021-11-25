@@ -3,8 +3,12 @@
 
 package util
 
-func TestWhichDarwin(t *testing.T) {
-	if "/usr/bin/which" != Which() {
+import (
+	"testing"
+)
+
+func TestWhichWindows(t *testing.T) {
+	if "C:\\Windows\\System32\\where.exe" != Which() {
 		t.Error("which not defined")
 	}
 }

@@ -5,6 +5,7 @@ package util
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 )
 
@@ -16,9 +17,10 @@ func Which() string {
 	return checkCommands(windowsWhich)
 }
 
-func homeDrive() {
+func homeDrive() string {
 	home := os.Getenv("HOMEDRIVE")
 	if home == "" {
-		return fmt.Sprintf("C%s%s", filepath.ListSeparator, filepath.Separator)
+		home = "C:"
 	}
+	return fmt.Sprintf("%s%s", home, string(filepath.Separator))
 }
