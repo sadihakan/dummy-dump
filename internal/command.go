@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/util"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -35,7 +36,19 @@ const (
 
 // CreateCheckBinaryCommand ...
 func CreateCheckBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return homeDirCommand(exec.Command(util.Which(), getCheckCommand(sourceType)...))
+	args := make([]string, 0)
+	switch runtime.GOOS {
+	case "windows":
+		args = append(args, string(os.PathSeparator)+"C")
+		args = append(args, util.Which())
+		args = append(args, getCheckCommand(sourceType)...)
+		return homeDirCommand(exec.Command("cmd", args...))
+	default:
+		args = append(args, "-c")
+		args = append(args, util.Which())
+		args = append(args, getCheckCommand(sourceType)...)
+		return homeDirCommand(exec.Command("bash", args...))
+	}
 }
 
 // CreateCheckBinaryPathCommand ...
@@ -60,8 +73,25 @@ func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
 
 // CreateExportCommand ...
 func CreateExportCommand(cfg config.Config) *exec.Cmd {
-	arg := getExportCommandArg(cfg)
-	return homeDirCommand(exec.Command(cfg.BinaryPath, arg...))
+	args := make([]string, 0)
+	tmp := make([]string, 0)
+	switch runtime.GOOS {
+	case "windows":
+		args = append(args, string(os.PathSeparator)+"C")
+		tmp = append(tmp, cfg.BinaryPath)
+		tmp = append(tmp, getExportCommandArg(cfg)...)
+		c := strings.Join(tmp, " ")
+		args = append(args, c)
+		return homeDirCommand(exec.Command("cmd", args...))
+	default:
+		args = append(args, "-c")
+		tmp = append(tmp, cfg.BinaryPath)
+		tmp = append(tmp, getExportCommandArg(cfg)...)
+		c := strings.Join(tmp, " ")
+		args = append(args, c)
+		return homeDirCommand(exec.Command("bash", args...))
+	}
+
 }
 
 // CreateImportCommand ...
