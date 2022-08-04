@@ -36,40 +36,27 @@ const (
 
 // CreateCheckBinaryCommand ...
 func CreateCheckBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	args := make([]string, 0)
-	switch runtime.GOOS {
-	case "windows":
-		args = append(args, string(os.PathSeparator)+"C")
-		args = append(args, util.Which())
-		args = append(args, getCheckCommand(sourceType)...)
-		return homeDirCommand(exec.Command("cmd", args...))
-	default:
-		args = append(args, "-c")
-		args = append(args, util.Which())
-		args = append(args, getCheckCommand(sourceType)...)
-		return homeDirCommand(exec.Command("bash", args...))
-	}
+	return buildShellCommand(util.Which(), getCheckCommand(sourceType))
 }
 
 // CreateCheckBinaryPathCommand ...
 func CreateCheckBinaryPathCommand(cfg config.Config) *exec.Cmd {
-	return homeDirCommand(exec.Command(util.Which(), getCheckBinaryPathCommand(cfg)...))
+	return buildShellCommand(util.Which(), getCheckBinaryPathCommand(cfg))
 }
 
 // CreateImportBinaryCommand ...
 func CreateImportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return homeDirCommand(exec.Command(util.Which(), getImportCommand(sourceType)...))
+	return buildShellCommand(util.Which(), getImportCommand(sourceType))
 }
 
 // CreateVersionCommand ...
 func CreateVersionCommand(binaryPath string, sourceType config.SourceType) *exec.Cmd {
-	return homeDirCommand(exec.Command(binaryPath, getVersionCommandArg(sourceType)...))
+	return buildShellCommand(binaryPath, getVersionCommandArg(sourceType))
 }
 
 // CreateExportBinaryCommand ...
 func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return homeDirCommand(exec.Command(util.Which(), getExportCommand(sourceType)...))
-	return buildShellCommand(cfg, getExportCommandArg(cfg))
+	return buildShellCommand(util.Which(), getExportCommand(sourceType))
 }
 
 // CreateExportCommand ...
@@ -90,16 +77,17 @@ func buildShellCommand(command string, args []string) *exec.Cmd {
 		arg = append(arg, string(os.PathSeparator)+"C")
 		tmp = append(tmp, command)
 		tmp = append(tmp, args...)
-		c := strings.Join(args, " ")
+		c := strings.Join(tmp, " ")
 		arg = append(arg, c)
 		return homeDirCommand(exec.Command("cmd", arg...))
 	default:
 		arg = append(arg, "-c")
 		tmp = append(tmp, command)
 		tmp = append(tmp, args...)
-		c := strings.Join(args, " ")
+		c := strings.Join(tmp, " ")
 		arg = append(arg, c)
-		return homeDirCommand(exec.Command("cmd", arg...))
+
+		return homeDirCommand(exec.Command("bash", arg...))
 	}
 }
 
