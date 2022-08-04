@@ -96,7 +96,28 @@ func CreateExportCommand(cfg config.Config) *exec.Cmd {
 
 // CreateImportCommand ...
 func CreateImportCommand(cfg config.Config) *exec.Cmd {
-	return homeDirCommand(exec.Command(cfg.BinaryPath, getImportCommandArg(cfg)...))
+	return buildShellCommand(cfg, getImportCommandArg(cfg))
+}
+
+func buildShellCommand(cfg config.Config, args []string) *exec.Cmd {
+	arg := make([]string, 0)
+	tmp := make([]string, 0)
+	switch runtime.GOOS {
+	case "windows":
+		arg = append(arg, string(os.PathSeparator)+"C")
+		tmp = append(tmp, cfg.BinaryPath)
+		tmp = append(tmp, args...)
+		c := strings.Join(tmp, " ")
+		arg = append(arg, c)
+		return homeDirCommand(exec.Command("cmd", arg...))
+	default:
+		arg = append(arg, "-c")
+		tmp = append(tmp, cfg.BinaryPath)
+		tmp = append(tmp, args...)
+		c := strings.Join(tmp, " ")
+		arg = append(arg, c)
+		return homeDirCommand(exec.Command("cmd", arg...))
+	}
 }
 
 func homeDirCommand(cmd *exec.Cmd) *exec.Cmd {
