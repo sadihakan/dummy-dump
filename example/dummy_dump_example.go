@@ -20,7 +20,7 @@ func main() {
 	fmt.Println("Version: ", version)
 
 	dd2, err := dummydump.New(&config.Config{
-		Source:         config.MySQL,
+		Source:         config.PostgreSQL,
 		Import:         false,
 		Export:         true,
 		User:           "hakankosanoglu",
@@ -30,7 +30,7 @@ func main() {
 		Port:           5432,
 		BackupFilePath: "/Users/hakankosanoglu/Desktop",
 		BackupName:     "aa.backup",
-		BinaryPath:     "aa",
+		BinaryPath:     binary,
 	})
 
 	if err != nil {
