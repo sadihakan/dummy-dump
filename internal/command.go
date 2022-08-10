@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/util"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -36,53 +35,38 @@ const (
 
 // CreateCheckBinaryCommand ...
 func CreateCheckBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return buildShellCommand(util.Which(), getCheckCommand(sourceType))
+	return homeDirCommand(exec.Command(util.Which(), getCheckCommand(sourceType)...))
 }
 
 // CreateCheckBinaryPathCommand ...
 func CreateCheckBinaryPathCommand(cfg config.Config) *exec.Cmd {
-	return buildShellCommand(util.Which(), getCheckBinaryPathCommand(cfg))
+	return homeDirCommand(exec.Command(util.Which(), getCheckBinaryPathCommand(cfg)...))
 }
 
 // CreateImportBinaryCommand ...
 func CreateImportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return buildShellCommand(util.Which(), getImportCommand(sourceType))
+	return homeDirCommand(exec.Command(util.Which(), getImportCommand(sourceType)...))
 }
 
 // CreateVersionCommand ...
 func CreateVersionCommand(binaryPath string, sourceType config.SourceType) *exec.Cmd {
-	return buildShellCommand(binaryPath, getVersionCommandArg(sourceType))
+	return homeDirCommand(exec.Command(binaryPath, getVersionCommandArg(sourceType)...))
 }
 
 // CreateExportBinaryCommand ...
 func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return buildShellCommand(util.Which(), getExportCommand(sourceType))
+	return homeDirCommand(exec.Command(util.Which(), getExportCommand(sourceType)...))
 }
 
 // CreateExportCommand ...
 func CreateExportCommand(cfg config.Config) *exec.Cmd {
-	return buildShellCommand(cfg.BinaryPath, getExportCommandArg(cfg))
+	arg := getExportCommandArg(cfg)
+	return homeDirCommand(exec.Command(cfg.BinaryPath, arg...))
 }
 
 // CreateImportCommand ...
 func CreateImportCommand(cfg config.Config) *exec.Cmd {
-	return buildShellCommand(cfg.BinaryPath, getImportCommandArg(cfg))
-}
-
-func buildShellCommand(command string, args []string) *exec.Cmd {
-	arg := make([]string, 0)
-	tmp := make([]string, 0)
-	switch runtime.GOOS {
-	case "windows":
-		return homeDirCommand(exec.Command(command, args...))
-	default:
-		arg = append(arg, "-c")
-		tmp = append(tmp, command)
-		tmp = append(tmp, args...)
-		c := strings.Join(tmp, " ")
-		arg = append(arg, c)
-		return homeDirCommand(exec.Command("bash", arg...))
-	}
+	return homeDirCommand(exec.Command(cfg.BinaryPath, getImportCommandArg(cfg)...))
 }
 
 func homeDirCommand(cmd *exec.Cmd) *exec.Cmd {
@@ -273,14 +257,4 @@ func getExportCommand(sourceType config.SourceType) (command []string) {
 		}
 	}
 	return command
-}
-
-func setCmdDirectory(cmd *exec.Cmd) {
-	switch runtime.GOOS {
-	case "windows":
-		cmd.Dir = os.Getenv("HOMEDRIVE")
-		break
-	default:
-		cmd.Dir = "/"
-	}
 }

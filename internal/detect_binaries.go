@@ -2,7 +2,6 @@ package internal
 
 import (
 	"bytes"
-	"errors"
 	"github.com/sadihakan/dummy-dump/config"
 	"os"
 	"os/exec"
@@ -46,17 +45,17 @@ func CheckVersion(binaryPath string, sourceType config.SourceType) (string, erro
 func checkVersion(binaryPath string, sourceType config.SourceType) (string, error) {
 	var out bytes.Buffer
 	var cmd *exec.Cmd
-	defer func() {
-		out.Reset()
-	}()
 
+	if sourceType == config.Oracle {
+
+	}
 	switch sourceType {
 	case config.Oracle:
 		cmd = CreateVersionCommand(filepath.Join(oraclelBinaryDirectories()[0], "sqlplus.exe"), sourceType)
 	default:
 		cmd = CreateVersionCommand(binaryPath, sourceType)
 	}
-	setCmdDirectory(cmd)
+
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = &out
@@ -72,12 +71,9 @@ func checkVersion(binaryPath string, sourceType config.SourceType) (string, erro
 func checkImport(sourceType config.SourceType) (string, error) {
 	var out bytes.Buffer
 	var cmd *exec.Cmd
-	defer func() {
-		out.Reset()
-	}()
 
 	cmd = CreateImportBinaryCommand(sourceType)
-	setCmdDirectory(cmd)
+
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = &out
@@ -92,24 +88,17 @@ func checkImport(sourceType config.SourceType) (string, error) {
 
 func checkExport(sourceType config.SourceType) (string, error) {
 	var out bytes.Buffer
-	var errOut bytes.Buffer
 	var cmd *exec.Cmd
-	defer func() {
-		out.Reset()
-		errOut.Reset()
-	}()
 
 	cmd = CreateExportBinaryCommand(sourceType)
-	setCmdDirectory(cmd)
-	cmd.Stderr = &errOut
+
+	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = &out
 	err := cmd.Run()
+
 	if err != nil {
 		return "", err
-	}
-	if errOut.Len() > 0 {
-		return "", errors.New(errOut.String())
 	}
 
 	lines := strings.Split(out.String(), "\n")
