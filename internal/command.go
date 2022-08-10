@@ -74,12 +74,7 @@ func buildShellCommand(command string, args []string) *exec.Cmd {
 	tmp := make([]string, 0)
 	switch runtime.GOOS {
 	case "windows":
-		arg = append(arg, string(os.PathSeparator)+"C")
-		tmp = append(tmp, command)
-		tmp = append(tmp, args...)
-		c := strings.Join(tmp, " ")
-		arg = append(arg, c)
-		return homeDirCommand(exec.Command("cmd", arg...))
+		return homeDirCommand(exec.Command(command, args...))
 	default:
 		arg = append(arg, "-c")
 		tmp = append(tmp, command)

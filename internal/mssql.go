@@ -75,7 +75,6 @@ func (ms MSSQL) Export(dump config.Config) error {
 	exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s'`,
 		dump.DB,
 		location)
-	fmt.Print(exportQuery)
 	_, err = db.Exec(exportQuery)
 	if err != nil {
 		return err
