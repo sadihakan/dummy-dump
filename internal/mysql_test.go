@@ -8,13 +8,13 @@ import (
 func TestMySQL_Check(t *testing.T) {
 	var d Dump
 	d = MySQL{}
-	d.Check()
+	d.Check(nil)
 }
 
 func TestMySQL_CheckWithError(t *testing.T) {
 	var d Dump
 	d = MySQL{}
-	err := d.Check()
+	err := d.Check(nil)
 	if err != nil {
 		t.Errorf("MySQL Check() Error: %s", err.Error())
 	}
@@ -34,7 +34,7 @@ func TestMySQL_Import(t *testing.T) {
 		DB:             "",
 		BinaryPath:     "",
 	}
-	d.Import(config)
+	d.Import(nil, config)
 
 }
 
@@ -52,7 +52,7 @@ func TestMySQL_ImportWithError(t *testing.T) {
 		DB:             "",
 		BinaryPath:     "",
 	}
-	err := d.Import(config)
+	err := d.Import(nil, config)
 
 	if err != nil {
 		t.Errorf("MySQL Import() Error: %s", err.Error())
@@ -72,7 +72,7 @@ func TestMySQL_Export(t *testing.T) {
 		DB:             "",
 		BinaryPath:     "",
 	}
-	d.Export(config)
+	d.Export(nil, config)
 
 }
 
@@ -89,7 +89,7 @@ func TestMySQL_ExportWithError(t *testing.T) {
 		DB:             "",
 		BinaryPath:     "",
 	}
-	err := d.Export(config)
+	err := d.Export(nil, config)
 	if err != nil {
 		t.Errorf("MySQL Export() Error: %s", err.Error())
 	}

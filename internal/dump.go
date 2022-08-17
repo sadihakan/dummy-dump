@@ -1,11 +1,14 @@
 package internal
 
-import "github.com/sadihakan/dummy-dump/config"
+import (
+	"context"
+	"github.com/sadihakan/dummy-dump/config"
+)
 
 // Dump ...
 type Dump interface {
-	Check() error
-	CheckPath(dump config.Config) error
-	Export(dump config.Config) error
-	Import(dump config.Config) error
+	Check(ctx context.Context) error
+	CheckPath(ctx context.Context, dump config.Config) error
+	Export(ctx context.Context, dump config.Config) error
+	Import(ctx context.Context, dump config.Config) error
 }

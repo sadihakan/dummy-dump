@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	dummydump "github.com/sadihakan/dummy-dump"
 	"github.com/sadihakan/dummy-dump/config"
@@ -15,7 +16,9 @@ func main() {
 
 	dd.SetBinaryConfig(config.PostgreSQL, false, true)
 
-	binary, version := dd.GetBinary()
+	ctx := context.Background()
+
+	binary, version := dd.GetBinary(ctx)
 	fmt.Println("Bin: ", binary)
 	fmt.Println("Version: ", version)
 
@@ -37,7 +40,7 @@ func main() {
 		fmt.Println("DummyDump error ", err)
 	}
 
-	_, err = dd2.CheckPath().Export().Run()
+	_, err = dd2.CheckPath(ctx).Export(ctx).Run()
 
 	if err != nil {
 		fmt.Println("Run error: ", err)

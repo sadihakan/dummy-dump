@@ -2,6 +2,7 @@ package internal
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"github.com/sadihakan/dummy-dump/config"
 	"os"
@@ -11,8 +12,8 @@ type Oracle struct {
 	Dump
 }
 
-func (o Oracle) Check() error {
-	cmd := CreateCheckBinaryCommand(config.Oracle)
+func (o Oracle) Check(ctx context.Context) error {
+	cmd := CreateCheckBinaryCommand(ctx, config.Oracle)
 	var out, errBuf bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
@@ -24,8 +25,8 @@ func (o Oracle) Check() error {
 	return nil
 }
 
-func (o Oracle) CheckPath(dump config.Config) error {
-	cmd := CreateCheckBinaryPathCommand(dump)
+func (o Oracle) CheckPath(ctx context.Context, dump config.Config) error {
+	cmd := CreateCheckBinaryPathCommand(ctx, dump)
 	var out, errBuf bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
@@ -36,10 +37,10 @@ func (o Oracle) CheckPath(dump config.Config) error {
 	return nil
 }
 
-func (o Oracle) Export(dump config.Config) error {
+func (o Oracle) Export(ctx context.Context, dump config.Config) error {
 	var out, errBuf bytes.Buffer
 
-	cmd := CreateExportCommand(dump)
+	cmd := CreateExportCommand(ctx, dump)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
@@ -51,10 +52,10 @@ func (o Oracle) Export(dump config.Config) error {
 	return nil
 }
 
-func (o Oracle) Import(dump config.Config) error {
+func (o Oracle) Import(ctx context.Context, dump config.Config) error {
 	var out, errBuf bytes.Buffer
 
-	cmd := CreateImportCommand(dump)
+	cmd := CreateImportCommand(ctx, dump)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
