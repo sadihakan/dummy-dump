@@ -2,6 +2,7 @@ package internal
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"github.com/sadihakan/dummy-dump/config"
 	"os"
@@ -21,8 +22,8 @@ type MySQL struct {
 	Dump
 }
 
-func (m MySQL) Check() error {
-	cmd := CreateCheckBinaryCommand(config.MySQL)
+func (m MySQL) Check(ctx context.Context) error {
+	cmd := CreateCheckBinaryCommand(ctx, config.MySQL)
 	err := cmd.Run()
 	if err != nil {
 		_, _ = os.Stderr.WriteString(err.Error())
@@ -31,8 +32,8 @@ func (m MySQL) Check() error {
 	return nil
 }
 
-func (m MySQL) CheckPath(dump config.Config) error {
-	cmd := CreateCheckBinaryPathCommand(dump)
+func (m MySQL) CheckPath(ctx context.Context, dump config.Config) error {
+	cmd := CreateCheckBinaryPathCommand(ctx, dump)
 	var out, errBuf bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
@@ -43,8 +44,8 @@ func (m MySQL) CheckPath(dump config.Config) error {
 	return nil
 }
 
-func (m MySQL) Export(dump config.Config) error {
-	cmd:= CreateExportCommand(dump)
+func (m MySQL) Export(ctx context.Context, dump config.Config) error {
+	cmd := CreateExportCommand(ctx, dump)
 	var outb, errBuf bytes.Buffer
 	cmd.Stderr = &errBuf
 	cmd.Stdin = os.Stdin
@@ -55,8 +56,8 @@ func (m MySQL) Export(dump config.Config) error {
 	return nil
 }
 
-func (m MySQL) Import(dump config.Config) error {
-	cmd := CreateImportCommand(dump)
+func (m MySQL) Import(ctx context.Context, dump config.Config) error {
+	cmd := CreateImportCommand(ctx, dump)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

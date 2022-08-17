@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	_ "github.com/microsoft/go-mssqldb"
@@ -38,7 +39,7 @@ func (ms MSSQL) NewDB(dump config.Config) (*sql.DB, error) {
 	return db, nil
 }
 
-func (ms MSSQL) Check() error {
+func (ms MSSQL) Check(_ context.Context) error {
 	cmd := exec.Command("reg", "query", "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft", "/f", "mssql", "/k")
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
@@ -51,11 +52,11 @@ func (ms MSSQL) Check() error {
 	return nil
 }
 
-func (ms MSSQL) CheckPath(dump config.Config) error {
+func (ms MSSQL) CheckPath(_ context.Context, dump config.Config) error {
 	return nil
 }
 
-func (ms MSSQL) Export(dump config.Config) error {
+func (ms MSSQL) Export(ctx context.Context, dump config.Config) error {
 	db, err := ms.NewDB(dump)
 	if err != nil {
 		return err
@@ -75,14 +76,14 @@ func (ms MSSQL) Export(dump config.Config) error {
 	exportQuery := fmt.Sprintf(`BACKUP DATABASE [%s] TO DISK = '%s'`,
 		dump.DB,
 		location)
-	_, err = db.Exec(exportQuery)
+	_, err = db.ExecContext(ctx, exportQuery)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ms MSSQL) Import(dump config.Config) error {
+func (ms MSSQL) Import(ctx context.Context, dump config.Config) error {
 	db, err := ms.NewDB(dump)
 	if err != nil {
 		return err
@@ -90,7 +91,7 @@ func (ms MSSQL) Import(dump config.Config) error {
 	importQuery := fmt.Sprintf(`RESTORE DATABASE [%s] FROM DISK = '%s' WITH REPLACE`,
 		dump.DB,
 		filepath.Join(dump.BackupFilePath, dump.BackupName))
-	_, err = db.Exec(importQuery)
+	_, err = db.ExecContext(ctx, importQuery)
 	if err != nil {
 		return err
 	}

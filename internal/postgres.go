@@ -2,6 +2,7 @@ package internal
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"github.com/sadihakan/dummy-dump/config"
 	"os"
@@ -11,8 +12,8 @@ type Postgres struct {
 	Dump
 }
 
-func (p Postgres) Check() error {
-	cmd := CreateCheckBinaryCommand(config.PostgreSQL)
+func (p Postgres) Check(ctx context.Context) error {
+	cmd := CreateCheckBinaryCommand(ctx, config.PostgreSQL)
 	var out, errBuf bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
@@ -24,8 +25,8 @@ func (p Postgres) Check() error {
 	return nil
 }
 
-func (p Postgres) CheckPath(dump config.Config) error {
-	cmd := CreateCheckBinaryPathCommand(dump)
+func (p Postgres) CheckPath(ctx context.Context, dump config.Config) error {
+	cmd := CreateCheckBinaryPathCommand(ctx, dump)
 	var out, errBuf bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
@@ -36,10 +37,10 @@ func (p Postgres) CheckPath(dump config.Config) error {
 	return nil
 }
 
-func (p Postgres) Export(dump config.Config) error {
+func (p Postgres) Export(ctx context.Context, dump config.Config) error {
 	var out, errBuf bytes.Buffer
 
-	cmd := CreateExportCommand(dump)
+	cmd := CreateExportCommand(ctx, dump)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
@@ -51,10 +52,10 @@ func (p Postgres) Export(dump config.Config) error {
 	return nil
 }
 
-func (p Postgres) Import(dump config.Config) error {
+func (p Postgres) Import(ctx context.Context, dump config.Config) error {
 	var out, errBuf bytes.Buffer
 
-	cmd := CreateImportCommand(dump)
+	cmd := CreateImportCommand(ctx, dump)
 	cmd.Stdout = &out
 	cmd.Stderr = &errBuf
 	err := cmd.Run()

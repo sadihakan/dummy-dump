@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/util"
@@ -34,39 +35,39 @@ const (
 )
 
 // CreateCheckBinaryCommand ...
-func CreateCheckBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return homeDirCommand(exec.Command(util.Which(), getCheckCommand(sourceType)...))
+func CreateCheckBinaryCommand(ctx context.Context, sourceType config.SourceType) *exec.Cmd {
+	return homeDirCommand(exec.CommandContext(ctx, util.Which(), getCheckCommand(sourceType)...))
 }
 
 // CreateCheckBinaryPathCommand ...
-func CreateCheckBinaryPathCommand(cfg config.Config) *exec.Cmd {
-	return homeDirCommand(exec.Command(util.Which(), getCheckBinaryPathCommand(cfg)...))
+func CreateCheckBinaryPathCommand(ctx context.Context, cfg config.Config) *exec.Cmd {
+	return homeDirCommand(exec.CommandContext(ctx, util.Which(), getCheckBinaryPathCommand(cfg)...))
 }
 
 // CreateImportBinaryCommand ...
-func CreateImportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return homeDirCommand(exec.Command(util.Which(), getImportCommand(sourceType)...))
+func CreateImportBinaryCommand(ctx context.Context, sourceType config.SourceType) *exec.Cmd {
+	return homeDirCommand(exec.CommandContext(ctx, util.Which(), getImportCommand(sourceType)...))
 }
 
 // CreateVersionCommand ...
-func CreateVersionCommand(binaryPath string, sourceType config.SourceType) *exec.Cmd {
-	return homeDirCommand(exec.Command(binaryPath, getVersionCommandArg(sourceType)...))
+func CreateVersionCommand(ctx context.Context, binaryPath string, sourceType config.SourceType) *exec.Cmd {
+	return homeDirCommand(exec.CommandContext(ctx, binaryPath, getVersionCommandArg(sourceType)...))
 }
 
 // CreateExportBinaryCommand ...
-func CreateExportBinaryCommand(sourceType config.SourceType) *exec.Cmd {
-	return homeDirCommand(exec.Command(util.Which(), getExportCommand(sourceType)...))
+func CreateExportBinaryCommand(ctx context.Context, sourceType config.SourceType) *exec.Cmd {
+	return homeDirCommand(exec.CommandContext(ctx, util.Which(), getExportCommand(sourceType)...))
 }
 
 // CreateExportCommand ...
-func CreateExportCommand(cfg config.Config) *exec.Cmd {
+func CreateExportCommand(ctx context.Context, cfg config.Config) *exec.Cmd {
 	arg := getExportCommandArg(cfg)
-	return homeDirCommand(exec.Command(cfg.BinaryPath, arg...))
+	return homeDirCommand(exec.CommandContext(ctx, cfg.BinaryPath, arg...))
 }
 
 // CreateImportCommand ...
-func CreateImportCommand(cfg config.Config) *exec.Cmd {
-	return homeDirCommand(exec.Command(cfg.BinaryPath, getImportCommandArg(cfg)...))
+func CreateImportCommand(ctx context.Context, cfg config.Config) *exec.Cmd {
+	return homeDirCommand(exec.CommandContext(ctx, cfg.BinaryPath, getImportCommandArg(cfg)...))
 }
 
 func homeDirCommand(cmd *exec.Cmd) *exec.Cmd {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
@@ -39,6 +40,8 @@ func main() {
 	flag.StringVar(&backupFilePath, "backupFilePath", "", "Backup file path")
 	flag.BoolVar(&scanStyle, "scan", false, "")
 	flag.Parse()
+
+	ctx := context.Background()
 
 	if scanStyle {
 		fmt.Println("Source type is: <mysql|postgres|mssql>")
@@ -117,7 +120,7 @@ func main() {
 
 	switch source {
 	case "postgres":
-		binaryPath, err := internal.CheckBinary(binaryPath, config.SourceType(source), importArg, exportArg)
+		binaryPath, err := internal.CheckBinary(ctx, binaryPath, config.SourceType(source), importArg, exportArg)
 		if err != nil {
 			panic(err)
 		}
@@ -125,10 +128,10 @@ func main() {
 		if err = dumpConfig.CheckConfigPostgreSQL(); err != nil {
 			panic(err)
 		}
-		dump = internal.Postgres{}
+		dump = internal.Postgres{Ctx: ctx}
 
 	case "mysql":
-		binaryPath, err := internal.CheckBinary(binaryPath, config.SourceType(source), importArg, exportArg)
+		binaryPath, err := internal.CheckBinary(ctx, binaryPath, config.SourceType(source), importArg, exportArg)
 		if err != nil {
 			panic(err)
 		}
@@ -136,7 +139,7 @@ func main() {
 		if err := dumpConfig.CheckConfigMySQL(); err != nil {
 			panic(err)
 		}
-		dump = internal.MySQL{}
+		dump = internal.MySQL{Ctx: ctx}
 
 	case "mssql":
 		if err := dumpConfig.CheckConfigMsSQL(); err != nil {

@@ -11,14 +11,14 @@ func TestCheck(t *testing.T) {
 	var dump Dump
 	dump = Postgres{}
 
-	dump.Check()
+	dump.Check(nil)
 }
 
 func TestCheckWithError(t *testing.T) {
 	var dump Dump
 	dump = Postgres{}
 
-	err := dump.Check()
+	err := dump.Check(nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -41,7 +41,7 @@ func TestExport(t *testing.T) {
 		BinaryPath:     "pg_dump",
 	}
 
-	dump.Export(config)
+	dump.Export(nil, config)
 }
 
 func TestExportWithError(t *testing.T) {
@@ -60,7 +60,7 @@ func TestExportWithError(t *testing.T) {
 		BinaryPath:     "pg_dump",
 	}
 
-	dump.Export(config)
+	dump.Export(nil, config)
 }
 
 func TestImport(t *testing.T) {
@@ -81,7 +81,7 @@ func TestImport(t *testing.T) {
 		BinaryPath:     "pg_restore",
 	}
 
-	dump.Import(config)
+	dump.Import(nil, config)
 }
 
 func TestImportWithError(t *testing.T) {
@@ -101,5 +101,5 @@ func TestImportWithError(t *testing.T) {
 		BinaryPath:     "pg_restore",
 	}
 
-	dump.Import(config)
+	dump.Import(nil, config)
 }

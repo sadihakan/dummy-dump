@@ -1,6 +1,7 @@
 package dummy_dump
 
 import (
+	"context"
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/errors"
 	"github.com/sadihakan/dummy-dump/internal"
@@ -112,14 +113,14 @@ func (dd *DummyDump) configParser() (err error) {
 	return err
 }
 
-func (dd *DummyDump) Import() *DummyDump {
+func (dd *DummyDump) Import(ctx context.Context) *DummyDump {
 	dumpConfig := dd.c
 
 	if !util.PathExists(dumpConfig.BackupFilePath) && dd.Error == nil {
 		dd.Error = errors.New(errors.ConfigPathNotExist)
 	}
 
-	err := dd.dump.Import(*dumpConfig)
+	err := dd.dump.Import(ctx, *dumpConfig)
 
 	if err != nil && dd.Error == nil {
 		dd.Error = err
@@ -128,9 +129,9 @@ func (dd *DummyDump) Import() *DummyDump {
 	return dd
 }
 
-func (dd *DummyDump) Export() *DummyDump {
+func (dd *DummyDump) Export(ctx context.Context) *DummyDump {
 	dumpConfig := dd.c
-	err := dd.dump.Export(*dumpConfig)
+	err := dd.dump.Export(ctx, *dumpConfig)
 
 	if err != nil && dd.Error == nil {
 		dd.Error = err
@@ -139,16 +140,16 @@ func (dd *DummyDump) Export() *DummyDump {
 	return dd
 }
 
-func (dd *DummyDump) Check() *DummyDump {
-	dd.Error = dd.dump.Check()
+func (dd *DummyDump) Check(ctx context.Context) *DummyDump {
+	dd.Error = dd.dump.Check(ctx)
 
 	return dd
 }
 
-func (dd *DummyDump) CheckPath() *DummyDump {
+func (dd *DummyDump) CheckPath(ctx context.Context) *DummyDump {
 	dumpConfig := dd.c
 
-	dd.Error = dd.dump.CheckPath(*dumpConfig)
+	dd.Error = dd.dump.CheckPath(ctx, *dumpConfig)
 
 	return dd
 }
@@ -161,10 +162,10 @@ func (dd *DummyDump) Run() (*DummyDump, error) {
 	return dd, nil
 }
 
-func (dd *DummyDump) GetBinary() (binaryPath string, version string) {
+func (dd *DummyDump) GetBinary(ctx context.Context) (binaryPath string, version string) {
 	dumpConfig := dd.c
-	binaryPath, err := internal.CheckBinary(dumpConfig.BinaryPath, dumpConfig.Source, dumpConfig.Import, dumpConfig.Export)
-	version, err = internal.CheckVersion(binaryPath, dumpConfig.Source)
+	binaryPath, err := internal.CheckBinary(ctx, dumpConfig.BinaryPath, dumpConfig.Source, dumpConfig.Import, dumpConfig.Export)
+	version, err = internal.CheckVersion(ctx, binaryPath, dumpConfig.Source)
 
 	if err != nil {
 		dd.Error = err
