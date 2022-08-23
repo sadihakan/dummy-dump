@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"github.com/sadihakan/dummy-dump/config"
 	"github.com/sadihakan/dummy-dump/util"
 	"path/filepath"
@@ -18,7 +19,11 @@ func TestCheckWithError(t *testing.T) {
 	var dump Dump
 	dump = Postgres{}
 
-	err := dump.Check(nil)
+	cnf := config.Config{
+		BinaryPath: "randomstring",
+	}
+
+	err := dump.CheckPath(context.Background(), cnf)
 
 	if err != nil {
 		t.Fatal(err)

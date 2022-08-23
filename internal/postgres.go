@@ -50,6 +50,7 @@ func (p Postgres) Export(ctx context.Context, dump config.Config) error {
 
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
+
 	if err := cmd.Run(); err != nil {
 		return errors.New(fmt.Sprint(err) + ": " + stderr.String())
 	}

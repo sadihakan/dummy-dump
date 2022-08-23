@@ -3,11 +3,21 @@ package internal
 import (
 	"bytes"
 	"context"
+	"errors"
+	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
 	"os"
 	"os/exec"
 	"strings"
 )
+
+var predefinedPostgresPaths = []string{
+	"/Applications/Postgres.app/Contents/Versions/latest/bin/pg_dump",
+}
+
+var predefinedMySQLPaths = []string{
+	"/Applications/Postgres.app/Contents/Versions/latest/bin/pg_dump",
+}
 
 // CheckBinary ...
 func CheckBinary(ctx context.Context, binaryPath string, sourceType config.SourceType, importArg bool, exportArg bool) (string, error) {
@@ -98,9 +108,43 @@ func checkExport(ctx context.Context, sourceType config.SourceType) (string, err
 	err := cmd.Run()
 
 	if err != nil {
-		return "", err
+		switch sourceType {
+		case config.PostgreSQL:
+			var path string
+			for i := 0; i < len(predefinedPostgresPaths); i++ {
+				path, err = findExport(ctx, predefinedPostgresPaths[i])
+				if err == nil {
+					break
+				}
+			}
+			return path, nil
+		case config.MySQL:
+			var path string
+			for i := 0; i < len(predefinedMySQLPaths); i++ {
+				path, err = findExport(ctx, predefinedMySQLPaths[i])
+				if err == nil {
+					break
+				}
+			}
+			return path, nil
+		}
 	}
 
 	lines := strings.Split(out.String(), "\n")
 	return strings.TrimSpace(lines[0]), nil
+}
+
+func findExport(ctx context.Context, path string) (string, error) {
+	cmd := CreateCheckBinaryPathCommand(ctx, config.Config{BinaryPath: path})
+
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		return "", errors.New(fmt.Sprint(err) + ": " + stderr.String())
+	}
+
+	return path, nil
 }
