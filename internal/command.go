@@ -36,42 +36,64 @@ const (
 
 // CreateCheckBinaryCommand ...
 func CreateCheckBinaryCommand(ctx context.Context, sourceType config.SourceType) *exec.Cmd {
-	return homeDirCommand(exec.CommandContext(ctx, util.Which(), getCheckCommand(sourceType)...))
+	return homeDirCommand(ctx, util.Which(), getCheckCommand(sourceType))
 }
 
 // CreateCheckBinaryPathCommand ...
 func CreateCheckBinaryPathCommand(ctx context.Context, cfg config.Config) *exec.Cmd {
-	return homeDirCommand(exec.CommandContext(ctx, util.Which(), getCheckBinaryPathCommand(cfg)...))
+	return homeDirCommand(ctx, "", getCheckBinaryPathCommand(cfg))
 }
 
 // CreateImportBinaryCommand ...
 func CreateImportBinaryCommand(ctx context.Context, sourceType config.SourceType) *exec.Cmd {
-	return homeDirCommand(exec.CommandContext(ctx, util.Which(), getImportCommand(sourceType)...))
+	return homeDirCommand(ctx, util.Which(), getImportCommand(sourceType))
 }
 
 // CreateVersionCommand ...
 func CreateVersionCommand(ctx context.Context, binaryPath string, sourceType config.SourceType) *exec.Cmd {
-	return homeDirCommand(exec.CommandContext(ctx, binaryPath, getVersionCommandArg(sourceType)...))
+	return homeDirCommand(ctx, binaryPath, getVersionCommandArg(sourceType))
 }
 
 // CreateExportBinaryCommand ...
 func CreateExportBinaryCommand(ctx context.Context, sourceType config.SourceType) *exec.Cmd {
-	return homeDirCommand(exec.CommandContext(ctx, util.Which(), getExportCommand(sourceType)...))
+	return homeDirCommand(ctx, util.Which(), getExportCommand(sourceType))
 }
 
 // CreateExportCommand ...
 func CreateExportCommand(ctx context.Context, cfg config.Config) *exec.Cmd {
-	arg := getExportCommandArg(cfg)
-	return homeDirCommand(exec.CommandContext(ctx, cfg.BinaryPath, arg...))
+	return homeDirCommand(ctx, cfg.BinaryPath, getExportCommandArg(cfg))
 }
 
 // CreateImportCommand ...
 func CreateImportCommand(ctx context.Context, cfg config.Config) *exec.Cmd {
-	return homeDirCommand(exec.CommandContext(ctx, cfg.BinaryPath, getImportCommandArg(cfg)...))
+	return homeDirCommand(ctx, cfg.BinaryPath, getImportCommandArg(cfg))
 }
 
-func homeDirCommand(cmd *exec.Cmd) *exec.Cmd {
+func homeDirCommand(ctx context.Context, command string, arg []string) *exec.Cmd {
+	params := make([]string, 0)
+	cmd := new(exec.Cmd)
+	switch runtime.GOOS {
+	case "darwin":
+		if command != "" {
+			params = append(params, command)
+		}
+		params = append(params, arg...)
+		command = strings.Join(params, " ")
+		fmt.Println(command)
+		cmd = exec.CommandContext(ctx, "sh", "-c", command)
+	case "linux":
+		cmd = exec.CommandContext(ctx, command, arg...)
+	case "windows":
+		if command != "" {
+			params = append(params, command)
+		}
+		params = append(params, arg...)
+		command = strings.Join(params, " ")
+		cmd = exec.CommandContext(ctx, "powershell.exe", "/C", command)
+	}
+
 	cmd.Dir = util.HomeDir()
+
 	return cmd
 }
 
