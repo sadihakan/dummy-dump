@@ -89,10 +89,10 @@ func homeDirCommand(ctx context.Context, command string, arg []string) *exec.Cmd
 		}
 		params = append(params, arg...)
 		command = strings.Join(params, " ")
-		cmd = exec.CommandContext(ctx, "powershell.exe", "/C", command)
+		cmd = exec.CommandContext(ctx, "powershell.exe", strings.TrimSpace(command))
 	}
 
-	cmd.Dir = util.HomeDir()
+	//cmd.Dir = util.HomeDir()
 
 	return cmd
 }
@@ -104,8 +104,7 @@ func getCheckBinaryPathCommand(cfg config.Config) (command []string) {
 	case "linux":
 		command = []string{cfg.BinaryPath}
 	case "windows":
-		path, file := filepath.Split(cfg.BinaryPath)
-		command = []string{"/r", path, file}
+		command = []string{cfg.BinaryPath}
 	}
 	return command
 }
@@ -192,7 +191,7 @@ func getCheckCommand(sourceType config.SourceType) (command []string) {
 			command = []string{"mysql"}
 		case "windows":
 			p := strings.TrimSpace(mysqlBinaryDirectory()[0])
-			command = []string{"/r", p, "mysql"}
+			command = []string{"/r", p, "mysqldump.exe"}
 		}
 	case config.Oracle:
 		switch runtime.GOOS {
@@ -265,8 +264,7 @@ func getExportCommand(sourceType config.SourceType) (command []string) {
 		case "linux":
 			command = []string{"mysqldump"}
 		case "windows":
-			p := strings.TrimSpace(mysqlBinaryDirectory()[0])
-			command = []string{"/r", p, "mysqldump"}
+			command = []string{"mysqldump.exe"}
 		}
 	case config.Oracle:
 		switch runtime.GOOS {

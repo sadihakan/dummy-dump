@@ -165,11 +165,11 @@ func (dd *DummyDump) Run() (*DummyDump, error) {
 func (dd *DummyDump) GetBinary(ctx context.Context) (binaryPath string, version string) {
 	dumpConfig := dd.c
 	binaryPath, err := internal.CheckBinary(ctx, dumpConfig.BinaryPath, dumpConfig.Source, dumpConfig.Import, dumpConfig.Export)
-	version, err = internal.CheckVersion(ctx, binaryPath, dumpConfig.Source)
-
 	if err != nil {
 		dd.Error = err
 	}
+
+	version, _ = internal.CheckVersion(ctx, binaryPath, dumpConfig.Source)
 
 	return binaryPath, version
 }
