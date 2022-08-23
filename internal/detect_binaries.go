@@ -11,14 +11,6 @@ import (
 	"strings"
 )
 
-var predefinedPostgresPaths = []string{
-	"/Applications/Postgres.app/Contents/Versions/latest/bin/pg_dump",
-}
-
-var predefinedMySQLPaths = []string{
-	"/Applications/Postgres.app/Contents/Versions/latest/bin/pg_dump",
-}
-
 // CheckBinary ...
 func CheckBinary(ctx context.Context, binaryPath string, sourceType config.SourceType, importArg bool, exportArg bool) (string, error) {
 	var err error
@@ -135,7 +127,7 @@ func checkExport(ctx context.Context, sourceType config.SourceType) (string, err
 }
 
 func findExport(ctx context.Context, path string) (string, error) {
-	cmd := CreateCheckBinaryPathCommand(ctx, config.Config{BinaryPath: path})
+	cmd := CreateCheckBinaryPathCommand(ctx, config.Config{BinaryPath: fmt.Sprintf("%s --version", path)})
 
 	var out bytes.Buffer
 	var stderr bytes.Buffer
