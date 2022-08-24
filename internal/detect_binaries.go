@@ -106,6 +106,9 @@ func checkExport(ctx context.Context, sourceType config.SourceType) (string, err
 					BinaryPath: predefinedPostgresPaths[i],
 					Source:     config.PostgreSQL,
 				})
+				if err == nil {
+					break
+				}
 			}
 			return path, nil
 		case config.MySQL:
@@ -121,8 +124,6 @@ func checkExport(ctx context.Context, sourceType config.SourceType) (string, err
 			return path, nil
 		}
 	}
-
-	fmt.Println(err, "*1")
 
 	if err != nil {
 		return "", err
