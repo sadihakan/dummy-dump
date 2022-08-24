@@ -9,9 +9,6 @@ import (
 	"github.com/sadihakan/dummy-dump/util"
 	"net/url"
 	"path/filepath"
-
-	"os"
-	"os/exec"
 )
 
 type MSSQL struct {
@@ -37,19 +34,6 @@ func (ms MSSQL) NewDB(dump config.Config) (*sql.DB, error) {
 		return nil, err
 	}
 	return db, nil
-}
-
-func (ms MSSQL) Check(_ context.Context) error {
-	cmd := exec.Command("reg", "query", "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft", "/f", "mssql", "/k")
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-
-	err := cmd.Run()
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func (ms MSSQL) CheckPath(_ context.Context, dump config.Config) error {

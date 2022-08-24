@@ -142,12 +142,6 @@ func (dd *DummyDump) Export(ctx context.Context) *DummyDump {
 	return dd
 }
 
-func (dd *DummyDump) Check(ctx context.Context) *DummyDump {
-	dd.Error = dd.dump.Check(ctx)
-
-	return dd
-}
-
 func (dd *DummyDump) CheckPath(ctx context.Context) *DummyDump {
 	dumpConfig := dd.c
 
