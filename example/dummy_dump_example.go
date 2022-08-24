@@ -22,28 +22,4 @@ func main() {
 	fmt.Println("Bin: ", binary)
 	fmt.Println("Version: ", version)
 
-	dd2, err := dummydump.New(&config.Config{
-		Source:         config.MySQL,
-		Import:         false,
-		Export:         true,
-		User:           "root",
-		Password:       "123456",
-		DB:             "testdb",
-		Host:           "localhost",
-		Port:           3306,
-		BackupFilePath: "C:\\Users\\Administrator\\Desktop",
-		BackupName:     "testdb.backup",
-		BinaryPath:     binary,
-	})
-
-	if err != nil {
-		fmt.Println("DummyDump error ", err)
-	}
-
-	_, err = dd2.Export(ctx).Run()
-
-	if err != nil {
-		fmt.Println("Run error: ", err)
-	}
-
 }

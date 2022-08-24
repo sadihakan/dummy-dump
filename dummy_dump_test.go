@@ -1,6 +1,7 @@
 package dummy_dump
 
 import (
+	"context"
 	"github.com/sadihakan/dummy-dump/config"
 	"testing"
 )
@@ -20,5 +21,5 @@ func TestNew(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	dd.Check().Import().Run()
+	dd.Import(context.Background()).Run()
 }

@@ -12,23 +12,8 @@ type Postgres struct {
 	Dump
 }
 
-func (p Postgres) Check(ctx context.Context) error {
-	cmd := CreateCheckBinaryCommand(ctx, config.PostgreSQL)
-
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		return errors.New(fmt.Sprint(err) + ": " + stderr.String())
-	}
-
-	return nil
-}
-
 func (p Postgres) CheckPath(ctx context.Context, dump config.Config) error {
-	cmd := CreateCheckBinaryPathCommand(ctx, dump)
+	cmd := CheckBinaryPathCommand(ctx, dump)
 
 	var out bytes.Buffer
 	var stderr bytes.Buffer

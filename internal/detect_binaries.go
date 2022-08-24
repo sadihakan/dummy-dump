@@ -8,8 +8,6 @@ import (
 	"github.com/sadihakan/dummy-dump/config"
 	"os"
 	"os/exec"
-	"path/filepath"
-	"runtime"
 	"strings"
 )
 
@@ -50,12 +48,7 @@ func checkVersion(ctx context.Context, binaryPath string, sourceType config.Sour
 	var out bytes.Buffer
 	var cmd *exec.Cmd
 
-	if runtime.GOOS == "windows" {
-		_, file := filepath.Split(binaryPath)
-		cmd = CreateVersionCommand(ctx, file, sourceType)
-	} else {
-		cmd = CreateVersionCommand(ctx, binaryPath, sourceType)
-	}
+	cmd = CheckVersionCommand(ctx, binaryPath, sourceType)
 
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
@@ -69,50 +62,58 @@ func checkVersion(ctx context.Context, binaryPath string, sourceType config.Sour
 	return strings.TrimSpace(lines[0]), nil
 }
 
-func checkImport(ctx context.Context, sourceType config.SourceType) (string, error) {
-	var out bytes.Buffer
-	var cmd *exec.Cmd
+func checkImport(_ context.Context, sourceType config.SourceType) (string, error) {
+	var path string
 
-	cmd = CreateImportBinaryCommand(ctx, sourceType)
-
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = &out
-	err := cmd.Run()
-
-	if err != nil {
-		return "", err
+	switch sourceType {
+	case config.PostgreSQL:
+		path, _ = exec.LookPath("pg_restore")
+	case config.MySQL:
+		path, _ = exec.LookPath("mysql")
+	case config.Oracle:
+		path, _ = exec.LookPath("impdp")
 	}
-	lines := strings.Split(out.String(), "\n")
-	return strings.TrimSpace(lines[0]), nil
+
+	return path, nil
 }
 
 func checkExport(ctx context.Context, sourceType config.SourceType) (string, error) {
-	var out bytes.Buffer
-	var cmd *exec.Cmd
+	var err error
+	var path string
 
-	cmd = CreateExportBinaryCommand(ctx, sourceType)
+	switch sourceType {
+	case config.PostgreSQL:
+		path, _ = exec.LookPath("pg_dump")
+	case config.MySQL:
+		path, _ = exec.LookPath("mysqldump")
+	case config.Oracle:
+		path, _ = exec.LookPath("expdp")
+	}
 
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = &out
-	err := cmd.Run()
-
-	if err != nil {
+	if path != "" {
+		path, err = findAndValidateExport(ctx, config.Config{
+			BinaryPath: path,
+			Source:     sourceType,
+		})
+		if err == nil {
+			return path, nil
+		}
+	} else {
 		switch sourceType {
 		case config.PostgreSQL:
-			var path string
 			for i := 0; i < len(predefinedPostgresPaths); i++ {
-				path, err = findExport(ctx, predefinedPostgresPaths[i])
-				if err == nil {
-					break
-				}
+				path, err = findAndValidateExport(ctx, config.Config{
+					BinaryPath: predefinedPostgresPaths[i],
+					Source:     config.PostgreSQL,
+				})
 			}
 			return path, nil
 		case config.MySQL:
-			var path string
 			for i := 0; i < len(predefinedMySQLPaths); i++ {
-				path, err = findExport(ctx, predefinedMySQLPaths[i])
+				path, err = findAndValidateExport(ctx, config.Config{
+					BinaryPath: predefinedMySQLPaths[i],
+					Source:     config.MySQL,
+				})
 				if err == nil {
 					break
 				}
@@ -120,13 +121,18 @@ func checkExport(ctx context.Context, sourceType config.SourceType) (string, err
 			return path, nil
 		}
 	}
-	fmt.Sprintf(out.String(), "****123123123123")
-	lines := strings.Split(out.String(), "\n")
-	return strings.TrimSpace(lines[0]), nil
+
+	fmt.Println(err, "*1")
+
+	if err != nil {
+		return "", err
+	}
+
+	return path, nil
 }
 
-func findExport(ctx context.Context, path string) (string, error) {
-	cmd := CreateCheckBinaryPathCommand(ctx, config.Config{BinaryPath: fmt.Sprintf("%s --version", path)})
+func findAndValidateExport(ctx context.Context, config config.Config) (string, error) {
+	cmd := CheckBinaryPathCommand(ctx, config)
 
 	var out bytes.Buffer
 	var stderr bytes.Buffer
@@ -137,5 +143,5 @@ func findExport(ctx context.Context, path string) (string, error) {
 		return "", errors.New(fmt.Sprint(err) + ": " + stderr.String())
 	}
 
-	return path, nil
+	return config.BinaryPath, nil
 }

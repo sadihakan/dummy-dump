@@ -128,7 +128,7 @@ func main() {
 		if err = dumpConfig.CheckConfigPostgreSQL(); err != nil {
 			panic(err)
 		}
-		dump = internal.Postgres{Ctx: ctx}
+		dump = internal.Postgres{}
 
 	case "mysql":
 		binaryPath, err := internal.CheckBinary(ctx, binaryPath, config.SourceType(source), importArg, exportArg)
@@ -139,7 +139,7 @@ func main() {
 		if err := dumpConfig.CheckConfigMySQL(); err != nil {
 			panic(err)
 		}
-		dump = internal.MySQL{Ctx: ctx}
+		dump = internal.MySQL{}
 
 	case "mssql":
 		if err := dumpConfig.CheckConfigMsSQL(); err != nil {
@@ -153,21 +153,17 @@ func main() {
 		return
 	}
 
-	if err := dump.Check(); err != nil {
-		panic(err)
-	}
-
 	if importArg {
 		if !util.PathExists(filepath.Join(dumpConfig.BackupFilePath, dumpConfig.BackupName)) {
 			panic("Path is not exist")
 		}
-		if err := dump.Import(dumpConfig); err != nil {
+		if err := dump.Import(ctx, dumpConfig); err != nil {
 			panic(err)
 		}
 	}
 
 	if exportArg {
-		if err := dump.Export(dumpConfig); err != nil {
+		if err := dump.Export(ctx, dumpConfig); err != nil {
 			panic(err)
 		}
 	}
