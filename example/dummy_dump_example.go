@@ -14,7 +14,7 @@ func main() {
 		fmt.Println("DummyDump new error: ", err)
 	}
 
-	dd.SetBinaryConfig(config.PostgreSQL, false, true)
+	dd.SetBinaryConfig(config.MySQL, false, true)
 
 	ctx := context.Background()
 
@@ -23,16 +23,16 @@ func main() {
 	fmt.Println("Version: ", version)
 
 	dd2, err := dummydump.New(&config.Config{
-		Source:         config.PostgreSQL,
+		Source:         config.MySQL,
 		Import:         false,
 		Export:         true,
-		User:           "hakankosanoglu",
-		Password:       "",
-		DB:             "hell",
+		User:           "root",
+		Password:       "123456",
+		DB:             "testdb",
 		Host:           "localhost",
-		Port:           5432,
-		BackupFilePath: "/Users/hakankosanoglu/Desktop",
-		BackupName:     "aa.backup",
+		Port:           3306,
+		BackupFilePath: "C:\\Users\\Administrator\\Desktop",
+		BackupName:     "testdb.backup",
 		BinaryPath:     binary,
 	})
 
@@ -40,7 +40,7 @@ func main() {
 		fmt.Println("DummyDump error ", err)
 	}
 
-	_, err = dd2.CheckPath(ctx).Export(ctx).Run()
+	_, err = dd2.Export(ctx).Run()
 
 	if err != nil {
 		fmt.Println("Run error: ", err)

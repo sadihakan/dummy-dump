@@ -120,7 +120,7 @@ func checkExport(ctx context.Context, sourceType config.SourceType) (string, err
 			return path, nil
 		}
 	}
-
+	fmt.Sprintf(out.String(), "****123123123123")
 	lines := strings.Split(out.String(), "\n")
 	return strings.TrimSpace(lines[0]), nil
 }

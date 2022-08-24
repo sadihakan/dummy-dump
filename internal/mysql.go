@@ -6,6 +6,8 @@ import (
 	"errors"
 	"github.com/sadihakan/dummy-dump/config"
 	"os"
+	"path/filepath"
+	"runtime"
 )
 
 const (
@@ -45,6 +47,10 @@ func (m MySQL) CheckPath(ctx context.Context, dump config.Config) error {
 }
 
 func (m MySQL) Export(ctx context.Context, dump config.Config) error {
+	if runtime.GOOS == "windows" {
+		_, dump.BinaryPath = filepath.Split(dump.BinaryPath)
+	}
+
 	cmd := CreateExportCommand(ctx, dump)
 	var outb, errBuf bytes.Buffer
 	cmd.Stderr = &errBuf
