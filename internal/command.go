@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"strconv"
 	"strings"
 )
 
@@ -90,10 +89,10 @@ func homeDirCommand(ctx context.Context, command string, arg []string) *exec.Cmd
 		}
 		params = append(params, arg...)
 		command = strings.Join(params, " ")
-		cmd = exec.CommandContext(ctx, "powershell.exe", strconv.Quote(command))
+		cmd = exec.CommandContext(ctx, "powershell.exe", strings.TrimSpace(command))
 	}
 
-	//cmd.Dir = util.HomeDir()
+	cmd.Dir = util.HomeDir()
 
 	return cmd
 }
