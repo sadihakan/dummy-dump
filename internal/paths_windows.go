@@ -1,8 +1,7 @@
 package internal
 
 var predefinedPostgresPaths = []string{
-	"/usr/local/bin/pg_dump",
-	"/Applications/Postgres.app/Contents/Versions/latest/bin/pg_dump",
+	"C:\\Program Files\\PostgreSQL\\14\\bin\\pg_dump.exe",
 }
 
 var predefinedMySQLPaths = []string{
