@@ -88,20 +88,19 @@ func checkImport(ctx context.Context, sourceType config.SourceType) (string, err
 }
 
 func checkExport(ctx context.Context, sourceType config.SourceType) (string, error) {
-	var out bytes.Buffer
-	var cmd *exec.Cmd
+	var err error
+	var path string
 
-	cmd = CreateExportBinaryCommand(ctx, sourceType)
+	switch sourceType {
+	case config.PostgreSQL:
+		path, _ = exec.LookPath("pg_dump")
+	case config.MySQL:
+		path, _ = exec.LookPath("mysqldump")
+	}
 
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = &out
-	err := cmd.Run()
-
-	if err != nil {
+	if path == "" {
 		switch sourceType {
 		case config.PostgreSQL:
-			var path string
 			for i := 0; i < len(predefinedPostgresPaths); i++ {
 				path, err = findExport(ctx, predefinedPostgresPaths[i])
 				if err == nil {
@@ -110,7 +109,6 @@ func checkExport(ctx context.Context, sourceType config.SourceType) (string, err
 			}
 			return path, nil
 		case config.MySQL:
-			var path string
 			for i := 0; i < len(predefinedMySQLPaths); i++ {
 				path, err = findExport(ctx, predefinedMySQLPaths[i])
 				if err == nil {
@@ -121,8 +119,7 @@ func checkExport(ctx context.Context, sourceType config.SourceType) (string, err
 		}
 	}
 
-	lines := strings.Split(out.String(), "\n")
-	return strings.TrimSpace(lines[0]), nil
+	return path, nil
 }
 
 func findExport(ctx context.Context, path string) (string, error) {
