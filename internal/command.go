@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 )
 
@@ -35,7 +36,7 @@ const (
 
 // CheckBinaryPathCommand ...
 func CheckBinaryPathCommand(ctx context.Context, cfg config.Config) *exec.Cmd {
-	return homeDirCommand(ctx, "", getBinaryPathCommand(cfg))
+	return homeDirCommand(ctx, cfg.BinaryPath, getVersionCommandArg(cfg.Source))
 }
 
 // CheckVersionCommand ...
@@ -67,43 +68,15 @@ func homeDirCommand(ctx context.Context, command string, arg []string) *exec.Cmd
 		cmd = exec.CommandContext(ctx, command, arg...)
 	case "windows":
 		if command != "" {
-			params = append(params, command)
+			params = append(params, strconv.Quote(command))
 		}
 		params = append(params, arg...)
-		ps, _ := exec.LookPath("powershell.exe")
-		fmt.Println(strings.Join(params, " "))
-		cmd = exec.CommandContext(ctx, ps, strings.TrimSpace(strings.Join(params, " ")))
+		cmd = exec.CommandContext(ctx, "powershell.exe", "&", strings.TrimSpace(strings.Join(params, " ")))
 	}
 
 	cmd.Dir = util.HomeDir()
 
 	return cmd
-}
-
-func getBinaryPathCommand(cfg config.Config) (command []string) {
-	switch runtime.GOOS {
-	case "darwin":
-		switch cfg.Source {
-		case config.PostgreSQL:
-			command = []string{cfg.BinaryPath, pgVersion}
-		case config.MySQL:
-			command = []string{cfg.BinaryPath, mysqlVersion}
-		case config.Oracle:
-			command = []string{cfg.BinaryPath, oracleVersion}
-		}
-	case "linux":
-		command = []string{cfg.BinaryPath}
-	case "windows":
-		switch cfg.Source {
-		case config.PostgreSQL:
-			command = []string{cfg.BinaryPath, pgVersion}
-		case config.MySQL:
-			command = []string{cfg.BinaryPath, mysqlVersion}
-		case config.Oracle:
-			command = []string{cfg.BinaryPath, oracleVersion}
-		}
-	}
-	return command
 }
 
 // getVersionCommandArg ...
