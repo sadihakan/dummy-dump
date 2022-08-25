@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
-	"os"
 )
 
 const (
@@ -22,45 +22,48 @@ type MySQL struct {
 	Dump
 }
 
-func (m MySQL) Check(ctx context.Context) error {
-	cmd := CreateCheckBinaryCommand(ctx, config.MySQL)
-	err := cmd.Run()
-	if err != nil {
-		_, _ = os.Stderr.WriteString(err.Error())
-		return err
-	}
-	return nil
-}
-
 func (m MySQL) CheckPath(ctx context.Context, dump config.Config) error {
-	cmd := CreateCheckBinaryPathCommand(ctx, dump)
-	var out, errBuf bytes.Buffer
+	cmd := CheckBinaryPathCommand(ctx, dump)
+
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+
 	cmd.Stdout = &out
-	cmd.Stderr = &errBuf
-	err := cmd.Run()
-	if err != nil {
-		return errors.New("mysql path does not located")
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		return errors.New(fmt.Sprint(err) + ": " + stderr.String())
 	}
+
 	return nil
 }
 
 func (m MySQL) Export(ctx context.Context, dump config.Config) error {
 	cmd := CreateExportCommand(ctx, dump)
-	var outb, errBuf bytes.Buffer
-	cmd.Stderr = &errBuf
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = &outb
+
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+
 	if err := cmd.Run(); err != nil {
-		return errors.New(errBuf.String())
+		return errors.New(fmt.Sprint(err) + ": " + stderr.String())
 	}
+
 	return nil
 }
 
 func (m MySQL) Import(ctx context.Context, dump config.Config) error {
 	cmd := CreateImportCommand(ctx, dump)
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	err := cmd.Run()
-	return err
+
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		return errors.New(fmt.Sprint(err) + ": " + stderr.String())
+	}
+
+	return nil
 }

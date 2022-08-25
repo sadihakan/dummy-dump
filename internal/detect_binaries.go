@@ -11,14 +11,6 @@ import (
 	"strings"
 )
 
-var predefinedPostgresPaths = []string{
-	"/Applications/Postgres.app/Contents/Versions/latest/bin/pg_dump",
-}
-
-var predefinedMySQLPaths = []string{
-	"/Applications/Postgres.app/Contents/Versions/latest/bin/pg_dump",
-}
-
 // CheckBinary ...
 func CheckBinary(ctx context.Context, binaryPath string, sourceType config.SourceType, importArg bool, exportArg bool) (string, error) {
 	var err error
@@ -56,15 +48,7 @@ func checkVersion(ctx context.Context, binaryPath string, sourceType config.Sour
 	var out bytes.Buffer
 	var cmd *exec.Cmd
 
-	if sourceType == config.Oracle {
-
-	}
-	switch sourceType {
-	case config.Oracle:
-		//cmd = CreateVersionCommand(filepath.Join(oraclelBinaryDirectories()[0], "sqlplus.exe"), sourceType)
-	default:
-		cmd = CreateVersionCommand(ctx, binaryPath, sourceType)
-	}
+	cmd = CheckVersionCommand(ctx, binaryPath, sourceType)
 
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
@@ -78,50 +62,61 @@ func checkVersion(ctx context.Context, binaryPath string, sourceType config.Sour
 	return strings.TrimSpace(lines[0]), nil
 }
 
-func checkImport(ctx context.Context, sourceType config.SourceType) (string, error) {
-	var out bytes.Buffer
-	var cmd *exec.Cmd
+func checkImport(_ context.Context, sourceType config.SourceType) (string, error) {
+	var path string
 
-	cmd = CreateImportBinaryCommand(ctx, sourceType)
-
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = &out
-	err := cmd.Run()
-
-	if err != nil {
-		return "", err
+	switch sourceType {
+	case config.PostgreSQL:
+		path, _ = exec.LookPath("pg_restore")
+	case config.MySQL:
+		path, _ = exec.LookPath("mysql")
+	case config.Oracle:
+		path, _ = exec.LookPath("impdp")
 	}
-	lines := strings.Split(out.String(), "\n")
-	return strings.TrimSpace(lines[0]), nil
+
+	return path, nil
 }
 
 func checkExport(ctx context.Context, sourceType config.SourceType) (string, error) {
-	var out bytes.Buffer
-	var cmd *exec.Cmd
+	var err error
+	var path string
 
-	cmd = CreateExportBinaryCommand(ctx, sourceType)
+	switch sourceType {
+	case config.PostgreSQL:
+		path, _ = exec.LookPath("pg_dump")
+	case config.MySQL:
+		path, _ = exec.LookPath("mysqldump")
+	case config.Oracle:
+		path, _ = exec.LookPath("expdp")
+	}
 
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = &out
-	err := cmd.Run()
-
-	if err != nil {
+	if path != "" {
+		path, err = findAndValidateExport(ctx, config.Config{
+			BinaryPath: path,
+			Source:     sourceType,
+		})
+		if err == nil {
+			return path, nil
+		}
+	} else {
 		switch sourceType {
 		case config.PostgreSQL:
-			var path string
 			for i := 0; i < len(predefinedPostgresPaths); i++ {
-				path, err = findExport(ctx, predefinedPostgresPaths[i])
+				path, err = findAndValidateExport(ctx, config.Config{
+					BinaryPath: predefinedPostgresPaths[i],
+					Source:     config.PostgreSQL,
+				})
 				if err == nil {
 					break
 				}
 			}
 			return path, nil
 		case config.MySQL:
-			var path string
 			for i := 0; i < len(predefinedMySQLPaths); i++ {
-				path, err = findExport(ctx, predefinedMySQLPaths[i])
+				path, err = findAndValidateExport(ctx, config.Config{
+					BinaryPath: predefinedMySQLPaths[i],
+					Source:     config.MySQL,
+				})
 				if err == nil {
 					break
 				}
@@ -130,12 +125,15 @@ func checkExport(ctx context.Context, sourceType config.SourceType) (string, err
 		}
 	}
 
-	lines := strings.Split(out.String(), "\n")
-	return strings.TrimSpace(lines[0]), nil
+	if err != nil {
+		return "", err
+	}
+
+	return path, nil
 }
 
-func findExport(ctx context.Context, path string) (string, error) {
-	cmd := CreateCheckBinaryPathCommand(ctx, config.Config{BinaryPath: path})
+func findAndValidateExport(ctx context.Context, config config.Config) (string, error) {
+	cmd := CheckBinaryPathCommand(ctx, config)
 
 	var out bytes.Buffer
 	var stderr bytes.Buffer
@@ -146,5 +144,5 @@ func findExport(ctx context.Context, path string) (string, error) {
 		return "", errors.New(fmt.Sprint(err) + ": " + stderr.String())
 	}
 
-	return path, nil
+	return config.BinaryPath, nil
 }

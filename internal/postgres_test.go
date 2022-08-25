@@ -8,13 +8,6 @@ import (
 	"testing"
 )
 
-func TestCheck(t *testing.T) {
-	var dump Dump
-	dump = Postgres{}
-
-	dump.Check(nil)
-}
-
 func TestCheckWithError(t *testing.T) {
 	var dump Dump
 	dump = Postgres{}

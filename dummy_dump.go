@@ -2,8 +2,10 @@ package dummy_dump
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/sadihakan/dummy-dump/config"
-	"github.com/sadihakan/dummy-dump/errors"
+	dummyErrors "github.com/sadihakan/dummy-dump/errors"
 	"github.com/sadihakan/dummy-dump/internal"
 	"github.com/sadihakan/dummy-dump/util"
 )
@@ -74,7 +76,7 @@ func (dd *DummyDump) configParserWithoutCheck() {
 	case config.Sqlcompact:
 		dd.dump = internal.SqlCompact{}
 	default:
-		panic(errors.New("not implemented"))
+		panic(dummyErrors.New("not implemented"))
 	}
 }
 
@@ -117,7 +119,7 @@ func (dd *DummyDump) Import(ctx context.Context) *DummyDump {
 	dumpConfig := dd.c
 
 	if !util.PathExists(dumpConfig.BackupFilePath) && dd.Error == nil {
-		dd.Error = errors.New(errors.ConfigPathNotExist)
+		dd.Error = dummyErrors.New(dummyErrors.ConfigPathNotExist)
 	}
 
 	err := dd.dump.Import(ctx, *dumpConfig)
@@ -136,12 +138,6 @@ func (dd *DummyDump) Export(ctx context.Context) *DummyDump {
 	if err != nil && dd.Error == nil {
 		dd.Error = err
 	}
-
-	return dd
-}
-
-func (dd *DummyDump) Check(ctx context.Context) *DummyDump {
-	dd.Error = dd.dump.Check(ctx)
 
 	return dd
 }
@@ -165,10 +161,13 @@ func (dd *DummyDump) Run() (*DummyDump, error) {
 func (dd *DummyDump) GetBinary(ctx context.Context) (binaryPath string, version string) {
 	dumpConfig := dd.c
 	binaryPath, err := internal.CheckBinary(ctx, dumpConfig.BinaryPath, dumpConfig.Source, dumpConfig.Import, dumpConfig.Export)
-	version, err = internal.CheckVersion(ctx, binaryPath, dumpConfig.Source)
-
 	if err != nil {
-		dd.Error = err
+		dd.Error = errors.New(fmt.Sprintf("Path error: %s", err))
+	}
+
+	version, err = internal.CheckVersion(ctx, binaryPath, dumpConfig.Source)
+	if err != nil {
+		dd.Error = errors.New(fmt.Sprintf("Version error: %s", err))
 	}
 
 	return binaryPath, version

@@ -11,13 +11,7 @@ type SqlCompact struct {
 	Dump
 }
 
-func (s SqlCompact) Check(_ context.Context) error {
-	//
-	return nil
-}
-
 func (s SqlCompact) CheckPath(_ context.Context, dump config.Config) error {
-	//
 	return nil
 }
 
@@ -27,6 +21,5 @@ func (s SqlCompact) Export(_ context.Context, dump config.Config) error {
 }
 
 func (s SqlCompact) Import(_ context.Context, dump config.Config) error {
-	//
 	return nil
 }
