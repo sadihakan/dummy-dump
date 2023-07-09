@@ -1,8 +1,32 @@
-# DummyDump
+# Overview
 
-Simple Database Backup Tool
+Welcome to the documentation for the dummy-dump GitHub repository. This documentation provides an overview of the project, its purpose, features, and instructions for setting it up and contributing.
 
-## Getting Started
+# Introduction
+
+dummy-dump is a database backup program written in Go. It provides a simple and efficient solution for creating backups of your databases. This repository aims to simplify the backup process and ensure the safety and integrity of your data.
+
+# Features
+
+The key features of dummy-dump include:
+
+- Support for multiple databases:
+    - Currently supports MySQL, PostgreSQL, and SQLite databases.
+    - Easily extendable to support other popular databases.
+- Customizable backup options:
+    - Specify the database connection details, including host, port, username, password, and database name.
+    - Choose the backup destination directory.
+    - Define backup retention policies, such as the number of backups to keep.
+- Automated backup scheduling:
+    - Schedule automated backups at regular intervals using cron expressions.
+    - Configure the frequency and timing of backups based on your requirements.
+    - Ensure regular and consistent backup operations.
+- Backup encryption and compression:
+    - Encrypt the backup files for enhanced security.
+    - Compress the backup files to minimize storage space requirements.
+    - Choose encryption and compression algorithms based on your security needs.
+
+# Usage
 
 ### Requirements
 
